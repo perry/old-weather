@@ -9,6 +9,3 @@
 - About (`/about/`)
 - My Old Weather (`/profile/`)
 - My Pages (`/my_pages/`)
-
-
-
