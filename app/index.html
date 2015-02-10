@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en" ng-app="app">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Old Weather</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <header id="site-header">
+            <a ui-sref="home" id="site-logo">Old Weather</a>
+
+            <nav id="site-nav">
+                <ul>
+                    <li><a ui-sref="home">Home</a></li>
+                    <li>
+                        Vessels
+                        <ul>
+                            <li><a>Search vessels</a></li>
+                            <li><a>View sources</a></li>
+                        </ul>
+                    </li>
+                    <li><a>Tutorial</a></li>
+                    <li><a>Transcribe</a></li>
+                    <li><a>About</a></li>
+                    <li>
+                        Discuss
+                        <ul>
+                            <li><a href="http://blog.oldweather.org">Blog</a></li>
+                            <li><a href="http://forum.oldweather.org">Forum</a></li>
+                            <li><a href="http://forum.oldweather.org/index.php?topic=3945.msg72585#msg72585">Got a question?</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <div ui-view="main"></div>
+
+        <footer id="site-footer">
+            <p>&copy; 2015 Zooniverse. This project is part of the JISC’s Developing Community Content. <a>Learn more</a>.</p>
+        </footer>
+
+        <script src="bower_components/angular/angular.js"></script>
+        <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+
+        <script src="modules/app/scripts/init.js"></script>
+        <script src="modules/app/scripts/templates.js"></script>
+
+        <script src="modules/ships/scripts/init.js"></script>
+        <script src="modules/ships/scripts/templates.js"></script>
+    </body>
+</html>
