@@ -13,7 +13,7 @@
         function ($stateProvider, $urlRouterProvider) {
             $stateProvider
                 .state('home', {
-                    url: '',
+                    url: '/',
                     views: {
                         main: {
                             templateUrl: 'templates/app/home.html'
