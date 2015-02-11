@@ -1,6 +1,6 @@
 - Home (`/`)
 - Vessels
-    - Ships (`/ships/``)
+    - Ships (`/ships/`)
         - Ship detail (`/ships/:id/`)
         - Ship search (`/ships_search/`)
     - Sources (`/sources/`)
