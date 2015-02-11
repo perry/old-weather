@@ -6,52 +6,62 @@
         <title>Old Weather</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
     </head>
     <body>
         <header id="site-header">
-            <a ui-sref="home" id="site-logo">Old Weather</a>
-
-            <nav id="site-nav">
-                <ul>
-                    <li><a ui-sref="home">Home</a></li>
-                    <li>
-                        Vessels
-                        <ul>
-                            <li><a>Search vessels</a></li>
-                            <li><a>View sources</a></li>
-                        </ul>
-                    </li>
-                    <li><a>Tutorial</a></li>
-                    <li><a>Transcribe</a></li>
-                    <li>
-                        About
-                        <ul>
-                            <li><a ui-sref="about.partners">Partners</a></li>
-                            <li><a ui-sref="about.team">Team</a></li>
-                            <li><a ui-sref="about.why">Why Scientists Need You</a></li>
-                            <li><a ui-sref="about.faq">Frequently Asked Questions</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        Discuss
-                        <ul>
-                            <li><a href="http://blog.oldweather.org">Blog</a></li>
-                            <li><a href="http://forum.oldweather.org">Forum</a></li>
-                            <li><a href="http://forum.oldweather.org/index.php?topic=3945.msg72585#msg72585">Got a question?</a></li>
-                        </ul>
-                    </li>
-                </ul>
+            <nav id="site-nav" class="navbar navbar-default">
+                <div class="container-fluid">
+                    <a ui-sref="home" id="site-logo" class="navbar-brand">Old Weather</a>
+                    <ul class="nav navbar-nav">
+                        <li><a ui-sref="home">Home</a></li>
+                        <li dropdown>
+                            <a href="#" class="dropdown-toggle" dropdown-toggle>
+                                Vessels <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a>Search vessels</a></li>
+                                <li><a>View sources</a></li>
+                            </ul>
+                        </li>
+                        <li><a>Tutorial</a></li>
+                        <li><a>Transcribe</a></li>
+                        <li dropdown>
+                            <a href="#" class="dropdown-toggle" dropdown-toggle>
+                                About <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a ui-sref="about.partners">Partners</a></li>
+                                <li><a ui-sref="about.team">Team</a></li>
+                                <li><a ui-sref="about.why">Why Scientists Need You</a></li>
+                                <li><a ui-sref="about.faq">Frequently Asked Questions</a></li>
+                            </ul>
+                        </li>
+                        <li dropdown>
+                            <a href="#" class="dropdown-toggle" dropdown-toggle>
+                                Discuss <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="http://blog.oldweather.org">Blog</a></li>
+                                <li><a href="http://forum.oldweather.org">Forum</a></li>
+                                <li><a href="http://forum.oldweather.org/index.php?topic=3945.msg72585#msg72585">Got a question?</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </nav>
         </header>
 
-        <div ui-view="main"></div>
+        <div ui-view="main" class="container-fluid"></div>
 
-        <footer id="site-footer">
+        <footer id="site-footer" class="container-fluid">
             <p>&copy; 2015 Zooniverse. This project is part of the JISC’s Developing Community Content. <a ui-sref="about.partners">Learn more</a>.</p>
         </footer>
 
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+        <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 
         <script src="modules/app/scripts/init.js"></script>
         <script src="modules/app/scripts/templates.js"></script>
