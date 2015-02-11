@@ -3,6 +3,7 @@ var fs = require('fs');
 var gulp = require('gulp');
 var watch = require('gulp-watch');
 var connect = require('gulp-connect');
+var historyApiFallback = require('connect-history-api-fallback');
 var templateCache = require('gulp-angular-templatecache');
 
 var baseDir = __dirname
@@ -15,7 +16,10 @@ var files = {
 gulp.task('connectDev', function () {
     connect.server({
         root: ['app'],
-        port: 8000
+        port: 8000,
+        middleware: function () {
+            return [historyApiFallback];
+        }
     });
 });
 
