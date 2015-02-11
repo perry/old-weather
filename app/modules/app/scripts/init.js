@@ -4,6 +4,7 @@
     var module = angular.module('app', [
         'ui.router',
         'ui.bootstrap',
+        '404',
         'content'
     ]);
 
