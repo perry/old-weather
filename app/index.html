@@ -11,44 +11,54 @@
     </head>
     <body>
         <header id="site-header">
-            <nav id="site-nav" class="navbar navbar-default">
+            <nav id="site-nav" class="navbar navbar-default" ng-init="isCollapsed = true;">
                 <div class="container-fluid">
-                    <a ui-sref="home" id="site-logo" class="navbar-brand">Old Weather</a>
-                    <ul class="nav navbar-nav">
-                        <li><a ui-sref="home">Home</a></li>
-                        <li dropdown>
-                            <a href="#" class="dropdown-toggle" dropdown-toggle>
-                                Vessels <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a>Search vessels</a></li>
-                                <li><a>View sources</a></li>
-                            </ul>
-                        </li>
-                        <li><a>Tutorial</a></li>
-                        <li><a>Transcribe</a></li>
-                        <li dropdown>
-                            <a href="#" class="dropdown-toggle" dropdown-toggle>
-                                About <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a ui-sref="about.partners">Partners</a></li>
-                                <li><a ui-sref="about.team">Team</a></li>
-                                <li><a ui-sref="about.why">Why Scientists Need You</a></li>
-                                <li><a ui-sref="about.faq">Frequently Asked Questions</a></li>
-                            </ul>
-                        </li>
-                        <li dropdown>
-                            <a href="#" class="dropdown-toggle" dropdown-toggle>
-                                Discuss <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="http://blog.oldweather.org">Blog</a></li>
-                                <li><a href="http://forum.oldweather.org">Forum</a></li>
-                                <li><a href="http://forum.oldweather.org/index.php?topic=3945.msg72585#msg72585">Got a question?</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" ng-click="isCollapsed = !isCollapsed">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+
+                        <a ui-sref="home" id="site-logo" class="navbar-brand">Old Weather</a>
+                    </div>
+                    <div class="collapse navbar-collapse" collapse="isCollapsed">
+                        <ul class="nav navbar-nav">
+                            <!-- <li dropdown> -->
+                            <!--     <a href="#" class="dropdown-toggle" dropdown-toggle> -->
+                            <!--         Vessels <span class="caret"></span> -->
+                            <!--     </a> -->
+                            <!--     <ul class="dropdown-menu" role="menu"> -->
+                            <!--         <li><a>Search vessels</a></li> -->
+                            <!--         <li><a>View sources</a></li> -->
+                            <!--     </ul> -->
+                            <!-- </li> -->
+                            <!-- <li><a>Tutorial</a></li> -->
+                            <!-- <li><a>Transcribe</a></li> -->
+                            <li dropdown>
+                                <a href="#" class="dropdown-toggle" dropdown-toggle>
+                                    About <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a ui-sref="about.partners">Partners</a></li>
+                                    <li><a ui-sref="about.team">Team</a></li>
+                                    <li><a ui-sref="about.why">Why Scientists Need You</a></li>
+                                    <li><a ui-sref="about.faq">Frequently Asked Questions</a></li>
+                                </ul>
+                            </li>
+                            <li dropdown>
+                                <a href="#" class="dropdown-toggle" dropdown-toggle>
+                                    Discuss <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="http://blog.oldweather.org">Blog</a></li>
+                                    <li><a href="http://forum.oldweather.org">Forum</a></li>
+                                    <li><a href="http://forum.oldweather.org/index.php?topic=3945.msg72585#msg72585">Got a question?</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </nav>
         </header>
