@@ -34,7 +34,9 @@ gulp.task('templates', ['cleanTemplates'], function () {
             var path = modulesDir + '/' + dir;
             gulp.src(path + '/**/templates/**/*.html')
                 .pipe(templateCache({
-                    module: dir
+                    module: dir,
+                    templateHeader: '(function (angular) {\n "use strict";\n angular.module("<%= module %>"<%= standalone %>).run(["$templateCache", function($templateCache) {',
+                    templateFooter: '\n }]);\n }(window.angular));'
                 }))
                 .pipe(gulp.dest(path + '/scripts'));
         });
