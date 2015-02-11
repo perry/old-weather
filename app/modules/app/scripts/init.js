@@ -2,7 +2,8 @@
     'use strict';
 
     var module = angular.module('app', [
-        'ui.router'
+        'ui.router',
+        'content'
     ]);
 
     module.config([

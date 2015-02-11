@@ -23,7 +23,15 @@
                     </li>
                     <li><a>Tutorial</a></li>
                     <li><a>Transcribe</a></li>
-                    <li><a>About</a></li>
+                    <li>
+                        About
+                        <ul>
+                            <li><a ui-sref="about.partners">Partners</a></li>
+                            <li><a ui-sref="about.team">Team</a></li>
+                            <li><a ui-sref="about.why">Why Scientists Need You</a></li>
+                            <li><a ui-sref="about.faq">Frequently Asked Questions</a></li>
+                        </ul>
+                    </li>
                     <li>
                         Discuss
                         <ul>
@@ -39,7 +47,7 @@
         <div ui-view="main"></div>
 
         <footer id="site-footer">
-            <p>&copy; 2015 Zooniverse. This project is part of the JISC’s Developing Community Content. <a>Learn more</a>.</p>
+            <p>&copy; 2015 Zooniverse. This project is part of the JISC’s Developing Community Content. <a ui-sref="about.partners">Learn more</a>.</p>
         </footer>
 
         <script src="bower_components/angular/angular.js"></script>
@@ -47,6 +55,9 @@
 
         <script src="modules/app/scripts/init.js"></script>
         <script src="modules/app/scripts/templates.js"></script>
+
+        <script src="modules/content/scripts/init.js"></script>
+        <script src="modules/content/scripts/templates.js"></script>
 
         <script src="modules/ships/scripts/init.js"></script>
         <script src="modules/ships/scripts/templates.js"></script>
