@@ -1,6 +1,7 @@
 var fs = require('fs');
 
 var gulp = require('gulp');
+var gulpDocs = require('gulp-ngdocs');
 var watch = require('gulp-watch');
 var clean = require('gulp-clean');
 var connect = require('gulp-connect');
@@ -28,6 +29,13 @@ gulp.task('connectDev', function () {
     });
 });
 
+gulp.task('connectDocs', function () {
+    connect.server({
+        root: ['.tmp/docs'],
+        port: 8001
+    });
+});
+
 gulp.task('templates', ['cleanTemplates'], function () {
     fs.readdir(modulesDir, function (err, dirs) {
         dirs.forEach(function (dir) {
@@ -43,12 +51,24 @@ gulp.task('templates', ['cleanTemplates'], function () {
     });
 });
 
+gulp.task('ngdocs', function () {
+    var options = {
+        html5Mode: false
+    };
+
+    return gulp.src(modulesDir + '/**/*.js')
+        .pipe(gulpDocs.process(options))
+        .pipe(gulp.dest('.tmp/docs'));
+});
+
 gulp.task('watch', function () {
     gulp.watch([files.templates], ['templates']);
 });
 
 gulp.task('default', [
+    'ngdocs',
     'templates',
     'watch',
-    'connectDev'
+    'connectDev',
+    'connectDocs'
 ]);
