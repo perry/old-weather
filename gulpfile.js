@@ -2,6 +2,7 @@ var fs = require('fs');
 
 var gulp = require('gulp');
 var watch = require('gulp-watch');
+var clean = require('gulp-clean');
 var connect = require('gulp-connect');
 var historyApiFallback = require('connect-history-api-fallback');
 var templateCache = require('gulp-angular-templatecache');
@@ -13,6 +14,10 @@ var files = {
     templates: appDir + '/modules/**/templates/**/*.html'
 }
 
+gulp.task('cleanTemplates', function () {
+    return gulp.src('**/templates.js', {read: false}).pipe(clean());
+});
+
 gulp.task('connectDev', function () {
     connect.server({
         root: ['app'],
@@ -23,7 +28,7 @@ gulp.task('connectDev', function () {
     });
 });
 
-gulp.task('templates', function () {
+gulp.task('templates', ['cleanTemplates'], function () {
     fs.readdir(modulesDir, function (err, dirs) {
         dirs.forEach(function (dir) {
             var path = modulesDir + '/' + dir;
