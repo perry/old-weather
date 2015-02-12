@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/perry/old-weather-rebuild",
   "devDependencies": {
-    "connect-history-api-fallback": "0.0.5",
     "gulp": "^3.8.10",
     "gulp-angular-templatecache": "^1.5.0",
     "gulp-clean": "^0.3.1",

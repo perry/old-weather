@@ -9,11 +9,9 @@
     ]);
 
     module.config([
-        '$locationProvider',
         '$stateProvider',
-        function ($locationProvider, $stateProvider) {
-            $locationProvider.html5Mode({enabled: true, requireBase: false});
-
+        '$urlRouterProvider',
+        function ($stateProvider, $urlRouterProvider) {
             $stateProvider
                 .state('home', {
                     url: '/',

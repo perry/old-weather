@@ -5,7 +5,6 @@ var gulpDocs = require('gulp-ngdocs');
 var watch = require('gulp-watch');
 var clean = require('gulp-clean');
 var connect = require('gulp-connect');
-var historyApiFallback = require('connect-history-api-fallback');
 var templateCache = require('gulp-angular-templatecache');
 
 var baseDir = __dirname
@@ -22,10 +21,7 @@ gulp.task('cleanTemplates', function () {
 gulp.task('connectDev', function () {
     connect.server({
         root: ['app'],
-        port: 8000,
-        middleware: function () {
-            return [historyApiFallback];
-        }
+        port: 8000
     });
 });
 
