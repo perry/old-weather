@@ -32,7 +32,7 @@ gulp.task('connectDocs', function () {
     });
 });
 
-gulp.task('templates', ['cleanTemplates'], function () {
+gulp.task('templates', function () {
     fs.readdir(modulesDir, function (err, dirs) {
         dirs.forEach(function (dir) {
             var path = modulesDir + '/' + dir;
@@ -52,7 +52,7 @@ gulp.task('ngdocs', function () {
         html5Mode: false
     };
 
-    return gulp.src(modulesDir + '/**/*.js')
+    gulp.src(modulesDir + '/**/*.js')
         .pipe(gulpDocs.process(options))
         .pipe(gulp.dest('.tmp/docs'));
 });
@@ -62,8 +62,9 @@ gulp.task('watch', function () {
 });
 
 gulp.task('default', [
-    'ngdocs',
+    'cleanTemplates',
     'templates',
+    'ngdocs',
     'watch',
     'connectDev',
     'connectDocs'
