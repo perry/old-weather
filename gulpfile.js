@@ -75,7 +75,10 @@ gulp.task('templates', function () {
 
 gulp.task('copy', function () {
     gulp.src(appDir + '/images/**/*')
-        .pipe(gulp.dest('.tmp/build/images'))
+        .pipe(gulp.dest('.tmp/build/images'));
+
+    gulp.src(appDir + '/bower_components/bootstrap/dist/fonts/*')
+        .pipe(gulp.dest('.tmp/build/fonts'));
 });
 
 gulp.task('ngdocs', function () {
