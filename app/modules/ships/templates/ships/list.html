@@ -2,10 +2,22 @@
     <h1>Ships</h1>
 </div>
 
-<div ng-repeat="ship in ships">
-    <a ui-sref="ships-detail({id: ship.id})">
-        <h2>{{ ::ship.name }} <small>- {{ ::ship.travel }}</small></h2>
-        <p>{{ ::ship.difficulty }} difficulty</p>
-        <p>Crew: {{ ::ship.users }}</p>
-    </a>
-</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Ship</th>
+            <th>Difficulity</th>
+            <th>Crew</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr ng-repeat="ship in ships">
+            <td>{{ ::ship.id }}</td>
+            <td><a ui-sref="ships-detail({id: ship.id})">{{ ::ship.name }}</a></td>
+            <td>{{ ::ship.difficulty }}</td>
+            <td>{{ ::ship.users }}</td>
+        </tr>
+    </tbody>
+</table>
