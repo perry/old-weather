@@ -13,7 +13,7 @@ var uglify = require('gulp-uglify');
 var minifyHtml = require('gulp-minify-html');
 var minifyCss = require('gulp-minify-css');
 var rev = require('gulp-rev');
-
+var karma = require('karma').server;
 var jshint = require('gulp-jshint');
 
 var baseDir = __dirname
@@ -54,6 +54,13 @@ gulp.task('jshint', function () {
     gulp.src(files.scripts)
         .pipe(jshint('.jshintrc'))
         .pipe(jshint.reporter('jshint-stylish'));
+});
+
+gulp.task('karma', function (done) {
+    karma.start({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: true
+    }, done);
 });
 
 gulp.task('usemin', function () {
@@ -140,6 +147,7 @@ gulp.task('build', function (cb) {
 gulp.task('test', function (cb) {
     runSequence(
         'jshint',
+        'karma',
         cb
     )
 });
