@@ -34,7 +34,7 @@
                 .state('about.faq', {
                     url: '/faq',
                     templateUrl: 'templates/content/faq.html'
-                })
+                });
         }
     ]);
 

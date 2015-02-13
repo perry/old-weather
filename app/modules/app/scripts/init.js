@@ -21,7 +21,7 @@
                             templateUrl: 'templates/app/home.html'
                         }
                     }
-                })
+                });
         }
     ]);
 
