@@ -6,6 +6,11 @@ node_js:
 notifications:
     email: false
 
+cache:
+    directories:
+        - $HOME/.npm
+        - $HOME/.cache/bower
+
 before_script:
     - 'npm install -g bower'
     - 'npm install codecov.io'
