@@ -5,15 +5,19 @@
 <table class="table">
     <thead>
         <tr>
-            <th>#</th>
-            <th>Ship</th>
-            <th>Difficulity</th>
-            <th>Crew</th>
+            <th ng-repeat="header in headers" ng-click="sort($index)">
+                {{ ::header.name }}
+                <span
+                    class="glyphicon"
+                    ng-show="header.key === columnSort.key"
+                    ng-class="{'glyphicon-chevron-down': columnSort.reverse === false, 'glyphicon-chevron-up': columnSort.reverse === true}"
+                ></span>
+            </th>
         </tr>
     </thead>
 
     <tbody>
-        <tr ng-repeat="ship in ships">
+        <tr ng-repeat="ship in ships | orderBy:columnSort.key:columnSort.reverse">
             <td>{{ ::ship.id }}</td>
             <td><a ui-sref="ships-detail({id: ship.id})">{{ ::ship.name }}</a></td>
             <td>{{ ::ship.difficulty }}</td>
