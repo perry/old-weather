@@ -9,7 +9,7 @@ build-docs:
 	gulp docs
 
 sync:
-	s3cmd --access_key=$(AWS_ACCESS_KEY) --secret_key=$(AWS_SECRET_ACCESS_KEY) --delete-removed --acl-public --add-header="Cache-Control: no-cache" --config=.s3cfg sync $(source) $(dest)
+	s3cmd --access_key=$(AWS_ACCESS_KEY) --secret_key=$(AWS_SECRET_ACCESS_KEY) --delete-removed --acl-public --add-header="Cache-Control: no-cache" sync $(source) $(dest)
 
 sync-app:
 	$(MAKE) sync source=./.tmp/build/* dest=s3://demo.zooniverse.org/oldweather/
