@@ -27,18 +27,8 @@
                     </div>
                     <div class="collapse navbar-collapse" collapse="isCollapsed">
                         <ul class="nav navbar-nav">
-                            <!-- <li dropdown> -->
-                            <!--     <a href="#" class="dropdown-toggle" dropdown-toggle> -->
-                            <!--         Vessels <span class="caret"></span> -->
-                            <!--     </a> -->
-                            <!--     <ul class="dropdown-menu" role="menu"> -->
-                            <!--         <li><a>Search vessels</a></li> -->
-                            <!--         <li><a>View sources</a></li> -->
-                            <!--     </ul> -->
-                            <!-- </li> -->
-                            <!-- <li><a>Tutorial</a></li> -->
-                            <!-- <li><a>Transcribe</a></li> -->
-                            <li dropdown>
+                            <li ui-sref-active="active"><a ui-sref="ships-list">Ships</a></li>
+                            <li ui-sref-active="active" dropdown>
                                 <a href="#" class="dropdown-toggle" dropdown-toggle>
                                     About <span class="caret"></span>
                                 </a>
@@ -87,6 +77,8 @@
 
         <script src="modules/ships/scripts/init.js"></script>
         <script src="modules/ships/scripts/templates.js"></script>
+        <script src="modules/ships/scripts/controllers/ShipsListCtrl.js"></script>
+        <script src="modules/ships/scripts/controllers/ShipsDetailCtrl.js"></script>
         <!-- endbuild -->
     </body>
 </html>

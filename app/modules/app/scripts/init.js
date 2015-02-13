@@ -5,7 +5,8 @@
         'ui.router',
         'ui.bootstrap',
         '404',
-        'content'
+        'content',
+        'ships'
     ]);
 
     module.config([

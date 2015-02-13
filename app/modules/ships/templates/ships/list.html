@@ -1,0 +1,9 @@
+<div class="page-header">
+    <h1>Ships</h1>
+</div>
+
+<div ng-repeat="ship in ships">
+    <a ui-sref="ships-detail({id: ship.id})">
+        <h2>{{ ::ship.name }}</h2>
+    </a>
+</div>
