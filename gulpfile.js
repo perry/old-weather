@@ -56,11 +56,24 @@ gulp.task('jshint', function () {
         .pipe(jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('karma', function (done) {
+gulp.task('karma', function (cb) {
+    karma.start({
+        configFile: __dirname + '/karma.conf.js'
+    }, cb);
+});
+
+gulp.task('karma-ci', function (cb) {
     karma.start({
         configFile: __dirname + '/karma.conf.js',
-        singleRun: true
-    }, done);
+        singleRun: true,
+        coverageReporter: {
+            type: 'lcovonly',
+            // Travis uses this path: coverage/lcov.info
+            subdir: '.',
+            file: 'lcov.info'
+        }
+    }, cb);
+
 });
 
 gulp.task('usemin', function () {
@@ -148,6 +161,14 @@ gulp.task('test', function (cb) {
     runSequence(
         'jshint',
         'karma',
+        cb
+    )
+});
+
+gulp.task('test-ci', function (cb) {
+    runSequence(
+        'jshint',
+        'karma-ci',
         cb
     )
 });
