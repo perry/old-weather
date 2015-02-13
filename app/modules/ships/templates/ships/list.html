@@ -2,7 +2,14 @@
     <h1>Ships</h1>
 </div>
 
-<table class="table table-hover">
+<form class="form clearfix">
+    <div class="form-group pull-right">
+        <label for="ship-filter">Filter</label>
+        <input type="text" class="form-control" id="ship-filter" ng-model="shipFilter">
+    </div>
+</form>
+
+<table class="table table-hover" ng-show="(ships | filter:shipFilter).length > 0">
     <thead>
         <tr>
             <th ng-repeat="header in headers" ng-click="sort($index)">
@@ -17,7 +24,7 @@
     </thead>
 
     <tbody>
-        <tr ng-repeat="ship in ships | orderBy:columnSort.key:columnSort.reverse">
+        <tr ng-repeat="ship in ships | filter:shipFilter | orderBy:columnSort.key:columnSort.reverse">
             <td><a ui-sref="ships-detail({id: ship.id})">{{ ::ship.name }}</a></td>
             <td>{{ ::ship.travel }}</td>
             <td>{{ ::ship.difficulty }}</td>
@@ -25,3 +32,7 @@
         </tr>
     </tbody>
 </table>
+
+<div class="alert alert-warning" role="alert" ng-show="(ships | filter:shipFilter).length === 0">
+    <p>We're unable to find a ship with your current filter. <a href="#" ng-click="$event.preventDefault(); shipFilter = '';">Clear your filter.</a></p>
+</div>
