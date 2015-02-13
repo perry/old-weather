@@ -12,16 +12,12 @@
      */
     module.controller('ShipsListCtrl', [
         '$scope',
-        function ($scope) {
-            $scope.ships = [
-                {
-                    id: 0,
-                    name: 'Bear',
-                    type: 'Cutter',
-                    crew: 100,
-                    difficulty: 1
-                }
-            ];
+        'shipsFactory',
+        function ($scope, shipsFactory) {
+            shipsFactory.get()
+                .then(function (data) {
+                    $scope.ships = data;
+                });
         }
     ]);
 }(window.angular));

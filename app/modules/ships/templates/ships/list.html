@@ -4,6 +4,8 @@
 
 <div ng-repeat="ship in ships">
     <a ui-sref="ships-detail({id: ship.id})">
-        <h2>{{ ::ship.name }}</h2>
+        <h2>{{ ::ship.name }} <small>- {{ ::ship.travel }}</small></h2>
+        <p>{{ ::ship.difficulty }} difficulty</p>
+        <p>Crew: {{ ::ship.users }}</p>
     </a>
 </div>

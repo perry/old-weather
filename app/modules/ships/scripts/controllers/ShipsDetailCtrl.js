@@ -12,14 +12,13 @@
      */
     module.controller('ShipsDetailCtrl', [
         '$scope',
-        function ($scope) {
-            $scope.ship = {
-                id: 0,
-                name: 'Bear',
-                type: 'Cutter',
-                crew: 100,
-                difficulty: 1
-            };
+        '$stateParams',
+        'shipsFactory',
+        function ($scope, $stateParams, shipsFactory) {
+            shipsFactory.get({id: parseInt($stateParams.id, 10)})
+                .then(function (response) {
+                    $scope.ship = response[0];
+                });
         }
     ]);
 }(window.angular));
