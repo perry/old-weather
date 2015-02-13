@@ -14,6 +14,8 @@ var minifyHtml = require('gulp-minify-html');
 var minifyCss = require('gulp-minify-css');
 var rev = require('gulp-rev');
 
+var jshint = require('gulp-jshint');
+
 var baseDir = __dirname
 var appDir = baseDir + '/app';
 var modulesDir = appDir + '/modules';
@@ -46,6 +48,12 @@ gulp.task('connectDocs', function () {
         root: ['.tmp/docs'],
         port: 8001
     });
+});
+
+gulp.task('jshint', function () {
+    gulp.src(files.scripts)
+        .pipe(jshint('.jshintrc'))
+        .pipe(jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('usemin', function () {
@@ -127,4 +135,11 @@ gulp.task('build', function (cb) {
         'usemin',
         cb
     );
+});
+
+gulp.task('test', function (cb) {
+    runSequence(
+        'jshint',
+        cb
+    )
 });
