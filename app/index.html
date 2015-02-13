@@ -11,8 +11,27 @@
         <link href="bower_components/bootswatch/flatly/bootstrap.css" rel="stylesheet">
         <!-- endbuild -->
         <style>
+            html {
+                overflow-y: scroll;
+            }
+            body {
+                display: flex;
+                min-height: 100vh;
+                flex-direction: column;
+            }
+            .navbar {
+                border-radius: 0;
+            }
             .container-fluid {
+                width: 100%;
                 max-width: 960px;
+            }
+            #site-main {
+                padding-bottom: 100px;
+                flex: 1;
+            }
+            #site-footer {
+                padding-bottom: 50px;
             }
         </style>
     </head>
@@ -60,7 +79,7 @@
             </nav>
         </header>
 
-        <div ui-view="main" class="container-fluid"></div>
+        <div ui-view="main" id="site-main" class="container-fluid"></div>
 
         <footer id="site-footer" >
             <div class="container-fluid">
