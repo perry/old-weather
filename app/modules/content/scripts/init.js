@@ -15,7 +15,7 @@
                     abstract: true,
                     views: {
                         main: {
-                            template: '<ui-view/>'
+                            template: '<ui-view>'
                         }
                     }
                 })
