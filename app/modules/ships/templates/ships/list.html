@@ -18,7 +18,6 @@
 
     <tbody>
         <tr ng-repeat="ship in ships | orderBy:columnSort.key:columnSort.reverse">
-            <td>{{ ::ship.id }}</td>
             <td><a ui-sref="ships-detail({id: ship.id})">{{ ::ship.name }}</a></td>
             <td>{{ ::ship.difficulty }}</td>
             <td>{{ ::ship.users }}</td>

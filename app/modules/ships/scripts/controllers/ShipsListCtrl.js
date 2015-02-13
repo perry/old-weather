@@ -15,7 +15,6 @@
         'shipsFactory',
         function ($scope, shipsFactory) {
             $scope.headers = [
-                {name: '#', key: 'id'},
                 {name: 'Ship', key: 'name'},
                 {name: 'Difficulty', key: 'difficulty'},
                 {name: 'Crew', key: 'users'}
