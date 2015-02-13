@@ -8,8 +8,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- build:css css/app.css -->
-        <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+        <link href="bower_components/bootswatch/flatly/bootstrap.css" rel="stylesheet">
         <!-- endbuild -->
+        <style>
+            .container-fluid {
+                max-width: 960px;
+            }
+        </style>
     </head>
     <body>
         <header id="site-header">
@@ -57,8 +62,25 @@
 
         <div ui-view="main" class="container-fluid"></div>
 
-        <footer id="site-footer" class="container-fluid">
-            <p>&copy; 2015 Zooniverse. This project is part of the JISC’s Developing Community Content. <a ui-sref="about.partners">Learn more</a>.</p>
+        <footer id="site-footer" >
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3>The project</h3>
+                        <p>Old Weather aims to recover worldwide weather observations to help improve climate model predictions. <a ui-sref="about.why">Learn more</a>.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3>About</h3>
+                        <p>Meet the <a ui-sref="about.team">team members</a> and <a ui-sref="about.partners">partner institutions</a> behind Old Weather.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3>FAQ</h3>
+                        <p>Questions about Old Weather? Visit the <a ui-sref="about.faq">FAQ page</a> or <a href="http://forum.oldweather.org/index.php?topic=3945.msg72585#msg72585">ask a question on the Old Weather forum</a>.</p>
+                    </div>
+                </div>
+
+                <p>&copy; 2015 Zooniverse. This project is part of the JISC’s Developing Community Content. <a ui-sref="about.partners">Learn more</a>.</p>
+            </div>
         </footer>
 
         <!-- build:js scripts/app.js -->
