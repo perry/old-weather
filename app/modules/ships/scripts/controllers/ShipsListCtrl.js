@@ -16,6 +16,7 @@
         function ($scope, shipsFactory) {
             $scope.headers = [
                 {name: 'Ship', key: 'name'},
+                {name: 'Travel', key: 'travel'},
                 {name: 'Difficulty', key: 'difficulty'},
                 {name: 'Crew', key: 'users'}
             ];
