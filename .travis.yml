@@ -18,7 +18,7 @@ before_script:
     - 'export DISPLAY=:99.0'
     - 'sh -e /etc/init.d/xvfb start'
 
-script: npm run-script test-ci
+script: npm test
 
 after_success:
     - $(npm bin)/codecov < coverage/lcov.info

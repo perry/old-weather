@@ -3,6 +3,7 @@ var fs = require('fs');
 var gulp = require('gulp');
 var gulpDocs = require('gulp-ngdocs');
 var runSequence = require('run-sequence');
+var chmod = require('gulp-chmod');
 var watch = require('gulp-watch');
 var clean = require('gulp-clean');
 var connect = require('gulp-connect');
@@ -24,16 +25,20 @@ var files = {
     scripts: modulesDir + '/**/*.js'
 }
 
+gulp.task('cleanHooks', function () {
+    return gulp.src('.git/hooks/pre-commit', {read: false}).pipe(clean());
+});
+
 gulp.task('cleanTemplates', function () {
     return gulp.src('**/templates.js', {read: false}).pipe(clean());
 });
 
 gulp.task('cleanBuild', function () {
-    return gulp.src('.tmp/build').pipe(clean());
+    return gulp.src('.tmp/build', {read: false}).pipe(clean());
 });
 
 gulp.task('cleanDocs', function () {
-    return gulp.src('.tmp/docs').pipe(clean());
+    return gulp.src('.tmp/docs', {read: false}).pipe(clean());
 });
 
 gulp.task('connectDev', function () {
@@ -48,6 +53,12 @@ gulp.task('connectDocs', function () {
         root: ['.tmp/docs'],
         port: 8001
     });
+});
+
+gulp.task('makeHooks', function () {
+    gulp.src('git-hooks/pre-commit')
+        .pipe(chmod(755))
+        .pipe(gulp.dest('.git/hooks/'));
 });
 
 gulp.task('jshint', function () {
@@ -171,4 +182,12 @@ gulp.task('test-ci', function (cb) {
         'karma-ci',
         cb
     )
+});
+
+gulp.task('hookmeup', function (cb) {
+    runSequence(
+        'cleanHooks',
+        'makeHooks',
+        cb
+    );
 });
