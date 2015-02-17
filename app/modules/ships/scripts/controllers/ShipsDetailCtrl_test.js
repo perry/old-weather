@@ -11,19 +11,15 @@
         var $q;
         var deferred;
         var shipsFactory;
+        var $stateParams;
         var $state;
 
         beforeEach(function () {
-            module(function ($provide) {
-                $provide.value('$stateParams', {id: 10});
-            });
-
-            inject(function (_$controller_, _$rootScope_, _$q_, _$state_) {
+            inject(function (_$controller_, _$rootScope_, _$q_) {
                 $controller = _$controller_;
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
                 $q = _$q_;
-                $state = _$state_;
 
                 shipsFactory = {
                     get: function () {
@@ -33,40 +29,54 @@
                 };
 
                 $state = {
-                    go: function (string) {
-
-                    }
+                    go: function (string) {}
                 };
 
                 spyOn(shipsFactory, 'get').and.callThrough();
                 spyOn($state, 'go').and.callThrough();
-
-                ctrl = $controller('ShipsDetailCtrl', {
-                    $scope: $scope,
-                    shipsFactory: shipsFactory,
-                    $state: $state
-                });
             });
         });
 
-        it('should be defined', function () {
-            expect(ctrl).toBeDefined();
+        describe('With $stateParams.id', function () {
+            beforeEach(function () {
+                ctrl = $controller('ShipsDetailCtrl', {
+                    $scope: $scope,
+                    shipsFactory: shipsFactory,
+                    $stateParams: {id: 10},
+                    $state: $state
+                });
+            });
+
+            it('should have called get on the service', function () {
+                expect(shipsFactory.get).toHaveBeenCalled();
+            });
+
+            it('should only contain one ship', function () {
+                deferred.resolve([{'id': 1}]);
+                $scope.$digest();
+                expect(_.isPlainObject($scope.ship)).toBe(true);
+            });
+
+            it('should throw a 404 if a ship isn\'t returned', function () {
+                deferred.reject();
+                $scope.$digest();
+                expect($state.go).toHaveBeenCalledWith('404');
+            });
         });
 
-        it('should have called get on the service', function () {
-            expect(shipsFactory.get).toHaveBeenCalled();
-        });
+        describe('Without $stateParams.id', function () {
+            beforeEach(function () {
+                ctrl = $controller('ShipsDetailCtrl', {
+                    $scope: $scope,
+                    shipsFactory: shipsFactory,
+                    $stateParams: {},
+                    $state: $state
+                });
+            });
 
-        it('should only contain one ship', function () {
-            deferred.resolve([{'id': 1}]);
-            $scope.$digest();
-            expect(_.isPlainObject($scope.ship)).toBe(true);
-        });
-
-        it('should throw a 404 if a ship isn\'t returned', function () {
-            deferred.reject([]);
-            $scope.$digest();
-            expect($state.go).toHaveBeenCalledWith('404');
+            it('should redirect to the ships-list state', function () {
+                expect($state.go).toHaveBeenCalledWith('ships-list');
+            });
         });
     });
 }(window.angular));

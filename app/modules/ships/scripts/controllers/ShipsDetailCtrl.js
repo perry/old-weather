@@ -22,10 +22,10 @@
                     .then(function (response) {
                         $scope.ship = response[0];
                     }, function (response) {
-                        if (response.length === 0) {
-                            $state.go('404');
-                        }
+                        $state.go('404');
                     });
+            } else {
+                $state.go('ships-list');
             }
         }
     ]);
