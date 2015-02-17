@@ -1,6 +1,6 @@
-(function (angular) {
+(function (module) {
     'use strict';
 
     beforeEach(module('ships'));
 
-}(window.angular));
+}(window.module));

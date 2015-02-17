@@ -1,4 +1,4 @@
-(function () {
+(function (angular) {
     'use strict';
 
     var module = angular.module('404', [
@@ -23,4 +23,4 @@
         }
     ]);
 
-}());
+}(window.angular));

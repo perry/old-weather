@@ -1,4 +1,4 @@
-(function (angular) {
+(function (angular, module, inject, _) {
     'use strict';
 
     beforeEach(module('ships'));
@@ -11,7 +11,6 @@
         var $q;
         var deferred;
         var shipsFactory;
-        var $stateParams;
         var $state;
 
         beforeEach(function () {
@@ -29,7 +28,7 @@
                 };
 
                 $state = {
-                    go: function (string) {}
+                    go: function () {}
                 };
 
                 spyOn(shipsFactory, 'get').and.callThrough();
@@ -79,4 +78,4 @@
             });
         });
     });
-}(window.angular));
+}(window.angular, window.module, window.inject, window._));

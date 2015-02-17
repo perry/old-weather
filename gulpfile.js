@@ -51,7 +51,7 @@ gulp.task('connectDocs', function () {
 });
 
 gulp.task('jshint', function () {
-    gulp.src(files.scripts)
+    gulp.src(modulesDir + '/**/!(templates).js')
         .pipe(jshint('.jshintrc'))
         .pipe(jshint.reporter('jshint-stylish'));
 });

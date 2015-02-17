@@ -21,7 +21,7 @@
                 shipsFactory.get({id: id})
                     .then(function (response) {
                         $scope.ship = response[0];
-                    }, function (response) {
+                    }, function () {
                         $state.go('404');
                     });
             } else {

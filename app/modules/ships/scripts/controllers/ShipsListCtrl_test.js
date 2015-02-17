@@ -1,4 +1,4 @@
-(function (angular) {
+(function (angular, module, inject, _) {
     'use strict';
 
     beforeEach(module('ships'));
@@ -90,7 +90,7 @@
             expect(shipsFactory.get).toHaveBeenCalledWith();
         });
 
-        it('should set $scope.ships to an array of objects if shipsFactory.get is resolved', function () {
+        it('should set ships to an array of objects if shipsFactory.get is resolved', function () {
             deferred.resolve([
                 {},
                 {},
@@ -100,10 +100,10 @@
             expect($scope.ships.length).toBeGreaterThan(0);
         });
 
-        it('should set $scope.ships to be an empty array if shipsFactory.get is rejected', function () {
+        it('should set ships to be an empty array if shipsFactory.get is rejected', function () {
             deferred.reject();
             $scope.$digest();
             expect($scope.ships.length).toBe(0);
         });
     });
-}(window.angular));
+}(window.angular, window.module, window.inject, window._));

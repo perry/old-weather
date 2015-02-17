@@ -1,4 +1,4 @@
-(function (angular) {
+(function (module, inject, _) {
     'use strict';
 
     beforeEach(module('ships'));
@@ -50,5 +50,5 @@
             scope.$digest();
         });
     });
-}(window.angular));
+}(window.module, window.inject, window._));
 

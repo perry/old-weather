@@ -50,7 +50,7 @@
             shipsFactory.get()
                 .then(function (response) {
                     $scope.ships = response;
-                }, function (response) {
+                }, function () {
                     $scope.ships = [];
                 });
         }
