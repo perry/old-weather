@@ -33,7 +33,11 @@
                     response = _.where(response, filter);
                 }
 
-                deferred.resolve(response);
+                if (response.length === 0) {
+                    deferred.reject(response);
+                } else {
+                    deferred.resolve(response);
+                }
 
                 return deferred.promise;
             };
