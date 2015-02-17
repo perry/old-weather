@@ -1,19 +1,19 @@
 module.exports = function(config) {
   config.set({
-    basePath: './app',
+    basePath: '',
     frameworks: ['jasmine'],
     files: [
-        'bower_components/lodash/lodash.js',
-        'bower_components/angular/angular.js',
-        'bower_components/angular-mocks/angular-mocks.js',
-        'bower_components/angular-ui-router/release/angular-ui-router.js',
-        'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
-        'modules/*/scripts/**/init.js',
-        'modules/*/scripts/**/!(init.js|*_test.js)',
-        'modules/*/scripts/**/*_test.js'
+        'app/bower_components/lodash/lodash.js',
+        'app/bower_components/angular/angular.js',
+        'app/bower_components/angular-mocks/angular-mocks.js',
+        'app/bower_components/angular-ui-router/release/angular-ui-router.js',
+        'app/bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+        'app/modules/*/scripts/**/init.js',
+        'app/modules/*/scripts/**/!(init.js|*_test.js)',
+        'app/modules/*/scripts/**/*_test.js'
     ],
     preprocessors: {
-        'modules/*/scripts/**/!(*_test.js)': 'coverage'
+        'app/modules/*/scripts/**/!(*_test.js)': 'coverage'
     },
     reporters: ['dots', 'coverage'],
     port: 9876,
