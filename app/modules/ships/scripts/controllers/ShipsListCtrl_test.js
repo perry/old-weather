@@ -8,16 +8,28 @@
         var $rootScope;
         var ctrl;
         var $scope;
+        var shipsFactory;
+        var deferred;
 
         beforeEach(function () {
-            inject(function (_$controller_, _$rootScope_) {
+            inject(function (_$controller_, _$rootScope_, _$q_) {
                 $controller = _$controller_;
                 $rootScope = _$rootScope_;
-            });
+                $scope = $rootScope.$new();
 
-            $scope = $rootScope.$new();
-            ctrl = $controller('ShipsListCtrl', {
-                $scope: $scope
+                shipsFactory = {
+                    get: function () {
+                        deferred = _$q_.defer();
+                        return deferred.promise;
+                    }
+                };
+
+                spyOn(shipsFactory, 'get').and.callThrough();
+
+                ctrl = $controller('ShipsListCtrl', {
+                    $scope: $scope,
+                    shipsFactory: shipsFactory
+                });
             });
         });
 
@@ -66,12 +78,32 @@
                 $scope.$digest();
                 expect($scope.columnSort.reverse).toBe(true);
                 $scope.sort(1);
-                $scope.$digest()
+                $scope.$digest();
                 expect($scope.columnSort.reverse).toBe(false);
                 $scope.sort(1);
-                $scope.$digest()
+                $scope.$digest();
                 expect($scope.columnSort.reverse).toBe(true);
             });
+        });
+
+        it('should call shipsFactory.get without arguments', function () {
+            expect(shipsFactory.get).toHaveBeenCalledWith();
+        });
+
+        it('should set $scope.ships to an array of objects if shipsFactory.get is resolved', function () {
+            deferred.resolve([
+                {},
+                {},
+                {}
+            ]);
+            $scope.$digest();
+            expect($scope.ships.length).toBeGreaterThan(0);
+        });
+
+        it('should set $scope.ships to be an empty array if shipsFactory.get is rejected', function () {
+            deferred.reject();
+            $scope.$digest();
+            expect($scope.ships.length).toBe(0);
         });
     });
 }(window.angular));

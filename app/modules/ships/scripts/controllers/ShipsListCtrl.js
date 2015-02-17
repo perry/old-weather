@@ -48,8 +48,10 @@
 
             // Get all the ships.
             shipsFactory.get()
-                .then(function (data) {
-                    $scope.ships = data;
+                .then(function (response) {
+                    $scope.ships = response;
+                }, function (response) {
+                    $scope.ships = [];
                 });
         }
     ]);

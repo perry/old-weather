@@ -21,6 +21,7 @@
             inject(function (_$controller_, _$rootScope_, _$q_, _$state_) {
                 $controller = _$controller_;
                 $rootScope = _$rootScope_;
+                $scope = $rootScope.$new();
                 $q = _$q_;
                 $state = _$state_;
 
@@ -40,7 +41,6 @@
                 spyOn(shipsFactory, 'get').and.callThrough();
                 spyOn($state, 'go').and.callThrough();
 
-                $scope = $rootScope.$new();
                 ctrl = $controller('ShipsDetailCtrl', {
                     $scope: $scope,
                     shipsFactory: shipsFactory,
