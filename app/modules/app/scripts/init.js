@@ -1,4 +1,4 @@
-(function () {
+(function (angular) {
     'use strict';
 
     var module = angular.module('app', [
@@ -11,8 +11,7 @@
 
     module.config([
         '$stateProvider',
-        '$urlRouterProvider',
-        function ($stateProvider, $urlRouterProvider) {
+        function ($stateProvider) {
             $stateProvider
                 .state('home', {
                     url: '/',
@@ -25,4 +24,4 @@
         }
     ]);
 
-}());
+}(window.angular));

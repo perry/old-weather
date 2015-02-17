@@ -3,6 +3,7 @@ var fs = require('fs');
 var gulp = require('gulp');
 var gulpDocs = require('gulp-ngdocs');
 var runSequence = require('run-sequence');
+var chmod = require('gulp-chmod');
 var watch = require('gulp-watch');
 var clean = require('gulp-clean');
 var connect = require('gulp-connect');
@@ -13,7 +14,7 @@ var uglify = require('gulp-uglify');
 var minifyHtml = require('gulp-minify-html');
 var minifyCss = require('gulp-minify-css');
 var rev = require('gulp-rev');
-
+var karma = require('karma').server;
 var jshint = require('gulp-jshint');
 
 var baseDir = __dirname
@@ -24,16 +25,20 @@ var files = {
     scripts: modulesDir + '/**/*.js'
 }
 
+gulp.task('cleanHooks', function () {
+    return gulp.src('.git/hooks/pre-commit', {read: false}).pipe(clean());
+});
+
 gulp.task('cleanTemplates', function () {
     return gulp.src('**/templates.js', {read: false}).pipe(clean());
 });
 
 gulp.task('cleanBuild', function () {
-    return gulp.src('.tmp/build').pipe(clean());
+    return gulp.src('.tmp/build', {read: false}).pipe(clean());
 });
 
 gulp.task('cleanDocs', function () {
-    return gulp.src('.tmp/docs').pipe(clean());
+    return gulp.src('.tmp/docs', {read: false}).pipe(clean());
 });
 
 gulp.task('connectDev', function () {
@@ -50,10 +55,36 @@ gulp.task('connectDocs', function () {
     });
 });
 
+gulp.task('makeHooks', function () {
+    gulp.src('git-hooks/pre-commit')
+        .pipe(chmod(755))
+        .pipe(gulp.dest('.git/hooks/'));
+});
+
 gulp.task('jshint', function () {
-    gulp.src(files.scripts)
+    gulp.src(modulesDir + '/**/!(templates).js')
         .pipe(jshint('.jshintrc'))
         .pipe(jshint.reporter('jshint-stylish'));
+});
+
+gulp.task('karma', function (cb) {
+    karma.start({
+        configFile: __dirname + '/karma.conf.js'
+    }, cb);
+});
+
+gulp.task('karma-ci', function (cb) {
+    karma.start({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: true,
+        coverageReporter: {
+            type: 'lcovonly',
+            // Travis uses this path: coverage/lcov.info
+            subdir: '.',
+            file: 'lcov.info'
+        }
+    }, cb);
+
 });
 
 gulp.task('usemin', function () {
@@ -140,6 +171,23 @@ gulp.task('build', function (cb) {
 gulp.task('test', function (cb) {
     runSequence(
         'jshint',
+        'karma',
         cb
     )
+});
+
+gulp.task('test-ci', function (cb) {
+    runSequence(
+        'jshint',
+        'karma-ci',
+        cb
+    )
+});
+
+gulp.task('hookmeup', function (cb) {
+    runSequence(
+        'cleanHooks',
+        'makeHooks',
+        cb
+    );
 });

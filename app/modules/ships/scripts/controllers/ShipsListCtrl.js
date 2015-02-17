@@ -33,6 +33,10 @@
              * The index of the header you wish to sort.
              */
             $scope.sort = function (index) {
+                if (angular.isUndefined(index) || angular.isUndefined($scope.headers[index])) {
+                    return;
+                }
+
                 if ($scope.columnSort.key !== $scope.headers[index].key) {
                     $scope.columnSort.reverse = false;
                 } else {
@@ -44,8 +48,10 @@
 
             // Get all the ships.
             shipsFactory.get()
-                .then(function (data) {
-                    $scope.ships = data;
+                .then(function (response) {
+                    $scope.ships = response;
+                }, function () {
+                    $scope.ships = [];
                 });
         }
     ]);

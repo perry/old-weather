@@ -1,4 +1,4 @@
-(function () {
+(function (angular) {
     'use strict';
 
     var module = angular.module('content', [
@@ -7,8 +7,7 @@
 
     module.config([
         '$stateProvider',
-        '$urlRouterProvider',
-        function ($stateProvider, $urlRouterProvider) {
+        function ($stateProvider) {
             $stateProvider
                 .state('about', {
                     url: '/about',
@@ -38,5 +37,5 @@
         }
     ]);
 
-}());
+}(window.angular));
 

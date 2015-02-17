@@ -1,3 +1,4 @@
 app/bower_components
 templates.js
 .tmp/
+coverage/
