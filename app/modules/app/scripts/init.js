@@ -2,6 +2,7 @@
     'use strict';
 
     var module = angular.module('app', [
+        'ngRaven',
         'ui.router',
         'ui.bootstrap',
         '404',
