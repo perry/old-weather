@@ -7,6 +7,7 @@ var chmod = require('gulp-chmod');
 var watch = require('gulp-watch');
 var clean = require('gulp-clean');
 var connect = require('gulp-connect');
+var stylus = require('gulp-stylus');
 var templateCache = require('gulp-angular-templatecache');
 
 var usemin = require('gulp-usemin');
@@ -20,6 +21,7 @@ var jshint = require('gulp-jshint');
 var baseDir = __dirname
 var appDir = baseDir + '/app';
 var modulesDir = appDir + '/modules';
+var stylDir = baseDir + '/styl';
 var files = {
     templates: appDir + '/modules/**/templates/**/*.html',
     scripts: modulesDir + '/**/*.js'
@@ -39,6 +41,12 @@ gulp.task('cleanBuild', function () {
 
 gulp.task('cleanDocs', function () {
     return gulp.src('.tmp/docs', {read: false}).pipe(clean());
+});
+
+gulp.task('stylus', function () {
+    gulp.src(stylDir + '/main.styl')
+        .pipe(stylus())
+        .pipe(gulp.dest(appDir + '/css'));
 });
 
 gulp.task('connectDev', function () {
@@ -134,6 +142,7 @@ gulp.task('ngdocs', function () {
 gulp.task('watch', function () {
     gulp.watch([files.templates], ['templates']);
     gulp.watch([files.scripts], ['ngdocs']);
+    gulp.watch([stylDir + '/**/*'], ['stylus']);
 });
 
 gulp.task('default', function (cb) {
@@ -142,6 +151,7 @@ gulp.task('default', function (cb) {
         'cleanTemplates',
         'templates',
         'ngdocs',
+        'stylus',
         [
             'watch',
             'connectDev',
