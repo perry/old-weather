@@ -186,7 +186,7 @@
         };
     });
 
-    module.directive('transcribeQuestions', function (toolFactory) {
+    module.directive('transcribeQuestions', function ($rootScope, toolFactory) {
         return {
             restrict: 'A',
             scope: {
@@ -222,8 +222,7 @@
                     } else if (activeQuestionIndex < questionsCount - 1) {
                         scope.activeQuestion = scope.questions[activeQuestionIndex + 1];
                     } else {
-                        // TODO: Questions completed.
-                        return;
+                        $rootScope.$broadcast('transcribe:questionsComplete');
                     }
                 };
             }
@@ -244,9 +243,10 @@
         };
     });
 
-    module.controller('transcribeCtrl', function ($scope, $sce, subjectFactory) {
+    module.controller('transcribeCtrl', function ($scope, $sce, subjectFactory, svgPanZoomFactory) {
         $scope.loadSubject = function () {
             $scope.isLoading = true;
+            $scope.questionsComplete = false;
 
             subjectFactory.get()
                 .then(function (response) {
@@ -263,9 +263,17 @@
 
             $scope.annotations = [];
         };
+
+        $scope.$on('transcribe:svgPanZoomToggle', function () {
+            $scope.isAnnotating = !svgPanZoomFactory.status();
+        });
+
+        $scope.$on('transcribe:questionsComplete', function () {
+            $scope.questionsComplete = true;
+        });
     });
 
-    module.factory('svgPanZoomFactory', function () {
+    module.factory('svgPanZoomFactory', function ($rootScope) {
         var self = this;
 
         return {
@@ -279,19 +287,29 @@
             viewport: function () {
                 return self.el.getElementsByClassName('svg-pan-zoom_viewport')[0];
             },
+            status: function () {
+                return self.svgInstance.isZoomEnabled() || self.svgInstance.isPanEnabled();
+            },
             enable: function () {
                 self.svgInstance.enablePan();
                 self.svgInstance.enableZoom();
+
+                $rootScope.$broadcast('transcribe:svgPanZoomToggle');
             },
             disable: function () {
                 self.svgInstance.disablePan();
                 self.svgInstance.disableZoom();
+
+                $rootScope.$broadcast('transcribe:svgPanZoomToggle');
             },
             toggle: function () {
                 var method = self.svgInstance.isZoomEnabled() || self.svgInstance.isPanEnabled() ? 'disable' : 'enable';
 
                 self.svgInstance[method + 'Pan']();
                 self.svgInstance[method + 'Zoom']();
+
+                $rootScope.$broadcast('transcribe:svgPanZoomToggle');
+
                 return method;
             }
         };
@@ -334,8 +352,8 @@
         var unBindMouseEvents = function () {
             self.data = null;
 
-            self.$viewport.off('mousedown', startDraw);
-            self.$viewport.off('mouseup', finishDraw);
+            self.$viewport.off('mousedown');
+            self.$viewport.off('mouseup');
         };
 
         var startDraw = function (event) {
