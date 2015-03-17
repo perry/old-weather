@@ -1,0 +1,90 @@
+<div class="row">
+    <div class="col-sm-2">
+    </div>
+
+    <div class="transcribe-col col-sm-3 col-md-2 pull-right">
+        <div
+            class="panel panel-default questions-panel animated"
+            transcribe-questions="subject.questions"
+            ng-show="subject.questions && !isLoading"
+            ng-class="{
+                'isLoading': isLoading,
+                'fadeIn': !isLoading,
+                'fadeOut': isLoading
+            }"
+        >
+        </div>
+
+        <ul
+            class="nav nav-pills nav-stacked"
+            transcribe-tools
+        ></ul>
+    </div>
+
+    <div class="transcribe-col col-sm-9 col-md-10">
+        <div class="log-container">
+            <span
+                us-spinner
+                ng-show="isLoading"
+                class="animated"
+                ng-class="{
+                    'isLoading': isLoading,
+                    'fadeIn': isLoading,
+                    'fadeOut': !isLoading
+                }"
+            ></span>
+
+            <svg class="log" svg-pan-zoom ng-class="{'annotating': activeTool}">
+                <g class="pan-zoom">
+                    <g
+                        class="animated image-wrapper"
+                        ng-show="!isLoading"
+                        ng-class="{
+                            'isLoading': isLoading,
+                            'fadeIn': !isLoading,
+                            'fadeOut': isLoading
+                        }"
+                    >
+                        <g class="image">
+                            <image
+                                ng-href="{{ trustedSubjectImage }}"
+                                xlink:href=""
+                                ng-load="subjectLoaded(); svg.reset();"
+                                width="1300"
+                                height="1893"
+                            ></image>
+                        </g>
+
+                        <g class="annotation" ng-repeat="a in annotations | orderBy:'y'">
+                            <rect ng-attr-width="{{ a.width }}" ng-attr-height="{{ a.height }}" ng-attr-x="{{ a.x }}" ng-attr-y="{{ a.y }}" type="{{ a.type }}"></rect>
+                        </g>
+
+                        <g class="annotation" ng-if="tempRect">
+                            <rect ng-attr-width="{{ tempRect.width }}" ng-attr-height="{{ tempRect.height }}" ng-attr-x="{{ tempRect.x }}" ng-attr-y="{{ tempRect.y }}"></rect>
+                        </g>
+                    </g>
+                </g>
+            </svg>
+
+            <div
+                class="btn-group-vertical log-controls animated"
+                ng-show="!activeTool && !isLoading"
+                ng-class="{
+                    'isLoading': isLoading,
+                    'bounceInRight': !activeTool && !isLoading,
+                    'bounceOutRight': activeTool || isLoading
+                }"
+            >
+                <button class="btn btn-default" ng-click="panZoom.reset()">
+                    <span class="glyphicon glyphicon-resize-full"></span>
+                </button>
+                <button class="btn btn-default" ng-click="panZoom.zoomIn()">
+                    <span class="glyphicon glyphicon-zoom-in"></span>
+                </button>
+                <button class="btn btn-default" ng-click="panZoom.zoomOut()">
+                    <span class="glyphicon glyphicon-zoom-out"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

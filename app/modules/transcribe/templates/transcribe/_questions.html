@@ -1,0 +1,35 @@
+<div class="panel-heading">
+    <div
+        ng-repeat="question in questions"
+        ng-show="question.id === activeQuestion.id"
+    >
+        <div
+            ng-repeat="step in question.steps"
+            ng-show="step.id === activeStep.id"
+        >
+            {{ ::step.title }}
+        </div>
+    </div>
+</div>
+<div class="panel-body">
+    <div class="btn-group">
+        <div
+            ng-repeat="question in questions"
+            ng-show="question.id === activeQuestion.id"
+        >
+            <div
+                ng-repeat="step in question.steps"
+                ng-show="step.id === activeStep.id"
+            >
+                <button
+                    type="button"
+                    class="btn btn-default"
+                    ng-repeat="action in step.actions"
+                    ng-click="confirm(action.value)"
+                >
+                    {{ ::action.title }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

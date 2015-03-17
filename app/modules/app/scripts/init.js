@@ -6,7 +6,8 @@
         'ui.bootstrap',
         '404',
         'content',
-        'ships'
+        'ships',
+        'transcribe'
     ]);
 
     module.config([
