@@ -20,19 +20,19 @@
                             title: 'No'
                         }
                     ]
+                },
+                {
+                    id: 1,
+                    title: 'Draw rectangles around each date you see on the page.',
+                    tool: 'date',
+                    actions: [
+                        {
+                            title: 'Save'
+                        }
+                    ]
                 }
             ]
         },
-        {
-            id: 1,
-            title: 'Draw rectangles around each date you see on the page.',
-            tool: 'date',
-            actions: [
-                {
-                    title: 'Save'
-                }
-            ]
-        }
     ];
 
     var subjectResponse = function () {
