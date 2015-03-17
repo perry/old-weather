@@ -1,92 +1,54 @@
 (function (angular, _, SVG, svgPanZoom) {
     'use strict';
 
-    var urls = ['http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_137_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_137_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_138_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_138_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_139_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_139_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_140_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_140_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_141_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_141_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_142_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_142_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_143_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_143_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_144_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_144_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_145_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_145_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_146_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_146_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_147_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_147_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_148_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_148_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_149_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_149_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_150_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_150_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_151_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_151_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_152_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_152_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_153_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_153_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_154_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_154_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_155_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_155_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_156_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_156_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_157_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_157_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_158_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_158_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_159_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_159_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_160_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_160_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_161_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_161_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_162_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_162_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_163_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_163_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_164_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_164_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_165_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_165_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_166_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_166_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_167_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_167_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_168_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_168_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_169_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_169_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_170_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_170_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_171_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_171_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_172_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_172_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_173_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_173_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_174_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_174_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_175_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_175_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_176_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_176_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_177_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_177_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_178_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_178_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_179_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_179_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_180_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_180_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_181_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_181_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_182_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_182_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_183_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_183_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_184_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_184_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_185_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_185_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_186_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_186_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_187_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_187_1.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_188_0.jpg','http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/vol097_188_1.jpg'];
+    // var imageIDs = ['vol097_137_0','vol097_137_1','vol097_138_0','vol097_138_1','vol097_139_0','vol097_139_1','vol097_140_0','vol097_140_1','vol097_141_0','vol097_141_1','vol097_142_0','vol097_142_1','vol097_143_0','vol097_143_1','vol097_144_0','vol097_144_1','vol097_145_0','vol097_145_1','vol097_146_0','vol097_146_1','vol097_147_0','vol097_147_1','vol097_148_0','vol097_148_1','vol097_149_0','vol097_149_1','vol097_150_0','vol097_150_1','vol097_151_0','vol097_151_1','vol097_152_0','vol097_152_1','vol097_153_0','vol097_153_1','vol097_154_0','vol097_154_1','vol097_155_0','vol097_155_1','vol097_156_0','vol097_156_1','vol097_157_0','vol097_157_1','vol097_158_0','vol097_158_1','vol097_159_0','vol097_159_1','vol097_160_0','vol097_160_1','vol097_161_0','vol097_161_1','vol097_162_0','vol097_162_1','vol097_163_0','vol097_163_1','vol097_164_0','vol097_164_1','vol097_165_0','vol097_165_1','vol097_166_0','vol097_166_1','vol097_167_0','vol097_167_1','vol097_168_0','vol097_168_1','vol097_169_0','vol097_169_1','vol097_170_0','vol097_170_1','vol097_171_0','vol097_171_1','vol097_172_0','vol097_172_1','vol097_173_0','vol097_173_1','vol097_174_0','vol097_174_1','vol097_175_0','vol097_175_1','vol097_176_0','vol097_176_1','vol097_177_0','vol097_177_1','vol097_178_0','vol097_178_1','vol097_179_0','vol097_179_1','vol097_180_0','vol097_180_1','vol097_181_0','vol097_181_1','vol097_182_0','vol097_182_1','vol097_183_0','vol097_183_1','vol097_184_0','vol097_184_1','vol097_185_0','vol097_185_1','vol097_186_0','vol097_186_1','vol097_187_0','vol097_187_1','vol097_188_0','vol097_188_1'];
+    var imageIDs = ['vol097_159_0'];
+
+    var questions = [
+        {
+            id: 0,
+            steps: [
+                {
+                    id: 0,
+                    title: 'Are there any dates mentioned on the page?',
+                    actions: [
+                        {
+                            title: 'Yes',
+                            value: 1
+                        },
+                        {
+                            title: 'No'
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            id: 1,
+            title: 'Draw rectangles around each date you see on the page.',
+            tool: 'date',
+            actions: [
+                {
+                    title: 'Save'
+                }
+            ]
+        }
+    ];
 
     var subjectResponse = function () {
+        var imageID = imageIDs[Math.floor(Math.random()*imageIDs.length)];
+
         return {
-            'links': {
-                'subjects.project': {
-                    'href': '/projects/subjects.project',
-                    'type': 'projects'
-                }
-            },
             'subjects': [
                 {
-                'id': '1',
-                'zooniverse_id': 'AGFS0001231',
-                'created_at': '2014-03-24T10:42:21Z',
-                'updated_at': '2014-03-24T10:42:21Z',
-                'locations': [
-                    {
-                    'image/jpeg': urls[Math.floor(Math.random()*urls.length)]
+                    'zooniverse_id': imageID,
+                    'locations': [
+                        {
+                            'image/jpeg': 'http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/' + imageID + '.jpg'
+                        }
+                    ],
+                    'questions': questions
                 }
-                ],
-                'metadata': {
-                    'lens_type': '50mm'
-                },
-                'links': {
-                    'project': '1'
-                },
-                'questions': [
-                    {
-                    id: 0,
-                    steps: [
-                        {
-                        id: 0,
-                        title: 'Are there any dates mentioned on the page?',
-                        actions: [
-                            {
-                            title: 'Yes',
-                            value: 1
-                        },
-                        {
-                            title: 'No'
-                        }
-                        ]
-                    },
-                    {
-                        id: 1,
-                        title: 'Draw rectangles around each date you see on the page.',
-                        tool: 'date',
-                        actions: [
-                            {
-                            title: 'Save'
-                        }
-                        ]
-                    }
-                    ]
-                },
-                {
-                    id: 1,
-                    steps: [
-                        {
-                        id: 0,
-                        title: 'Are there any latitude/longitudes on the page?',
-                        actions: [
-                            {
-                            title: 'Yes',
-                            value: 1
-                        },
-                        {
-                            title: 'No'
-                        }
-                        ]
-                    },
-                    {
-                        id: 1,
-                        title: 'Draw rectangles around each latitude/longitude you see on the page.',
-                        tool: 'location',
-                        actions: [
-                            {
-                            title: 'Save'
-                        }
-                        ]
-                    }
-                    ]
-                }
-                ]
-            }
             ]
         };
     };
@@ -206,7 +168,6 @@
     });
 
     module.factory('toolFactory', function (svgPanZoomFactory, svgDrawingFactory) {
-
         var enable = function (tool) {
             svgPanZoomFactory.disable();
 
