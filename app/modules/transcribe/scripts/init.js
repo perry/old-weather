@@ -1,4 +1,4 @@
-(function (angular, _, SVG, svgPanZoom) {
+(function (angular, _) {
     'use strict';
 
     // var imageIDs = ['vol097_137_0','vol097_137_1','vol097_138_0','vol097_138_1','vol097_139_0','vol097_139_1','vol097_140_0','vol097_140_1','vol097_141_0','vol097_141_1','vol097_142_0','vol097_142_1','vol097_143_0','vol097_143_1','vol097_144_0','vol097_144_1','vol097_145_0','vol097_145_1','vol097_146_0','vol097_146_1','vol097_147_0','vol097_147_1','vol097_148_0','vol097_148_1','vol097_149_0','vol097_149_1','vol097_150_0','vol097_150_1','vol097_151_0','vol097_151_1','vol097_152_0','vol097_152_1','vol097_153_0','vol097_153_1','vol097_154_0','vol097_154_1','vol097_155_0','vol097_155_1','vol097_156_0','vol097_156_1','vol097_157_0','vol097_157_1','vol097_158_0','vol097_158_1','vol097_159_0','vol097_159_1','vol097_160_0','vol097_160_1','vol097_161_0','vol097_161_1','vol097_162_0','vol097_162_1','vol097_163_0','vol097_163_1','vol097_164_0','vol097_164_1','vol097_165_0','vol097_165_1','vol097_166_0','vol097_166_1','vol097_167_0','vol097_167_1','vol097_168_0','vol097_168_1','vol097_169_0','vol097_169_1','vol097_170_0','vol097_170_1','vol097_171_0','vol097_171_1','vol097_172_0','vol097_172_1','vol097_173_0','vol097_173_1','vol097_174_0','vol097_174_1','vol097_175_0','vol097_175_1','vol097_176_0','vol097_176_1','vol097_177_0','vol097_177_1','vol097_178_0','vol097_178_1','vol097_179_0','vol097_179_1','vol097_180_0','vol097_180_1','vol097_181_0','vol097_181_1','vol097_182_0','vol097_182_1','vol097_183_0','vol097_183_1','vol097_184_0','vol097_184_1','vol097_185_0','vol097_185_1','vol097_186_0','vol097_186_1','vol097_187_0','vol097_187_1','vol097_188_0','vol097_188_1'];
@@ -57,7 +57,8 @@
         'ngAnimate',
         'ui.router',
         'ngLoad',
-        'angularSpinner'
+        'angularSpinner',
+        'svg'
     ]);
 
     module.config(function ($stateProvider) {
@@ -273,161 +274,4 @@
         });
     });
 
-    module.factory('svgPanZoomFactory', function ($rootScope) {
-        var self = this;
-
-        return {
-            init: function (el, opts) {
-                opts = opts || {};
-                self.el = el;
-                self.opts = opts;
-                self.svgInstance = svgPanZoom(self.el, self.opts);
-                return self.svgInstance;
-            },
-            viewport: function () {
-                return self.el.getElementsByClassName('svg-pan-zoom_viewport')[0];
-            },
-            status: function () {
-                return self.svgInstance.isZoomEnabled() || self.svgInstance.isPanEnabled();
-            },
-            enable: function () {
-                self.svgInstance.enablePan();
-                self.svgInstance.enableZoom();
-
-                $rootScope.$broadcast('transcribe:svgPanZoomToggle');
-            },
-            disable: function () {
-                self.svgInstance.disablePan();
-                self.svgInstance.disableZoom();
-
-                $rootScope.$broadcast('transcribe:svgPanZoomToggle');
-            },
-            toggle: function () {
-                var method = self.svgInstance.isZoomEnabled() || self.svgInstance.isPanEnabled() ? 'disable' : 'enable';
-
-                self.svgInstance[method + 'Pan']();
-                self.svgInstance[method + 'Zoom']();
-
-                $rootScope.$broadcast('transcribe:svgPanZoomToggle');
-
-                return method;
-            }
-        };
-    });
-
-    module.service('svgService', function () {
-        this.getPoint = function (el, $viewport, event) {
-            var point = el.createSVGPoint();
-            point.x = event.clientX;
-            point.y = event.clientY;
-            return point.matrixTransform($viewport[0].getScreenCTM().inverse());
-        };
-    });
-
-    module.factory('svgDrawingFactory', function (svgService) {
-        var self = this;
-
-        self.tempRect = null;
-        self.tempOrigin = null;
-        self.drawing = false;
-        self.drawPromise = undefined;
-        self.data = null;
-
-        var init = function (scope, svg, el, $viewport) {
-            self.scope = scope;
-            self.svg = svg;
-            self.el = el;
-            self.$viewport = $viewport;
-        };
-
-        var bindMouseEvents = function (data) {
-            if (angular.isDefined(data)) {
-                self.data = data;
-            }
-
-            self.$viewport.on('mousedown', startDraw);
-            self.$viewport.on('mouseup', finishDraw);
-        };
-
-        var unBindMouseEvents = function () {
-            self.data = null;
-
-            self.$viewport.off('mousedown');
-            self.$viewport.off('mouseup');
-        };
-
-        var startDraw = function (event) {
-            event.stopImmediatePropagation();
-
-            if (self.drawing) {
-                draw(event);
-                finishDraw(event);
-            } else {
-                self.tempOrigin = svgService.getPoint(self.el, self.$viewport, event);
-                self.drawing = true;
-                self.tempRect = angular.extend({}, self.tempOrigin, {
-                    width: 0,
-                    height: 0
-                }, self.data);
-                self.scope.tempRect = self.tempRect;
-                self.$viewport.on('mousemove', draw);
-            }
-        };
-
-        var draw = function (event) {
-            var newPoint = svgService.getPoint(self.el, self.$viewport, event);
-            self.tempRect.x = (self.tempOrigin.x < newPoint.x) ? self.tempOrigin.x : newPoint.x;
-            self.tempRect.y = (self.tempOrigin.y < newPoint.y) ? self.tempOrigin.y : newPoint.y;
-            self.tempRect.width = Math.abs(newPoint.x - self.tempOrigin.x);
-            self.tempRect.height = Math.abs(newPoint.y - self.tempOrigin.y);
-            self.scope.$apply();
-        };
-
-        var finishDraw = function (event) {
-            var newPoint = svgService.getPoint(self.el, self.$viewport, event);
-            if (self.tempOrigin && !(newPoint.x === self.tempOrigin.x && newPoint.y === self.tempOrigin.y)) {
-                self.scope.annotations.push(angular.extend({}, self.tempRect));
-                self.scope.tempRect = undefined;
-                self.scope.$apply();
-                self.drawing = false;
-                self.tempRect = null;
-                self.tempOrigin = null;
-                self.data = null;
-            } else {
-                // TODO: Add a marker here.
-                return;
-            }
-            self.$viewport.off('mousemove');
-        };
-
-        return {
-            init: init,
-            startDraw: startDraw,
-            draw: draw,
-            finishDraw: finishDraw,
-            bindMouseEvents: bindMouseEvents,
-            unBindMouseEvents: unBindMouseEvents
-        };
-    });
-
-    module.directive('svgPanZoom', function ($timeout, svgPanZoomFactory, svgDrawingFactory) {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                var el = element[0];
-
-                scope.panZoom = svgPanZoomFactory.init(el, {
-                    minZoom: 1,
-                    maxZoom: 3,
-                    mouseWheelZoomEnabled: false
-                });
-
-                var viewport = svgPanZoomFactory.viewport();
-                var $viewport = angular.element(viewport);
-
-                svgDrawingFactory.init(scope, scope.panZoom, el, $viewport);
-            }
-        };
-    });
-
-}(window.angular, window._, window.SVG, window.svgPanZoom));
+}(window.angular, window._));
