@@ -32,7 +32,7 @@
                     ]
                 }
             ]
-        },
+        }
     ];
 
     var subjectResponse = function () {
@@ -56,9 +56,11 @@
     var module = angular.module('transcribe', [
         'ngAnimate',
         'ui.router',
+        'firebase',
         'ngLoad',
         'angularSpinner',
-        'svg'
+        'svg',
+        'annotation'
     ]);
 
     module.config(function ($stateProvider) {
@@ -171,13 +173,11 @@
     module.factory('toolFactory', function (svgPanZoomFactory, svgDrawingFactory) {
         var enable = function (tool) {
             svgPanZoomFactory.disable();
-
             svgDrawingFactory.bindMouseEvents({type: tool});
         };
 
         var disable = function () {
             svgPanZoomFactory.enable();
-
             svgDrawingFactory.unBindMouseEvents();
         };
 
@@ -203,11 +203,15 @@
                 });
 
                 scope.$watch('activeQuestion', function () {
-                    scope.activeStep = scope.activeQuestion.steps[0];
+                    if (angular.isDefined(scope.activeQuestion)) {
+                        scope.activeStep = scope.activeQuestion.steps[0];
+                    } else {
+                        scope.activeStep = undefined;
+                    }
                 });
 
                 scope.$watch('activeStep', function () {
-                    if (angular.isDefined(scope.activeStep.tool)) {
+                    if (scope.activeStep && angular.isDefined(scope.activeStep.tool)) {
                         toolFactory.enable(scope.activeStep.tool);
                     } else {
                         toolFactory.disable();
@@ -223,6 +227,7 @@
                     } else if (activeQuestionIndex < questionsCount - 1) {
                         scope.activeQuestion = scope.questions[activeQuestionIndex + 1];
                     } else {
+                        scope.activeQuestion = undefined;
                         $rootScope.$broadcast('transcribe:questionsComplete');
                     }
                 };
@@ -245,6 +250,7 @@
     });
 
     module.controller('transcribeCtrl', function ($scope, $sce, subjectFactory, svgPanZoomFactory) {
+
         $scope.loadSubject = function () {
             $scope.isLoading = true;
             $scope.questionsComplete = false;
@@ -261,8 +267,6 @@
 
         $scope.subjectLoaded = function () {
             $scope.isLoading = false;
-
-            $scope.annotations = [];
         };
 
         $scope.$on('transcribe:svgPanZoomToggle', function () {

@@ -3,7 +3,7 @@
 
     var module = angular.module('svg');
 
-    module.factory('svgDrawingFactory', function (svgService) {
+    module.factory('svgDrawingFactory', function (svgService, $rootScope) {
         var self = this;
 
         self.tempRect = null;
@@ -12,8 +12,7 @@
         self.drawPromise = undefined;
         self.data = null;
 
-        var init = function (scope, svg, el, $viewport) {
-            self.scope = scope;
+        var init = function (svg, el, $viewport) {
             self.svg = svg;
             self.el = el;
             self.$viewport = $viewport;
@@ -46,9 +45,10 @@
                 self.drawing = true;
                 self.tempRect = angular.extend({}, self.tempOrigin, {
                     width: 0,
-                    height: 0
+                    height: 0,
+                    _id: _.uniqueId()
                 }, self.data);
-                self.scope.tempRect = self.tempRect;
+                $rootScope.$broadcast('svgDrawing:add', self.tempRect);
                 self.$viewport.on('mousemove', draw);
             }
         };
@@ -59,15 +59,13 @@
             self.tempRect.y = (self.tempOrigin.y < newPoint.y) ? self.tempOrigin.y : newPoint.y;
             self.tempRect.width = Math.abs(newPoint.x - self.tempOrigin.x);
             self.tempRect.height = Math.abs(newPoint.y - self.tempOrigin.y);
-            self.scope.$apply();
+            $rootScope.$broadcast('svgDrawing:update', self.tempRect);
         };
 
         var finishDraw = function (event) {
             var newPoint = svgService.getPoint(self.el, self.$viewport, event);
             if (self.tempOrigin && !(newPoint.x === self.tempOrigin.x && newPoint.y === self.tempOrigin.y)) {
-                self.scope.annotations.push(angular.extend({}, self.tempRect));
-                self.scope.tempRect = undefined;
-                self.scope.$apply();
+                $rootScope.$broadcast('svgDrawing:update', angular.extend({}, self.tempRect));
                 self.drawing = false;
                 self.tempRect = null;
                 self.tempOrigin = null;

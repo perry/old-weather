@@ -18,7 +18,7 @@
                 var viewport = svgPanZoomFactory.viewport();
                 var $viewport = angular.element(viewport);
 
-                svgDrawingFactory.init(scope, scope.panZoom, el, $viewport);
+                svgDrawingFactory.init(scope.panZoom, el, $viewport);
             }
         };
     });
