@@ -63,21 +63,25 @@
 
             <div
                 class="btn-group-vertical log-controls animated"
-                ng-show="!isAnnotating && !isLoading"
+                ng-show="!isLoading"
                 ng-class="{
                     'isLoading': isLoading,
-                    'bounceInRight': !isAnnotating && !isLoading,
-                    'bounceOutRight': isAnnotating || isLoading
+                    'bounceInRight': !isLoading,
+                    'bounceOutRight': isLoading
                 }"
             >
-                <button class="btn btn-default" ng-click="panZoom.reset()">
-                    <span class="glyphicon glyphicon-resize-full"></span>
+                <button class="btn btn-default" ng-click="togglePan()" ng-show="isAnnotating || hasMouseEvents()">
+                    <span class="glyphicon glyphicon-move" ng-show="isAnnotating"></span>
+                    <span class="glyphicon glyphicon-screenshot" ng-show="!isAnnotating && hasMouseEvents()"></span>
                 </button>
                 <button class="btn btn-default" ng-click="panZoom.zoomIn()">
                     <span class="glyphicon glyphicon-zoom-in"></span>
                 </button>
                 <button class="btn btn-default" ng-click="panZoom.zoomOut()">
                     <span class="glyphicon glyphicon-zoom-out"></span>
+                </button>
+                <button class="btn btn-default" ng-click="panZoom.reset()">
+                    <span class="glyphicon glyphicon-resize-full"></span>
                 </button>
             </div>
         </div>

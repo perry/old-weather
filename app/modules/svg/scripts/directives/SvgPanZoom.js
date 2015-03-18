@@ -19,6 +19,14 @@
                 var $viewport = angular.element(viewport);
 
                 svgDrawingFactory.init(scope.panZoom, el, $viewport);
+
+                scope.togglePan = function () {
+                    return svgPanZoomFactory.toggle();
+                };
+
+                scope.hasMouseEvents = function () {
+                    return svgDrawingFactory.hasMouseEvents();
+                };
             }
         };
     });

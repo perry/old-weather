@@ -3,7 +3,7 @@
 
     var module = angular.module('svg');
 
-    module.factory('svgDrawingFactory', function (svgService, $rootScope) {
+    module.factory('svgDrawingFactory', function ($rootScope, svgPanZoomFactory, svgService) {
         var self = this;
 
         self.tempRect = null;
@@ -11,6 +11,7 @@
         self.drawing = false;
         self.drawPromise = undefined;
         self.data = null;
+        self.eventsBound = false;
 
         var init = function (svg, el, $viewport) {
             self.svg = svg;
@@ -25,6 +26,8 @@
 
             self.$viewport.on('mousedown', startDraw);
             self.$viewport.on('mouseup', finishDraw);
+
+            self.eventsBound = true;
         };
 
         var unBindMouseEvents = function () {
@@ -32,24 +35,33 @@
 
             self.$viewport.off('mousedown');
             self.$viewport.off('mouseup');
+
+            self.eventsBound = false;
+        };
+
+        var hasMouseEvents = function () {
+            return self.eventsBound;
         };
 
         var startDraw = function (event) {
-            event.stopImmediatePropagation();
+            // Only start drawing if panZoom is disabled.
+            if (!svgPanZoomFactory.status()) {
+                event.stopImmediatePropagation();
 
-            if (self.drawing) {
-                draw(event);
-                finishDraw(event);
-            } else {
-                self.tempOrigin = svgService.getPoint(self.el, self.$viewport, event);
-                self.drawing = true;
-                self.tempRect = angular.extend({}, self.tempOrigin, {
-                    width: 0,
-                    height: 0,
-                    _id: _.uniqueId()
-                }, self.data);
-                $rootScope.$broadcast('svgDrawing:add', self.tempRect);
-                self.$viewport.on('mousemove', draw);
+                if (self.drawing) {
+                    draw(event);
+                    finishDraw(event);
+                } else {
+                    self.tempOrigin = svgService.getPoint(self.el, self.$viewport, event);
+                    self.drawing = true;
+                    self.tempRect = angular.extend({}, self.tempOrigin, {
+                        width: 0,
+                        height: 0,
+                        _id: _.uniqueId()
+                    }, self.data);
+                    $rootScope.$broadcast('svgDrawing:add', self.tempRect);
+                    self.$viewport.on('mousemove', draw);
+                }
             }
         };
 
@@ -83,7 +95,8 @@
             draw: draw,
             finishDraw: finishDraw,
             bindMouseEvents: bindMouseEvents,
-            unBindMouseEvents: unBindMouseEvents
+            unBindMouseEvents: unBindMouseEvents,
+            hasMouseEvents: hasMouseEvents
         };
     });
 }(window.angular));
