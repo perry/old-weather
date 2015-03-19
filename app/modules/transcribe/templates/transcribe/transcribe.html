@@ -1,0 +1,97 @@
+<div class="row">
+    <div class="transcribe-col col-sm-3 col-md-2 pull-right">
+        <div
+            class="panel panel-default questions-panel animated"
+            transcribe-questions="subject.questions"
+            ng-show="!questionsComplete && subject.questions && !isLoading"
+            ng-class="{
+                'isLoading': isLoading,
+                'fadeIn': !isLoading,
+                'fadeOut': isLoading,
+                'questions-complete': questionsComplete
+            }"
+        >
+        </div>
+
+        <div ng-show="questionsComplete">
+            <div class="btn-group btn-group-justified">
+                <div class="btn-group">
+                    <button class="btn btn-primary" ng-click="loadSubject()">
+                        I've finished
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </button>
+                </div>
+            </div>
+            <p>Feel free to mark any other data using the tools below.</p>
+            <ul
+                class="nav nav-pills nav-stacked"
+                transcribe-tools
+            ></ul>
+        </div>
+    </div>
+
+    <div class="transcribe-col col-sm-9 col-md-10">
+        <div class="log-container">
+            <span
+                us-spinner
+                ng-show="isLoading"
+                class="animated"
+                ng-class="{
+                    'isLoading': isLoading,
+                    'fadeIn': isLoading,
+                    'fadeOut': !isLoading
+                }"
+            ></span>
+
+            <svg class="log" svg-pan-zoom ng-class="{'annotating': isAnnotating}">
+                <g class="pan-zoom">
+                    <g
+                        class="animated image-wrapper"
+                        ng-show="!isLoading"
+                        ng-class="{
+                            'isLoading': isLoading,
+                            'fadeIn': !isLoading,
+                            'fadeOut': isLoading
+                        }"
+                    >
+                        <g class="image">
+                            <image
+                                ng-href="{{ trustedSubjectImage }}"
+                                xlink:href=""
+                                ng-load="subjectLoaded(); svg.reset();"
+                                width="1300"
+                                height="1893"
+                            ></image>
+                        </g>
+
+                        <g annotations></g>
+                    </g>
+                </g>
+            </svg>
+
+            <div
+                class="btn-group-vertical log-controls animated"
+                ng-show="!isLoading"
+                ng-class="{
+                    'isLoading': isLoading,
+                    'bounceInRight': !isLoading,
+                    'bounceOutRight': isLoading
+                }"
+            >
+                <button class="btn btn-default" ng-click="togglePan()" ng-show="isAnnotating || hasMouseEvents()">
+                    <span class="glyphicon glyphicon-move" ng-show="isAnnotating"></span>
+                    <span class="glyphicon glyphicon-screenshot" ng-show="!isAnnotating && hasMouseEvents()"></span>
+                </button>
+                <button class="btn btn-default" ng-click="panZoom.zoomIn()">
+                    <span class="glyphicon glyphicon-zoom-in"></span>
+                </button>
+                <button class="btn btn-default" ng-click="panZoom.zoomOut()">
+                    <span class="glyphicon glyphicon-zoom-out"></span>
+                </button>
+                <button class="btn btn-default" ng-click="panZoom.reset()">
+                    <span class="glyphicon glyphicon-resize-full"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

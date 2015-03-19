@@ -29,8 +29,8 @@
                     </div>
                     <div class="collapse navbar-collapse" collapse="isCollapsed">
                         <ul class="nav navbar-nav">
+                            <li ui-sref-active="active"><a ui-sref="transcribe">Transcribe</a></li>
                             <li ui-sref-active="active"><a ui-sref="ships-list">Ships</a></li>
-                            <li><a href="http://talk.oldweather.org">Talk</a></li>
                             <li ui-sref-active="active" dropdown>
                                 <a href="#" class="dropdown-toggle" dropdown-toggle>
                                     About <span class="caret"></span>
@@ -75,8 +75,14 @@
         <!-- build:js scripts/app.js -->
         <script src="bower_components/lodash/lodash.js"></script>
         <script src="bower_components/angular/angular.js"></script>
+        <script src="bower_components/angular-animate/angular-animate.js"></script>
         <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
         <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+        <script src="bower_components/ng-load/ng-load.js"></script>
+        <script src="bower_components/spin.js/spin.js"></script>
+        <script src="bower_components/angular-spinner/angular-spinner.js"></script>
+        <script src="bower_components/svg.js/dist/svg.js"></script>
+        <script src="bower_components/svg-pan-zoom/dist/svg-pan-zoom.js"></script>
 
         <script src="modules/app/scripts/init.js"></script>
         <script src="modules/app/scripts/templates.js"></script>
@@ -92,6 +98,20 @@
         <script src="modules/ships/scripts/services/ships.js"></script>
         <script src="modules/ships/scripts/controllers/ShipsListCtrl.js"></script>
         <script src="modules/ships/scripts/controllers/ShipsDetailCtrl.js"></script>
+
+        <script src="modules/svg/scripts/init.js"></script>
+        <script src="modules/svg/scripts/directives/SvgPanZoom.js"></script>
+        <script src="modules/svg/scripts/services/SvgService.js"></script>
+        <script src="modules/svg/scripts/services/SvgDrawingFactory.js"></script>
+        <script src="modules/svg/scripts/services/SvgPanZoomFactory.js"></script>
+
+        <script src="modules/annotation/scripts/init.js"></script>
+        <script src="modules/annotation/scripts/templates.js"></script>
+        <script src="modules/annotation/scripts/services/AnnotationFactory.js"></script>
+        <script src="modules/annotation/scripts/directives/Annotations.js"></script>
+
+        <script src="modules/transcribe/scripts/init.js"></script>
+        <script src="modules/transcribe/scripts/templates.js"></script>
         <!-- endbuild -->
     </body>
 </html>

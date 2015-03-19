@@ -7,13 +7,16 @@ var chmod = require('gulp-chmod');
 var watch = require('gulp-watch');
 var clean = require('gulp-clean');
 var connect = require('gulp-connect');
+var sourcemaps = require('gulp-sourcemaps');
 var stylus = require('gulp-stylus');
+var nib = require('nib');
 var templateCache = require('gulp-angular-templatecache');
 
 var usemin = require('gulp-usemin');
+var ngAnnotate = require('gulp-ng-annotate');
 var uglify = require('gulp-uglify');
-var minifyHtml = require('gulp-minify-html');
-var minifyCss = require('gulp-minify-css');
+var minifyHTML = require('gulp-minify-html');
+var minifyCSS = require('gulp-minify-css');
 var rev = require('gulp-rev');
 var karma = require('karma').server;
 var jshint = require('gulp-jshint');
@@ -45,7 +48,9 @@ gulp.task('cleanDocs', function () {
 
 gulp.task('stylus', function () {
     gulp.src(stylDir + '/main.styl')
-        .pipe(stylus())
+        .pipe(sourcemaps.init())
+        .pipe(stylus({use: nib()}))
+        .pipe(sourcemaps.write())
         .pipe(gulp.dest(appDir + '/css'));
 });
 
@@ -95,12 +100,21 @@ gulp.task('karma-ci', function (cb) {
 
 });
 
+gulp.task('coffee', function () {
+    gulp.src(files.coffee)
+    .pipe(sourcemaps.init())
+    .pipe(coffee().on('error', gutil.log))
+    .pipe(sourcemaps.write())
+    .pipe(ngAnnotate())
+    .pipe(gulp.dest(modulesDir + '/'))
+});
+
 gulp.task('usemin', function () {
     return gulp.src(appDir + '/index.html')
     .pipe(usemin({
-        css: [minifyCss(), 'concat', rev()],
-        html: [minifyHtml({empty: true})],
-        js: [uglify(), rev()]
+        css: [minifyCSS(), 'concat', rev()],
+        html: [minifyHTML({empty: true})],
+        js: [ngAnnotate(), uglify(), rev()]
     }))
     .pipe(gulp.dest('.tmp/build/'));
 });
@@ -110,6 +124,7 @@ gulp.task('templates', function () {
         dirs.forEach(function (dir) {
             var path = modulesDir + '/' + dir;
             gulp.src(path + '/**/templates/**/*.html')
+                .pipe(minifyHTML())
                 .pipe(templateCache({
                     module: dir,
                     templateHeader: '(function (angular) {\n "use strict";\n angular.module("<%= module %>"<%= standalone %>).run(["$templateCache", function($templateCache) {',

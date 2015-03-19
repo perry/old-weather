@@ -1,3 +1,5 @@
+@import 'nib'
+
 html
     overflow-y: scroll
 
@@ -22,19 +24,55 @@ img
 #site-footer
     padding-bottom: 50px
 
+.transcribe-col
+    $animation-duration = 1000ms
+
+    min-height: 100vh
+
+    .animated
+        animation-duration: $animation-duration
+
+    [us-spinner]
+        &.isLoading-add.isLoading-add-active
+            animation-delay: $animation-duration
+
+    .image-wrapper,
+    .log-controls,
+    .questions-panel
+        &.isLoading-remove.isLoading-remove-active
+            animation-delay: $animation-duration
+
 .log-container
+
     position: relative
     font-size: 0
+    overflow: hidden
 
-.log-container .log-controls
-    position: absolute
-    bottom: 35px
-    right: 15px
+
+    .log-controls
+        position: absolute
+        bottom: 35px
+        right: 15px
 
 .log
-    cursor: move
     background: grey
     max-width: 100%
     width: 100%
     height: 90vh
+    image
+        cursor: move
+    &.annotating
+        image, rect
+            cursor: crosshair
 
+.annotation
+    rect
+        cursor: pointer
+        fill: rgba(#000, 0.3)
+    &:nth-of-type(2n+1)
+        rect
+            fill: rgba(#0000FF, 0.4)
+
+.questions-panel
+    &.animated.questions-complete
+        animation-duration: 0

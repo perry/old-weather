@@ -1,0 +1,40 @@
+<div class="panel-heading">
+    <div
+        ng-repeat="question in questions"
+        ng-show="question.id === activeQuestion.id"
+    >
+        <div
+            ng-repeat="step in question.steps"
+            ng-show="step.id === activeStep.id"
+        >
+            {{ ::step.title }}
+        </div>
+    </div>
+</div>
+<div class="panel-body">
+    <div
+        ng-repeat="question in questions"
+        ng-show="question.id === activeQuestion.id"
+    >
+        <div
+            class="btn-group btn-group-justified"
+            ng-repeat="step in question.steps"
+            ng-show="step.id === activeStep.id"
+        >
+            <div class="btn-group" ng-repeat="action in step.actions">
+                <button
+                    class="btn btn-default"
+                    ng-click="confirm(action.value)"
+                >
+                    {{ ::action.title }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-group btn-group-justified">
+        <div class="btn-group">
+            <button class="btn btn-default btn-xs" ng-click="skipQuestions()">Skip all questions</button>
+        </div>
+    </div>
+</div>
