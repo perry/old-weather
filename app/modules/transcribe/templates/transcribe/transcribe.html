@@ -1,7 +1,4 @@
 <div class="row">
-    <div class="col-sm-2">
-    </div>
-
     <div class="transcribe-col col-sm-3 col-md-2 pull-right">
         <div
             class="panel panel-default questions-panel animated"
@@ -10,16 +7,27 @@
             ng-class="{
                 'isLoading': isLoading,
                 'fadeIn': !isLoading,
-                'fadeOut': isLoading
+                'fadeOut': isLoading,
+                'questions-complete': questionsComplete
             }"
         >
         </div>
 
-        <ul
-            class="nav nav-pills nav-stacked"
-            transcribe-tools
-            ng-show="questionsComplete"
-        ></ul>
+        <div ng-show="questionsComplete">
+            <div class="btn-group btn-group-justified">
+                <div class="btn-group">
+                    <button class="btn btn-primary" ng-click="loadSubject()">
+                        I've finished
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </button>
+                </div>
+            </div>
+            <p>Feel free to mark any other data using the tools below.</p>
+            <ul
+                class="nav nav-pills nav-stacked"
+                transcribe-tools
+            ></ul>
+        </div>
     </div>
 
     <div class="transcribe-col col-sm-9 col-md-10">

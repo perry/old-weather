@@ -11,7 +11,7 @@
             link: function (scope, element, attrs) {
                 scope.annotations = [];
 
-                var updateAnnotations = function (data) {
+                var updateAnnotations = function (e, data) {
                     var existing = _.find(scope.annotations, {_id: data._id});
                     if (angular.isUndefined(existing)) {
                         scope.annotations.push(data);
@@ -23,13 +23,13 @@
                     scope.$apply();
                 };
 
-                scope.$on('svgDrawing:add', function (e, data) {
-                    updateAnnotations(data);
+                scope.$on('transcribe:loadedSubject', function () {
+                    scope.annotations = [];
                 });
 
-                scope.$on('svgDrawing:update', function (e, data) {
-                    updateAnnotations(data);
-                });
+                scope.$on('svgDrawing:add', updateAnnotations);
+
+                scope.$on('svgDrawing:update', updateAnnotations);
             }
         };
     });

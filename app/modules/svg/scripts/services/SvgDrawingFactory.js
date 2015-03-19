@@ -77,7 +77,7 @@
         var finishDraw = function (event) {
             var newPoint = svgService.getPoint(self.el, self.$viewport, event);
             if (self.tempOrigin && !(newPoint.x === self.tempOrigin.x && newPoint.y === self.tempOrigin.y)) {
-                $rootScope.$broadcast('svgDrawing:update', angular.extend({}, self.tempRect));
+                $rootScope.$broadcast('svgDrawing:finish', angular.extend({}, self.tempRect));
                 self.drawing = false;
                 self.tempRect = null;
                 self.tempOrigin = null;
