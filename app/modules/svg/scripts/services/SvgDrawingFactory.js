@@ -1,4 +1,4 @@
-(function (angular) {
+(function (angular, _) {
     'use strict';
 
     var module = angular.module('svg');
@@ -99,5 +99,4 @@
             hasMouseEvents: hasMouseEvents
         };
     });
-}(window.angular));
-
+}(window.angular, window._));

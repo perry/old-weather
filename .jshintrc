@@ -7,11 +7,10 @@
     "immed": true,
     "indent": 4,
     "latedef": true,
-    "maxlen": 100,
     "newcap": true,
     "noempty": true,
     "nonbsp": true,
     "quotmark": "single",
     "undef": true,
-    "unused": true
+    "unused": "vars"
 }

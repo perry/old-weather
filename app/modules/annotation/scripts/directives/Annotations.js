@@ -1,4 +1,4 @@
-(function (angular) {
+(function (angular, _) {
     'use strict';
 
     var module = angular.module('annotation');
@@ -34,6 +34,4 @@
         };
     });
 
-}(window.angular));
-
-
+}(window.angular, window._));

@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    var module = angular.module('svg', []);
+    angular.module('svg', []);
 
 }(window.angular));
 
