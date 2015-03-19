@@ -126,7 +126,6 @@
     var module = angular.module('transcribe', [
         'ngAnimate',
         'ui.router',
-        'firebase',
         'ngLoad',
         'angularSpinner',
         'svg',
