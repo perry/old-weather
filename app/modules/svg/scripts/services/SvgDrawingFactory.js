@@ -57,6 +57,7 @@
                     self.tempRect = angular.extend({}, self.tempOrigin, {
                         width: 0,
                         height: 0,
+                        timestamp: new Date().getTime(),
                         _id: _.uniqueId()
                     }, self.data);
                     $rootScope.$broadcast('svgDrawing:add', self.tempRect);
