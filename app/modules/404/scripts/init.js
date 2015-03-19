@@ -9,6 +9,7 @@
         '$stateProvider',
         '$urlRouterProvider',
         function ($stateProvider, $urlRouterProvider) {
+            $urlRouterProvider.when('', '/');
             $urlRouterProvider.otherwise('/404');
 
             $stateProvider
