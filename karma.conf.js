@@ -5,9 +5,12 @@ module.exports = function(config) {
     files: [
         'app/bower_components/lodash/lodash.js',
         'app/bower_components/angular/angular.js',
+        'app/bower_components/angular-animate/angular-animate.js',
         'app/bower_components/angular-mocks/angular-mocks.js',
         'app/bower_components/angular-ui-router/release/angular-ui-router.js',
         'app/bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+        'app/bower_components/ng-load/ng-load.js',
+        'app/bower_components/angular-spinner/angular-spinner.js',
         'app/modules/*/scripts/**/init.js',
         'app/modules/*/scripts/**/!(init.js|*_test.js)',
         'app/modules/*/scripts/**/*_test.js'
