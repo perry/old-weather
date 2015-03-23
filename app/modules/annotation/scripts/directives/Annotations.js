@@ -9,27 +9,31 @@
             scope: true,
             templateUrl: 'templates/annotation/annotations.html',
             link: function (scope, element, attrs) {
-                scope.annotations = [];
+                scope.updateAnnotation = function (e, data) {
+                    if (!angular.isUndefined(data)) {
+                        var existing = _.find(scope.annotations, {_id: data._id});
+                        if (angular.isUndefined(existing)) {
+                            scope.annotations.push(data);
+                        } else {
+                            var indexOf = _.indexOf(scope.annotations, existing);
+                            scope.annotations.splice(indexOf, 1, data);
+                        }
 
-                var updateAnnotations = function (e, data) {
-                    var existing = _.find(scope.annotations, {_id: data._id});
-                    if (angular.isUndefined(existing)) {
-                        scope.annotations.push(data);
-                    } else {
-                        var indexOf = _.indexOf(scope.annotations, existing);
-                        scope.annotations.splice(indexOf, 1, data);
+                        scope.$apply();
                     }
-
-                    scope.$apply();
                 };
 
-                scope.$on('transcribe:loadedSubject', function () {
+                scope.createAnnotationsList = function () {
                     scope.annotations = [];
-                });
+                };
 
-                scope.$on('svgDrawing:add', updateAnnotations);
+                scope.createAnnotationsList();
 
-                scope.$on('svgDrawing:update', updateAnnotations);
+                scope.$on('transcribe:loadedSubject', scope.createAnnotationsList);
+
+                scope.$on('svgDrawing:add', scope.updateAnnotation);
+                scope.$on('svgDrawing:update', scope.updateAnnotation);
+                scope.$on('svgDrawing:finish', scope.updateAnnotation);
             }
         };
     });
