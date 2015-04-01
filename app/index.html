@@ -54,21 +54,34 @@
         <footer id="site-footer" >
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-4">
-                        <h3>The project</h3>
-                        <p>Old Weather aims to recover worldwide weather observations to help improve climate model predictions. <a ui-sref="about.why">Learn more</a>.</p>
+                    <div class="col-xs-4 col-md-3 col-lg-2">
+                        <svg class="zooniverse-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="-45.6 101 703.2 590.1" xml:space="preserve">
+                            <g>
+                                <path d="M306 120.6c152.1 0 275.4 123.3 275.4 275.4S458.1 671.4 306 671.4S30.6 548.1 30.6 396S153.9 120.6 306 120.6z M306 212.4 c-101.4 0-183.6 82.2-183.6 183.6S204.6 579.6 306 579.6S489.6 497.4 489.6 396S407.4 212.4 306 212.4z"/>
+                                <path d="M306 319.5c42.2 0 76.5 34.3 76.5 76.5s-34.3 76.5-76.5 76.5s-76.5-34.3-76.5-76.5S263.8 319.5 306 319.5z"/>
+                                <path d="M657.6 101L325.7 419.4L-45.6 691l331.9-318.5L657.6 101z"/>
+                            </g>
+                        </svg>
                     </div>
-                    <div class="col-md-4">
-                        <h3>About</h3>
-                        <p>Meet the <a ui-sref="about.team">team members</a> and <a ui-sref="about.partners">partner institutions</a> behind Old Weather.</p>
-                    </div>
-                    <div class="col-md-4">
-                        <h3>FAQ</h3>
-                        <p>Questions about Old Weather? Visit the <a ui-sref="about.faq">FAQ page</a> or <a href="http://forum.oldweather.org/index.php?topic=3945.msg72585#msg72585">ask a question on the Old Weather forum</a>.</p>
+
+                    <div class="col-xs-8 col-md-9 col-lg-10">
+                        <p>The Zooniverse is a collection of web-based citizen science projects that use the efforts of volunteers to help researchers deal with the flood of data that confronts them.</p>
+                        <div class="row" zooniverse-projects-list>
+                            <div class="col-xs-12 col-sm-{{ 12 / data.length }}" ng-repeat="category in ::data" ng-if="!loading && data">
+                                <h4 ng-bind="category.category"></h4>
+                                <ul class="list-unstyled">
+                                    <li ng-repeat="project in category.projects">
+                                        <a ng-href="{{ project.url }}" ng-bind="project.name"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <p><a href="https://www.zooniverse.org/privacy">Privacy policy</a> | <a href="https://github.com/zooniverse">Source & bugs</a></p>
+
+                        <p>&copy; 2015 Zooniverse. This project is part of the JISC’s Developing Community Content. <a ui-sref="about.partners">Learn more</a>.</p>
                     </div>
                 </div>
-
-                <p>&copy; 2015 Zooniverse. This project is part of the JISC’s Developing Community Content. <a ui-sref="about.partners">Learn more</a>.</p>
             </div>
         </footer>
 
@@ -112,6 +125,10 @@
 
         <script src="modules/transcribe/scripts/init.js"></script>
         <script src="modules/transcribe/scripts/templates.js"></script>
+
+        <script src="modules/zooniverse/scripts/init.js"></script>
+        <script src="modules/zooniverse/scripts/services/ProjectsFactory.js"></script>
+        <script src="modules/zooniverse/scripts/directives/projectsList.js"></script>
         <!-- endbuild -->
     </body>
 </html>

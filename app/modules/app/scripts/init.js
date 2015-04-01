@@ -7,7 +7,8 @@
         '404',
         'content',
         'ships',
-        'transcribe'
+        'transcribe',
+        'zooniverse'
     ]);
 
     module.config([
