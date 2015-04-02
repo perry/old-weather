@@ -12,11 +12,11 @@ module.exports = function(config) {
         'app/bower_components/ng-load/ng-load.js',
         'app/bower_components/angular-spinner/angular-spinner.js',
         'app/modules/*/scripts/**/init.js',
-        'app/modules/*/scripts/**/!(init.js|*_test.js)',
-        'app/modules/*/scripts/**/*_test.js'
+        'app/modules/*/scripts/**/!(init.js|*-spec.js)',
+        'app/modules/*/scripts/**/*-spec.js'
     ],
     preprocessors: {
-        'app/modules/*/scripts/**/!(*_test.js)': 'coverage'
+        'app/modules/*/scripts/**/!(*-spec.js)': 'coverage'
     },
     reporters: ['dots', 'coverage'],
     port: 9876,
