@@ -2,7 +2,8 @@
     'use strict';
 
     var module = angular.module('ships', [
-        'ui.router'
+        'ui.router',
+        'zooAPI'
     ]);
 
     module.config([

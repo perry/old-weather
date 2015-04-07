@@ -10,24 +10,21 @@
      * @description
      *
      */
-    module.controller('ShipsDetailCtrl', [
-        '$scope',
-        '$stateParams',
-        '$state',
-        'shipsFactory',
-        function ($scope, $stateParams, $state, shipsFactory) {
+    module.controller('ShipsDetailCtrl',
+        function ($scope, $stateParams, $state, zooAPISubjectSets) {
             if (angular.isDefined($stateParams.id)) {
                 var id = parseInt($stateParams.id, 10);
-                shipsFactory.get({id: id})
+                zooAPISubjectSets.get(id)
                     .then(function (response) {
-                        $scope.ship = response[0];
+                        $scope.ship = response.data.subject_sets[0];
                     }, function () {
                         $state.go('404');
                     });
+
             } else {
                 $state.go('ships-list');
             }
         }
-    ]);
+    );
 }(window.angular));
 

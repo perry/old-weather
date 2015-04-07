@@ -2,37 +2,41 @@
     <h1>Ships</h1>
 </div>
 
-<form class="form clearfix">
-    <div class="form-group pull-right">
-        <label for="ship-filter">Filter</label>
-        <input type="text" class="form-control" id="ship-filter" ng-model="shipFilter">
+<div us-spinner ng-if="loading"></div>
+
+<div ng-show="!loading">
+    <form class="form clearfix">
+        <div class="form-group pull-right">
+            <label for="ship-filter">Filter</label>
+            <input type="text" class="form-control" id="ship-filter" ng-model="shipFilter">
+        </div>
+    </form>
+
+    <table class="table table-hover" ng-show="(ships | filter:shipFilter).length > 0">
+        <thead>
+            <tr>
+                <th ng-repeat="header in headers" ng-click="sort($index)">
+                    {{ ::header.name }}
+                    <span
+                        class="glyphicon"
+                        ng-show="header.key === columnSort.key"
+                        ng-class="{'glyphicon-chevron-down': columnSort.reverse === false, 'glyphicon-chevron-up': columnSort.reverse === true}"
+                    ></span>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr ng-repeat="ship in ships | filter:shipFilter | orderBy:columnSort.key:columnSort.reverse">
+                <td><a ui-sref="ships-detail({id: ship.id})">{{ ::ship.display_name }}</a></td>
+                <td>TODO</td>
+                <td>TODO</td>
+                <td>TODO</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="alert alert-warning" role="alert" ng-show="(ships | filter:shipFilter).length === 0">
+        <p>We're unable to find a ship with your current filter.</p>
     </div>
-</form>
-
-<table class="table table-hover" ng-show="(ships | filter:shipFilter).length > 0">
-    <thead>
-        <tr>
-            <th ng-repeat="header in headers" ng-click="sort($index)">
-                {{ ::header.name }}
-                <span
-                    class="glyphicon"
-                    ng-show="header.key === columnSort.key"
-                    ng-class="{'glyphicon-chevron-down': columnSort.reverse === false, 'glyphicon-chevron-up': columnSort.reverse === true}"
-                ></span>
-            </th>
-        </tr>
-    </thead>
-
-    <tbody>
-        <tr ng-repeat="ship in ships | filter:shipFilter | orderBy:columnSort.key:columnSort.reverse">
-            <td><a ui-sref="ships-detail({id: ship.id})">{{ ::ship.name }}</a></td>
-            <td>{{ ::ship.travel }}</td>
-            <td>{{ ::ship.difficulty }}</td>
-            <td>{{ ::ship.users }}</td>
-        </tr>
-    </tbody>
-</table>
-
-<div class="alert alert-warning" role="alert" ng-show="(ships | filter:shipFilter).length === 0">
-    <p>We're unable to find a ship with your current filter.</p>
 </div>

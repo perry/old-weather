@@ -10,13 +10,11 @@
      * @description
      * Controller for ships listing.
      */
-    module.controller('ShipsListCtrl', [
-        '$scope',
-        'shipsFactory',
-        function ($scope, shipsFactory) {
+    module.controller('ShipsListCtrl',
+        function ($scope, zooAPISubjectSets) {
             // An array of objects containing the table header information.
             $scope.headers = [
-                {name: 'Ship', key: 'name'},
+                {name: 'Ship', key: 'display_name'},
                 {name: 'Travel', key: 'travel'},
                 {name: 'Difficulty', key: 'difficulty'},
                 {name: 'Crew', key: 'users'}
@@ -47,12 +45,16 @@
             };
 
             // Get all the ships.
-            shipsFactory.get()
+            $scope.loading = true;
+            zooAPISubjectSets.get()
                 .then(function (response) {
-                    $scope.ships = response;
+                    $scope.ships = response.data.subject_sets;
                 }, function () {
                     $scope.ships = [];
+                })
+                ['finally'](function () {
+                    $scope.loading = false;
                 });
         }
-    ]);
+    );
 }(window.angular));
