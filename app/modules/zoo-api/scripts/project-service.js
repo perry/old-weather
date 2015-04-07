@@ -3,8 +3,6 @@
 
     var module = angular.module('zooAPI');
 
-    console.log(module)
-
     module.constant('API_ROOT', 'https://panoptes-staging.zooniverse.org/api');
 
     module.factory('zooAPIRoot', function ($q) {
@@ -78,7 +76,6 @@
 
 
             APIPromise.then(function () {
-            console.log(href)
                 $http.get(API_ROOT + href)
                     .then(deferred.resolve, deferred.reject);
             });
