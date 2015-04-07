@@ -12,21 +12,21 @@
             var deferred = $q.defer();
 
             deferred.resolve({
-                "links": {
-                    "subjects": "/subjects",
-                    "users": "/users",
-                    "projects": "/projects",
-                    "workflows": "/workflows",
-                    "subject_sets": "/subject_sets",
-                    "groups": "/groups",
-                    "classifications": "/classifications",
-                    "memberships": "/memberships",
-                    "collections": "/collections",
-                    "subject_queues": "/subject_queues",
-                    "project_roles": "/project_roles",
-                    "project_preferences": "/project_preferences",
-                    "workflow_contents": "/workflow_contents",
-                    "project_contents": "/project_contents"
+                'links': {
+                    'subjects': '/subjects',
+                    'users': '/users',
+                    'projects': '/projects',
+                    'workflows': '/workflows',
+                    'subject_sets': '/subject_sets',
+                    'groups': '/groups',
+                    'classifications': '/classifications',
+                    'memberships': '/memberships',
+                    'collections': '/collections',
+                    'subject_queues': '/subject_queues',
+                    'project_roles': '/project_roles',
+                    'project_preferences': '/project_preferences',
+                    'workflow_contents': '/workflow_contents',
+                    'project_contents': '/project_contents'
                 }
             });
 
