@@ -13,10 +13,9 @@
     module.controller('ShipsDetailCtrl',
         function ($scope, $stateParams, $state, zooAPISubjectSets) {
             if (angular.isDefined($stateParams.id)) {
-                var id = parseInt($stateParams.id, 10);
-                zooAPISubjectSets.get(id)
+                zooAPISubjectSets.get({id: $stateParams.id})
                     .then(function (response) {
-                        $scope.ship = response.data.subject_sets[0];
+                        $scope.ship = response[0];
                     }, function () {
                         $state.go('404');
                     });

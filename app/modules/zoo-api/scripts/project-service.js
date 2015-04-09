@@ -1,84 +1,40 @@
-(function (angular) {
+(function (angular, _) {
     'use strict';
 
     var module = angular.module('zooAPI');
 
-    module.constant('API_ROOT', 'https://panoptes-staging.zooniverse.org/api');
+    var upsert = function (arr, key, newVal) {
+        var match = _.find(arr, key);
+        if (match){
+            var index = _.indexOf(arr, match);
+            arr.splice(index, 1, newVal);
+        } else {
+            arr.push(newVal);
+        }
+    };
 
-    module.factory('zooAPIRoot', function ($q) {
-        // TODO: the API_ROOT endpoint currently returns a 404, we should perform
-        //       a GET on the API_ROOT rather than returning this list.
+    module.constant('zooAPIConfig', {
+        display_name: 'oldweather'
+    });
+
+    module.factory('zooAPI', function ($window) {
+        return $window.zooAPI;
+    });
+
+    module.factory('zooAPIProject', function ($q, localStorageService, zooAPIConfig, zooAPI) {
         var get = function () {
             var deferred = $q.defer();
 
-            deferred.resolve({
-                'links': {
-                    'subjects': '/subjects',
-                    'users': '/users',
-                    'projects': '/projects',
-                    'workflows': '/workflows',
-                    'subject_sets': '/subject_sets',
-                    'groups': '/groups',
-                    'classifications': '/classifications',
-                    'memberships': '/memberships',
-                    'collections': '/collections',
-                    'subject_queues': '/subject_queues',
-                    'project_roles': '/project_roles',
-                    'project_preferences': '/project_preferences',
-                    'workflow_contents': '/workflow_contents',
-                    'project_contents': '/project_contents'
-                }
-            });
-
-            return deferred.promise;
-        };
-
-        return {
-            get: get
-        };
-    });
-
-    module.factory('zooAPIProject', function ($q, $http, zooAPIRoot, API_ROOT) {
-        var get = function () {
-            var deferred = $q.defer();
-
-            zooAPIRoot.get().then(function (response) {
-                $http.get(API_ROOT + response.links.projects + '/195')
-                    .then(deferred.resolve, deferred.reject);
-            });
-
-            return deferred.promise;
-        };
-
-        return {
-            get: get
-        };
-    });
-
-    module.factory('zooAPISubjectSets', function ($q, $http, zooAPIRoot, zooAPIProject, API_ROOT) {
-        var get = function (id) {
-            var deferred = $q.defer();
-            var href;
-            var APIPromise;
-
-            if (angular.isUndefined(id)) {
-                APIPromise = zooAPIProject.get();
-                APIPromise.then(function (response) {
-                    href = response.data.links['projects.subject_sets'].href;
-                    href = href.replace('{projects.id}', '195');
-                });
-            } else {
-                APIPromise = zooAPIRoot.get();
-                APIPromise.then(function (response) {
-                    href = response.links.subject_sets + '/' + id;
-                });
+            var cache = localStorageService.get('project');
+            if (cache) {
+                deferred.resolve(cache);
             }
 
-
-            APIPromise.then(function () {
-                $http.get(API_ROOT + href)
-                    .then(deferred.resolve, deferred.reject);
-            });
+            zooAPI.type('projects').get({display_name: zooAPIConfig.display_name})
+                .then(function (response) {
+                    localStorageService.set('project', response[0]);
+                    deferred.resolve(localStorageService.get('project'));
+                });
 
             return deferred.promise;
         };
@@ -88,4 +44,68 @@
         };
     });
 
-}(window.angular));
+    module.factory('zooAPISubjectSets', function ($q, localStorageService, zooAPI, zooAPIProject) {
+        var get = function (filter) {
+            var deferred = $q.defer();
+
+            var cache = localStorageService.get('subject_sets');
+            if (cache) {
+                if (filter) {
+                    var cacheByID = _.find(cache, filter);
+                    if (angular.isDefined(cacheByID)) {
+                        deferred.resolve([cacheByID]);
+                    }
+                } else {
+                    deferred.resolve(cache);
+                }
+            } else {
+                cache = [];
+            }
+
+            zooAPIProject.get()
+                .then(function (response) {
+                    var options = {project_id: response.id};
+                    var subjectSets = [];
+
+                    if (angular.isDefined(filter)) {
+                        options = angular.extend(options, filter);
+                    }
+
+                    var loadPages = function (opts) {
+                        zooAPI.type('subject_sets').get(opts)
+                            .then(processResponse, deferred.reject);
+                    };
+
+                    var processResponse = function (sets) {
+                        var meta = sets[0]._meta.subject_sets;
+
+                        angular.forEach(sets, function (s) {
+                            upsert(subjectSets, {'id': s.id}, s);
+                        });
+
+                        if (meta.next_page) {
+                            deferred.notify(subjectSets);
+                            loadPages(angular.extend({}, options, {page: meta.next_page}));
+                        } else {
+                            angular.forEach(subjectSets, function (s) {
+                                upsert(cache, {'id': s.id}, s);
+                            });
+
+                            localStorageService.set('subject_sets', cache);
+
+                            deferred.resolve(subjectSets);
+                        }
+                    };
+
+                    loadPages(options);
+                });
+
+            return deferred.promise;
+        };
+
+        return {
+            get: get
+        };
+    });
+
+}(window.angular, window._));

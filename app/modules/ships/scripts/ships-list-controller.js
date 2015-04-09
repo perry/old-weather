@@ -46,11 +46,15 @@
 
             // Get all the ships.
             $scope.loading = true;
+            $scope.ships = [];
             zooAPISubjectSets.get()
                 .then(function (response) {
-                    $scope.ships = response.data.subject_sets;
+                    $scope.ships = response;
                 }, function () {
                     $scope.ships = [];
+                }, function (response) {
+                    $scope.loading = false;
+                    $scope.ships = response;
                 })
                 ['finally'](function () {
                     $scope.loading = false;
