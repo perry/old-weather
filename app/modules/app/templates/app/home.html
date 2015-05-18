@@ -1,7 +1,27 @@
-<div class="page-header">
-    <h1>Welcome to Old Weather</h1>
+<span
+    us-spinner
+    ng-show="!project"
+    class="animated"
+    ng-class="{
+        'isLoading': !project,
+        'fadeIn': !project,
+        'fadeOut': project
+    }"
+></span>
+
+<div
+    ng-show="project"
+    class="animated"
+    ng-class="{
+        'isLoading': !project,
+        'fadeIn': project,
+        'fadeOut': !project
+    }"
+>
+    <div class="page-header">
+        <h1>Welcome to Old Weather</h1>
+    </div>
+    <p ng-bind="project.description"></p>
+
+    <p ng-bind="project.introduction"></p>
 </div>
-
-<p>Old Weather aims to recover worldwide weather observations to help improve climate model predictions. <a ui-sref="about.why">Learn more</a>.</p>
-
-<p>Help scientists recover Arctic and worldwide weather observations made by United States ships since the mid-19th century by transcribing ships' logs. These transcriptions will contribute to climate model projections and will improve our knowledge of past environmental conditions. Historians will use your work to track past ship movements and tell the stories of the people on board.</p>

@@ -12,6 +12,8 @@
      */
     module.controller('ShipsListCtrl',
         function ($scope, zooAPISubjectSets) {
+            $scope.images = ['http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png'];
+
             // An array of objects containing the table header information.
             $scope.headers = [
                 {name: 'Ship', key: 'display_name'},
@@ -55,10 +57,31 @@
                 }, function (response) {
                     $scope.loading = false;
                     $scope.ships = response;
+                    console.log($scope.ships.length)
                 })
                 ['finally'](function () {
                     $scope.loading = false;
                 });
         }
     );
+
+    module.directive('shipsList', function ($timeout) {
+        return {
+            link: function (scope, element, attrs) {
+                var pckry = new Packery(element[0], {
+                    columnWidth: '.grid-sizer',
+                    itemSelector: '.item',
+                    percentPosition: true,
+                    transitionDuration: 0
+                });
+
+                scope.$watch('ships', function () {
+                    $timeout(function () {
+                        pckry.reloadItems();
+                        pckry.layout();
+                    });
+                });
+            }
+        };
+    });
 }(window.angular));

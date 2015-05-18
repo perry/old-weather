@@ -41,8 +41,27 @@
                 $rootScope.$broadcast('transcribe:svgPanZoomToggle');
 
                 return method;
+            },
+            zoomToRect: function (rect) {
+                var sizes = self.svgInstance.getSizes();
+                var realZoom = sizes.realZoom;
+
+                var rectCoords = {
+                    x: -((rect.x + (rect.width/2))*realZoom)+(sizes.width/2),
+                    y: -((rect.y + (rect.height/2))*realZoom)+(sizes.height/2)
+                };
+                self.svgInstance.pan(rectCoords);
+
+                var padding = 50;
+                var zoomRatios = {
+                    width: Math.abs(sizes.width / (rect.width + padding)),
+                    height: Math.abs(sizes.height / (rect.height + padding))
+                };
+                var zoomLevel = Math.min(zoomRatios.width, zoomRatios.height);
+                self.svgInstance.zoom(zoomLevel);
+
+                return {sizes: self.svgInstance.getSizes()};
             }
         };
     });
 }(window.angular, window.svgPanZoom));
-

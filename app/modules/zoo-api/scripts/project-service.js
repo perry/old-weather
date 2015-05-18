@@ -5,7 +5,7 @@
 
     var upsert = function (arr, key, newVal) {
         var match = _.find(arr, key);
-        if (match){
+        if (match) {
             var index = _.indexOf(arr, match);
             arr.splice(index, 1, newVal);
         } else {
@@ -53,10 +53,10 @@
                 if (filter) {
                     var cacheByID = _.find(cache, filter);
                     if (angular.isDefined(cacheByID)) {
-                        deferred.resolve([cacheByID]);
+                        deferred.notify([cacheByID]);
                     }
                 } else {
-                    deferred.resolve(cache);
+                    deferred.notify(cache);
                 }
             } else {
                 cache = [];
@@ -65,6 +65,7 @@
             zooAPIProject.get()
                 .then(function (response) {
                     var options = {project_id: response.id};
+                    // An array that will contain subject sets returned from out API call.
                     var subjectSets = [];
 
                     if (angular.isDefined(filter)) {
@@ -90,6 +91,16 @@
                             angular.forEach(subjectSets, function (s) {
                                 upsert(cache, {'id': s.id}, s);
                             });
+
+                            // If an item in the cache, is not in the list returned by the server
+                            // and we're not filtering (assuming we're loading all data here!)
+                            if (!filter) {
+                                angular.forEach(cache, function (c) {
+                                    if (angular.isUndefined(_.find(subjectSets, {id: c.id}))) {
+                                        _.remove(cache, c);
+                                    }
+                                });
+                            }
 
                             localStorageService.set('subject_sets', cache);
 

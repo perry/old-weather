@@ -58,7 +58,7 @@
                         width: 0,
                         height: 0,
                         timestamp: new Date().getTime(),
-                        _id: _.uniqueId()
+                        _id: _.uniqueId() + new Date().getTime()
                     }, self.data);
                     $rootScope.$broadcast('svgDrawing:add', self.tempRect);
                     self.$viewport.on('mousemove', draw);

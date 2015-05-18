@@ -8,7 +8,9 @@
         'content',
         'ships',
         'transcribe',
-        'zooniverse'
+        'transcription',
+        'zooniverse',
+        'auth'
     ]);
 
     module.config([
@@ -19,6 +21,7 @@
                     url: '/',
                     views: {
                         main: {
+                            controller: 'HomeController',
                             templateUrl: 'templates/app/home.html'
                         }
                     }

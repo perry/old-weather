@@ -9,11 +9,15 @@
             link: function (scope, element, attrs) {
                 var el = element[0];
 
-                scope.panZoom = svgPanZoomFactory.init(el, {
-                    minZoom: 1,
-                    maxZoom: 3,
+                var opts = {
                     mouseWheelZoomEnabled: false
-                });
+                };
+                var attrOpts = scope.$eval(attrs.svgPanZoom);
+                if (angular.isObject(attrOpts)) {
+                    angular.extend(opts, attrOpts);
+                }
+
+                scope.panZoom = svgPanZoomFactory.init(el, opts);
 
                 var viewport = svgPanZoomFactory.viewport();
                 var $viewport = angular.element(viewport);

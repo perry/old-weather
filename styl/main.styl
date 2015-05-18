@@ -54,6 +54,16 @@ img
         bottom: 35px
         right: 15px
 
+    .input-area
+        width: 100%
+        position: absolute
+        left: 0
+        padding: 0 15px
+        transform: translateY(15px);
+        > div
+            padding: 25px
+            background: #fff
+
 .log
     background: grey
     max-width: 100%
@@ -76,3 +86,55 @@ img
 .questions-panel
     &.animated.questions-complete
         animation-duration: 0
+
+[ships-list]
+    margin: 0 -5px
+    .grid-sizer,
+    .item
+        width: 25%
+        @media screen and (max-width: 1200px)
+            width: 33%
+        @media screen and (max-width: 950px)
+            width: 50%
+        @media screen and (max-width: 700px)
+            width: 100%
+    .item
+        background-size: cover
+        background-position: center center
+        position: relative
+        border: 5px solid #fff
+        display: block
+        height: 250px
+        overflow: hidden
+        .cover,
+        .gradient
+            position: absolute
+            z-index: 1
+            top: 0
+            left: 0
+            width: 100%
+            height: 100%
+            display: block
+        .cover
+            background-color: rgba(38,38,38,0.25)
+            transition: background 150ms linear
+        &:hover
+            .cover
+                background-color: rgba(38,38,38,0.75)
+        .gradient
+            background-image: linear-gradient(top, rgba(#333, 0.8), rgba(#333, 0))
+        .content
+            text-align: center
+            position: absolute
+            z-index: 2
+            top: 0
+            left: 0
+            width: 100%
+            height: 100%
+            color: #fff
+            h3
+                color: #fff
+        .buttons
+            position: absolute
+            bottom: 10px
+            width: 100%

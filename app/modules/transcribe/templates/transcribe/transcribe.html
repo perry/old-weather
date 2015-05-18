@@ -1,9 +1,13 @@
-<div class="row">
+<div class="row" ng-if="subject === null">
+    <p>There aren't any subjects to transcribe on this ship.</p>
+</div>
+
+<div class="row" ng-if="subject !== null">
     <div class="transcribe-col col-sm-3 col-md-2 pull-right">
         <div
             class="panel panel-default questions-panel animated"
-            transcribe-questions="subject.questions"
-            ng-show="!questionsComplete && subject.questions && !isLoading"
+            transcribe-questions="questions"
+            ng-show="!questionsComplete && questions && !isLoading"
             ng-class="{
                 'isLoading': isLoading,
                 'fadeIn': !isLoading,
@@ -56,15 +60,14 @@
                     >
                         <g class="image">
                             <image
-                                ng-href="{{ trustedSubjectImage }}"
-                                xlink:href=""
+                                xlink:href="{{ trustedSubjectImage }}"
                                 ng-load="subjectLoaded(); svg.reset();"
                                 width="1300"
                                 height="1893"
                             ></image>
                         </g>
 
-                        <g annotations></g>
+                        <g annotations ng-if="!isLoading"></g>
                     </g>
                 </g>
             </svg>
