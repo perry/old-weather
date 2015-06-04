@@ -5,7 +5,7 @@
         <div class="grid-sizer"></div>
         <div
             class="item"
-            ng-repeat="ship in ships | limitTo:20 | orderBy:columnSort.key:columnSort.reverse"
+            ng-repeat="(key, ship) in ships track by key | limitTo:20 | orderBy:columnSort.key:columnSort.reverse"
             style="background-image: url('{{ ::images[$index] }}')"
             ng-init="ship.hover = false"
             ng-mouseenter="ship.hover = true"

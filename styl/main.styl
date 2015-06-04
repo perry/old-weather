@@ -17,6 +17,9 @@ img
 .container-fluid
     width: 100%
 
+.glyphicon.mirror
+    transform: scaleX(-1)
+
 #site-main
     padding-bottom: 100px
     flex: 1
@@ -48,6 +51,27 @@ img
     font-size: 0
     overflow: hidden
 
+    .guides
+        pointer-events: none
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height 100%
+        &:before,
+        &:after
+            content: ''
+            display: block
+            background: rgba(#000, 0.8)
+            position: absolute
+        &:before
+            height: 100%
+            width: 10px
+            left: 20%
+        &:after
+            width: 100%
+            height: 10px
+            top: 20%
 
     .log-controls
         position: absolute
@@ -79,9 +103,11 @@ img
     rect
         cursor: pointer
         fill: rgba(#000, 0.3)
-    &:nth-of-type(2n+1)
-        rect
-            fill: rgba(#0000FF, 0.4)
+        stroke-width: 1
+        stroke: #000
+    // &:nth-of-type(2n+1)
+    //     rect
+    //         fill: rgba(#0000FF, 0.4)
 
 .questions-panel
     &.animated.questions-complete

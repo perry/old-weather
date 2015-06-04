@@ -22,6 +22,8 @@
         var bindMouseEvents = function (data) {
             if (angular.isDefined(data)) {
                 self.data = data;
+            } else {
+                self.data = null;
             }
 
             self.$viewport.on('mousedown', startDraw);
@@ -46,7 +48,7 @@
         var startDraw = function (event) {
             // Only start drawing if panZoom is disabled.
             if (!svgPanZoomFactory.status()) {
-                event.stopImmediatePropagation();
+                event.preventDefault();
 
                 if (self.drawing) {
                     draw(event);
@@ -58,9 +60,10 @@
                         width: 0,
                         height: 0,
                         timestamp: new Date().getTime(),
-                        _id: _.uniqueId() + new Date().getTime()
+                        _id: _.uniqueId() + new Date().getTime(),
+                        rotation: svgPanZoomFactory.getRotation()
                     }, self.data);
-                    $rootScope.$broadcast('svgDrawing:add', self.tempRect);
+                    $rootScope.$broadcast('svgDrawing:add', self.tempRect, self.data);
                     self.$viewport.on('mousemove', draw);
                 }
             }
@@ -72,17 +75,16 @@
             self.tempRect.y = (self.tempOrigin.y < newPoint.y) ? self.tempOrigin.y : newPoint.y;
             self.tempRect.width = Math.abs(newPoint.x - self.tempOrigin.x);
             self.tempRect.height = Math.abs(newPoint.y - self.tempOrigin.y);
-            $rootScope.$broadcast('svgDrawing:update', self.tempRect);
+            $rootScope.$broadcast('svgDrawing:update', self.tempRect, self.data);
         };
 
         var finishDraw = function (event) {
             var newPoint = svgService.getPoint(self.el, self.$viewport, event);
             if (self.tempOrigin && !(newPoint.x === self.tempOrigin.x && newPoint.y === self.tempOrigin.y)) {
-                $rootScope.$broadcast('svgDrawing:finish', angular.extend({}, self.tempRect));
+                $rootScope.$broadcast('svgDrawing:finish', angular.extend({}, self.tempRect), self.data);
                 self.drawing = false;
                 self.tempRect = null;
                 self.tempOrigin = null;
-                self.data = null;
             } else {
                 // TODO: Add a marker here.
                 return;

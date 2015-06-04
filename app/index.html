@@ -30,20 +30,19 @@
 
                     <div class="collapse navbar-collapse navbar-left" collapse="isCollapsed">
                         <ul class="nav navbar-nav">
-                            <!-- <li ui-sref-active="active"><a ui-sref="transcribe">Transcribe</a></li> -->
                             <li ui-sref-active="active"><a ui-sref="ships-list">Ships</a></li>
-                            <!-- <li ui-sref-active="active" dropdown> -->
-                            <!--     <a href="#" class="dropdown-toggle" dropdown-toggle> -->
-                            <!--         About <span class="caret"></span> -->
-                            <!--     </a> -->
-                            <!--     <ul class="dropdown-menu" role="menu"> -->
-                            <!--         <li ui-sref-active="active"><a ui-sref="about.partners">Partners</a></li> -->
-                            <!--         <li ui-sref-active="active"><a ui-sref="about.team">Team</a></li> -->
-                            <!--         <li ui-sref-active="active"><a ui-sref="about.why">Why Scientists Need You</a></li> -->
-                            <!--         <li ui-sref-active="active"><a ui-sref="about.faq">Frequently Asked Questions</a></li> -->
-                            <!--     </ul> -->
-                            <!-- </li> -->
-                            <!-- <li><a href="http://blog.oldweather.org">Blog</a></li> -->
+                            <li ui-sref-active="active" dropdown>
+                               <a href="#" class="dropdown-toggle" dropdown-toggle>
+                                   About <span class="caret"></span>
+                               </a>
+                               <ul class="dropdown-menu" role="menu">
+                                   <li ui-sref-active="active"><a ui-sref="about.partners">Partners</a></li>
+                                   <li ui-sref-active="active"><a ui-sref="about.team">Team</a></li>
+                                   <li ui-sref-active="active"><a ui-sref="about.why">Why Scientists Need You</a></li>
+                                   <li ui-sref-active="active"><a ui-sref="about.faq">Frequently Asked Questions</a></li>
+                               </ul>
+                           </li>
+                           <li><a href="http://blog.oldweather.org">Blog</a></li>
                         </ul>
                     </div>
 
@@ -65,7 +64,7 @@
                         </li>
 
                         <ul ng-show="user">
-                            <p class="navbar-text">Signed in as {{ user.display_name }}</p>
+                            <p class="navbar-text" ng-bind="'Signed in as ' + user.display_name"></p>
                             <ul class="nav navbar-nav">
                                 <li><button class="btn btn-link navbar-btn" ng-click="signOut()">Log out</button></li>
                             </ul>
@@ -121,7 +120,6 @@
         <script src="bower_components/ng-load/ng-load.js"></script>
         <script src="bower_components/spin.js/spin.js"></script>
         <script src="bower_components/angular-spinner/angular-spinner.js"></script>
-        <script src="bower_components/svg.js/dist/svg.js"></script>
         <script src="bower_components/svg-pan-zoom/dist/svg-pan-zoom.js"></script>
         <script src="bower_components/packery/dist/packery.pkgd.js"></script>
 

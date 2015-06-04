@@ -91,8 +91,8 @@
                     },
                     {
                         id: 1,
-                        title: 'Draw rectangles around each header row in the tabular data.',
-                        tool: 'weather',
+                        title: 'Draw rectangles around each header cell in the tabular data.',
+                        tool: 'header',
                         actions: [
                             {
                                 title: 'Save',
@@ -102,8 +102,8 @@
                     },
                     {
                         id: 2,
-                        title: 'Draw rectangles around all other rows in the tabular data.',
-                        tool: 'weather',
+                        title: 'Mark the height of each row in the table.',
+                        tool: 'row',
                         actions: [
                             {
                                 title: 'Save'
@@ -113,24 +113,6 @@
                 ]
             }
         ];
-    };
-
-    var subjectResponse = function () {
-        var imageID = imageIDs[Math.floor(Math.random()*imageIDs.length)];
-
-        return {
-            'subjects': [
-                {
-                    'zooniverse_id': imageID,
-                    'locations': [
-                        {
-                            'image/jpeg': 'http://oldweather.s3.amazonaws.com/ow3/final/USRC Bear/vol097/' + imageID + '.jpg'
-                        }
-                    ],
-                    'questions': questions()
-                }
-            ]
-        };
     };
 
     var module = angular.module('transcribe', [
@@ -145,7 +127,7 @@
     module.config(function ($stateProvider) {
         $stateProvider
             .state('transcribe', {
-                url: '/transcribe/:subject_set_id/',
+                url: '/annotate/:subject_set_id/',
                 views: {
                     main: {
                         controller: 'transcribeCtrl',
@@ -155,13 +137,21 @@
             });
     });
 
-    module.directive('transcribeTools', function (svgPanZoomFactory, svgDrawingFactory) {
+    module.directive('transcribeTools', function (svgPanZoomFactory, svgDrawingFactory, toolFactory) {
         return {
             restrict: 'A',
             templateUrl: 'templates/transcribe/_tools.html',
             scope: true,
             link: function (scope, element, attrs) {
                 scope.tools = [
+                    {
+                        id: 'header',
+                        title: 'Table header'
+                    },
+                    {
+                        id: 'row',
+                        title: 'Table row'
+                    },
                     {
                         id: 'date',
                         title: 'Date',
@@ -233,11 +223,10 @@
 
                     // Toggle pan zoom based on the active tool.
                     if (_.isNull(scope.$parent.activeTool)) {
-                        svgPanZoomFactory.enable();
-                        svgDrawingFactory.unBindMouseEvents();
+                        toolFactory.disable();
                     } else {
-                        svgPanZoomFactory.disable();
-                        svgDrawingFactory.bindMouseEvents({type: thisTool.id});
+                        console.log(thisTool.id);
+                        toolFactory.enable(thisTool.id)
                     }
                 };
 
@@ -413,6 +402,8 @@
     module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, subjectFactory, svgPanZoomFactory) {
 
         $scope.loadSubject = function () {
+            console.log($scope);
+            $rootScope.$broadcast('transcribe:saveSubject', $scope.subject);
             $rootScope.$broadcast('transcribe:loadingSubject');
 
             $scope.subject = undefined;
@@ -430,6 +421,7 @@
                             // TODO: change this. We're cache busting the image.onload event.
                             subjectImage += '?' + new Date().getTime();
                             subjectImage = 'http://oldweather.s3.amazonaws.com/ow3/final/USRC%20Bear/vol097/vol097_159_0.jpg?' + new Date().getTime();
+                            // subjectImage = 'http://www.cosmik.com/oldweather/charleston_-_1945_july_12_-_b1956_027.jpg';
                             $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
 
                             $rootScope.$broadcast('transcribe:loadedSubject');
@@ -454,7 +446,16 @@
         $scope.$on('transcribe:questionsComplete', function () {
             $scope.questionsComplete = true;
         });
+
+        $scope.clearAnnotations = function () {
+            if (confirm('Remove all annotations?')) {
+                $rootScope.$broadcast('transcribe:clearAnnotations')
+            }
+        }
+
+        $scope.toggleGuides = function () {
+            $scope.showGuides = !$scope.showGuides;
+        };
     });
 
 }(window.angular, window._));
-

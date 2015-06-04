@@ -3,7 +3,7 @@
 
     var module = angular.module('svg');
 
-    module.directive('svgPanZoom', function (svgPanZoomFactory, svgDrawingFactory) {
+    module.directive('svgPanZoom', function ($timeout, svgPanZoomFactory, svgDrawingFactory) {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -31,6 +31,40 @@
                 scope.hasMouseEvents = function () {
                     return svgDrawingFactory.hasMouseEvents();
                 };
+
+                var longRotation = false;
+                var longRotationTimeout = undefined;
+                scope.rotation = 0;
+
+                scope.rotate = function (degrees) {
+                    scope.rotation = svgPanZoomFactory.rotate(degrees);
+                };
+
+                scope.startLongRotation = function (degrees) {
+                    var increment = function (d) {
+                        if (longRotation) {
+                            scope.rotate(d);
+                            $timeout(function () {
+                                increment(d);
+                            }, 10);
+                        }
+                    };
+
+                    longRotationTimeout = $timeout(function () {
+                        longRotation = true;
+                        increment(degrees);
+                    }, 300);
+                };
+
+                scope.stopLongRotation = function () {
+                    $timeout.cancel(longRotationTimeout);
+                    longRotation = false;
+                };
+
+                scope.reset = function () {
+                    scope.panZoom.reset();
+                    scope.rotate(0);
+                }
             }
         };
     });

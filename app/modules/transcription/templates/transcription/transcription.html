@@ -1,5 +1,8 @@
 <div>
-    <div ng-show="!annotations && !isLoading">Nothing here</div>
+    <div ng-show="!annotations && !isLoading">
+        <p>There isn't anything to transcribe on this ship. Help <a ui-sref="transcribe({subject_set_id: ship.id})">annotate logs on this ship</a> or try <a ui-sref="ships-list">another ship</a>?</p>
+    </div>
+
     <div class="log-container" ng-show="annotations && !isLoading">
         <span
         us-spinner
@@ -13,7 +16,8 @@
             ></span>
 
 
-    <svg class="log" masked="annotations" svg-pan-zoom="{'fit': false}" ng-class="{'annotating': isAnnotating}">
+{{ annotations[0] }}
+    <svg class="log" masked="annotations" svg-pan-zoom="{'fit': false, 'maxZoom': 5}" ng-class="{'annotating': isAnnotating}">
         <g class="pan-zoom">
             <g
                 class="animated image-wrapper"
@@ -23,6 +27,7 @@
                 'fadeIn': !isLoading,
                 'fadeOut': isLoading
                 }"
+                ng-attr-transform="{{ 'rotate(' + annotations[0].rotation + ')'}}"
             >
                 <g class="image">
                     <image
@@ -33,12 +38,22 @@
                     ></image>
                 </g>
 
-                <rect width="1300" height="1893" fill="rgba(0, 0, 0, 0.7)" mask="url(#hole)"></rect>
+                <rect class="masked-rect" width="1300" height="1893" fill="rgba(0, 0, 0, 0.7)" mask="url(#hole)"></rect>
 
                 <mask id="hole">
                     <rect x="0" y="0" width="1300" height="1893" fill="white"></rect>
-                    <g class="annotation" ng-repeat="a in annotations" ng-show="$first">
-                        <rect ng-attr-width="{{ a.width }}" ng-attr-height="{{ a.height }}" ng-attr-x="{{ a.x }}" ng-attr-y="{{ a.y }}" type="{{ a.type }}" fill="black"></rect>
+                    <g class="annotation" ng-repeat="a in annotations" ng-show="$first || showAllAnnotations">
+                        <rect
+                        ng-attr-transform="{{ 'rotate(' + (a.rotation * -1) + ')'}}"
+                            ng-attr-width="{{ a.width }}"
+                            ng-attr-height="{{ a.height }}"
+                            ng-attr-x="{{ a.x }}"
+                            ng-attr-y="{{ a.y }}"
+                            type="{{ a.type }}"
+                            fill="black"
+                            ng-click="foo($index)"
+                        ></rect>
+
                     </g>
                 </mask>
 
@@ -46,14 +61,14 @@
         </g>
     </svg>
 
-    <div class="input-area" ng-style="{'top': uiPositionTop + 'px'}">
+    <div class="input-area" ng-show="!showAllAnnotations" ng-style="{'top': uiPositionTop + 'px'}">
         <div>
             <form ng-submit="$event.preventDefault(); nextAnnotation()">
-                <h1>{{ annotations[0].timestamp }}
                 <input class="form-control input-lg" type="text" ng-model="annotationContent" autofocus>
-                <button ng-click="prevAnnotation()" class="btn btn-default">Prev</button>
-                <button ng-click="nextAnnotation()" class="btn btn-default">Next</button>
             </form>
+            <button ng-click="prevAnnotation()" class="btn btn-default">Prev</button>
+            <button ng-click="toggleAllAnnotations()" class="btn btn-default">Show all</button>
+            <button ng-click="nextAnnotation()" class="btn btn-default">Next</button>
         </div>
     </div>
 
@@ -76,7 +91,7 @@
                 <button class="btn btn-default" ng-click="panZoom.zoomOut()">
                     <span class="glyphicon glyphicon-zoom-out"></span>
                 </button>
-                <button class="btn btn-default" ng-click="panZoom.reset()">
+                <button class="btn btn-default" ng-click="panZoom.fit(); panZoom.center()">
                     <span class="glyphicon glyphicon-resize-full"></span>
                 </button>
             </div>

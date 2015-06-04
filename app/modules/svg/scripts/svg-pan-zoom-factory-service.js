@@ -12,10 +12,14 @@
                 self.el = el;
                 self.opts = opts;
                 self.svgInstance = svgPanZoom(self.el, self.opts);
+                self.rotation = 0;
                 return self.svgInstance;
             },
             viewport: function () {
                 return self.el.getElementsByClassName('svg-pan-zoom_viewport')[0];
+            },
+            rotateContainer: function () {
+                return self.el.getElementsByClassName('rotate-container')[0];
             },
             status: function () {
                 return self.svgInstance.isZoomEnabled() || self.svgInstance.isPanEnabled();
@@ -41,6 +45,24 @@
                 $rootScope.$broadcast('transcribe:svgPanZoomToggle');
 
                 return method;
+            },
+            getRotation: function () {
+                return self.rotation;
+            },
+            rotate: function (degrees) {
+                if (_.isString(degrees)) {
+                    var operand = degrees.charAt(0);
+                    var value = parseFloat(degrees.substring(1));
+                    if (operand === '+') {
+                        self.rotation += value;
+                    } else if (operand === '-') {
+                        self.rotation -= value;
+                    }
+                } else if (_.isNumber(degrees)) {
+                    self.rotation = degrees;
+                }
+                
+                return self.rotation;
             },
             zoomToRect: function (rect) {
                 var sizes = self.svgInstance.getSizes();

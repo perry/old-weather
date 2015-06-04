@@ -71,4 +71,3 @@
     });
 
 }(window.angular, window.zooAuth));
-
