@@ -1,1 +1,0 @@
-# Old Weather [![Build Status](https://travis-ci.org/perry/old-weather.svg?branch=master)](https://travis-ci.org/perry/old-weather) [![codecov.io](https://codecov.io/github/perry/old-weather/coverage.svg?branch=master)](https://codecov.io/github/perry/old-weather?branch=master)
