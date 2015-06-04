@@ -29,7 +29,6 @@
 
         var annotations_list = localStorageService.get('annotations_list');
         var annotations_for_subject_set = _.where(annotations_list, {subject_set_id: subject_set_id});
-        console.log(annotations_list);
 
         $scope.showAllAnnotations = false;
 
@@ -48,7 +47,7 @@
             } else {
                 $scope.annotations = null;
             }
-        }
+        };
 
         load_next();
 
@@ -57,31 +56,31 @@
                 var annotation = $scope.annotations[0];
                 var obj = svgPanZoomFactory.zoomToRect(annotation);
 
-                $scope.uiPositionTop = (obj.sizes.height / 2) + ((annotation.height * obj.sizes.realZoom) / 2)
+                $scope.uiPositionTop = (obj.sizes.height / 2) + ((annotation.height * obj.sizes.realZoom) / 2);
                 $scope.annotationContent = $scope.annotations[0].content;
             }
         }, true);
 
         $scope.prevAnnotation = function () {
             $scope.save();
-            $scope.annotations.unshift($scope.annotations.pop())
-        }
+            $scope.annotations.unshift($scope.annotations.pop());
+        };
 
         $scope.nextAnnotation = function () {
             $scope.save();
-            $scope.annotations.push($scope.annotations.shift())
-        }
+            $scope.annotations.push($scope.annotations.shift());
+        };
 
         $scope.save = function () {
             $scope.annotations[0].content = $scope.annotationContent;
             $scope.annotationContent = null;
-        }
+        };
 
         $scope.toggleAllAnnotations = function () {
             $scope.showAllAnnotations = true;
             $scope.panZoom.fit();
             $scope.panZoom.center();
-        }
+        };
     });
 
 }(window.angular, window._));

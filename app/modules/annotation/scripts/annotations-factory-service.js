@@ -1,4 +1,4 @@
-(function (angular) {
+(function (angular, _) {
     'use strict';
 
     var module = angular.module('annotation');
@@ -44,11 +44,11 @@
                             obj.links.workflow = workflow.id;
                             obj.metadata.workflow_version = workflow.version;
 
-                            self.classification = zooAPI.type('classifications').create(obj)
+                            self.classification = zooAPI.type('classifications').create(obj);
                         });
                 });
 
-        }
+        };
 
         var storeData = function (data, subject) {
             var id = subject.id;
@@ -153,4 +153,4 @@
         return obj;
     });
 
-}(window.angular));
+}(window.angular, window._));

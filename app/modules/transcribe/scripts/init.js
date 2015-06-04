@@ -12,7 +12,7 @@
     };
 
     // var imageIDs = ['vol097_137_0','vol097_137_1','vol097_138_0','vol097_138_1','vol097_139_0','vol097_139_1','vol097_140_0','vol097_140_1','vol097_141_0','vol097_141_1','vol097_142_0','vol097_142_1','vol097_143_0','vol097_143_1','vol097_144_0','vol097_144_1','vol097_145_0','vol097_145_1','vol097_146_0','vol097_146_1','vol097_147_0','vol097_147_1','vol097_148_0','vol097_148_1','vol097_149_0','vol097_149_1','vol097_150_0','vol097_150_1','vol097_151_0','vol097_151_1','vol097_152_0','vol097_152_1','vol097_153_0','vol097_153_1','vol097_154_0','vol097_154_1','vol097_155_0','vol097_155_1','vol097_156_0','vol097_156_1','vol097_157_0','vol097_157_1','vol097_158_0','vol097_158_1','vol097_159_0','vol097_159_1','vol097_160_0','vol097_160_1','vol097_161_0','vol097_161_1','vol097_162_0','vol097_162_1','vol097_163_0','vol097_163_1','vol097_164_0','vol097_164_1','vol097_165_0','vol097_165_1','vol097_166_0','vol097_166_1','vol097_167_0','vol097_167_1','vol097_168_0','vol097_168_1','vol097_169_0','vol097_169_1','vol097_170_0','vol097_170_1','vol097_171_0','vol097_171_1','vol097_172_0','vol097_172_1','vol097_173_0','vol097_173_1','vol097_174_0','vol097_174_1','vol097_175_0','vol097_175_1','vol097_176_0','vol097_176_1','vol097_177_0','vol097_177_1','vol097_178_0','vol097_178_1','vol097_179_0','vol097_179_1','vol097_180_0','vol097_180_1','vol097_181_0','vol097_181_1','vol097_182_0','vol097_182_1','vol097_183_0','vol097_183_1','vol097_184_0','vol097_184_1','vol097_185_0','vol097_185_1','vol097_186_0','vol097_186_1','vol097_187_0','vol097_187_1','vol097_188_0','vol097_188_1'];
-    var imageIDs = ['vol097_159_0', 'vol097_137_1','vol097_138_0'];
+    // var imageIDs = ['vol097_159_0', 'vol097_137_1','vol097_138_0'];
 
     var questions = function () {
         return [
@@ -225,8 +225,7 @@
                     if (_.isNull(scope.$parent.activeTool)) {
                         toolFactory.disable();
                     } else {
-                        console.log(thisTool.id);
-                        toolFactory.enable(thisTool.id)
+                        toolFactory.enable(thisTool.id);
                     }
                 };
 
@@ -331,10 +330,10 @@
         var _loadNewSubjects = function (subject_set_id) {
             var deferred = $q.defer();
 
-            var subjectSetUpdated = localStorageService.get('subject_set_updated_' + subject_set_id);
-            if (!subjectSetUpdated) {
-                subjectSetUpdated = localStorageService.get
-            }
+            // var subjectSetUpdated = localStorageService.get('subject_set_updated_' + subject_set_id);
+            // if (!subjectSetUpdated) {
+                // subjectSetUpdated = localStorageService.get
+            // }
 
             var lastPage = localStorageService.get('subject_set_page_' + subject_set_id);
             if (!lastPage) {
@@ -402,7 +401,6 @@
     module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, subjectFactory, svgPanZoomFactory) {
 
         $scope.loadSubject = function () {
-            console.log($scope);
             $rootScope.$broadcast('transcribe:saveSubject', $scope.subject);
             $rootScope.$broadcast('transcribe:loadingSubject');
 
@@ -448,10 +446,10 @@
         });
 
         $scope.clearAnnotations = function () {
-            if (confirm('Remove all annotations?')) {
-                $rootScope.$broadcast('transcribe:clearAnnotations')
+            if (window.confirm('Remove all annotations?')) {
+                $rootScope.$broadcast('transcribe:clearAnnotations');
             }
-        }
+        };
 
         $scope.toggleGuides = function () {
             $scope.showGuides = !$scope.showGuides;

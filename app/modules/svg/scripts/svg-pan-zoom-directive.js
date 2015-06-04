@@ -33,7 +33,7 @@
                 };
 
                 var longRotation = false;
-                var longRotationTimeout = undefined;
+                var longRotationTimeout;
                 scope.rotation = 0;
 
                 scope.rotate = function (degrees) {
@@ -64,7 +64,7 @@
                 scope.reset = function () {
                     scope.panZoom.reset();
                     scope.rotate(0);
-                }
+                };
             }
         };
     });

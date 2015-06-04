@@ -28,7 +28,7 @@
             signIn: signIn,
             signOut: signOut,
             getUser: function () { return localStorageService.get('user'); }
-        }
+        };
     });
 
     module.controller('HeaderUserCtrl', function ($timeout, $scope, authFactory) {

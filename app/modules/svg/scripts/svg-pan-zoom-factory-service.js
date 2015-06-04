@@ -1,4 +1,4 @@
-(function (angular, svgPanZoom) {
+(function (angular, _, svgPanZoom) {
     'use strict';
 
     var module = angular.module('svg');
@@ -61,7 +61,7 @@
                 } else if (_.isNumber(degrees)) {
                     self.rotation = degrees;
                 }
-                
+
                 return self.rotation;
             },
             zoomToRect: function (rect) {
@@ -86,4 +86,4 @@
             }
         };
     });
-}(window.angular, window.svgPanZoom));
+}(window.angular, window._, window.svgPanZoom));

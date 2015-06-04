@@ -38,7 +38,7 @@
 
                 var saveAnnotations = function (e, subject) {
                     annotationsFactory.sync();
-                }
+                };
 
                 var createCells = function (row) {
                     var headers = _.where(scope.annotations, {type: 'header'});
@@ -53,7 +53,7 @@
                                 rotation: header.rotation
                             };
 
-                            var existing = _.find(scope.annotations, {x: obj.x, y: obj.y})
+                            var existing = _.find(scope.annotations, {x: obj.x, y: obj.y});
 
                             if (angular.isUndefined(existing)) {
                                 obj._id = _.uniqueId() + new Date().getTime();
@@ -86,7 +86,7 @@
 
                 scope.$on('transcribe:loadedSubject', getAnnotations);
 
-                scope.$on('transcribe:saveSubject', saveAnnotations)
+                scope.$on('transcribe:saveSubject', saveAnnotations);
 
                 scope.$on('svgDrawing:add', storeAnnotations);
 
@@ -100,7 +100,7 @@
 
                 scope.$on('svgDrawing:finish', function (e, rect, data) {
                     if (data.type === 'row') {
-                        createCells(rect)
+                        createCells(rect);
                     }
                 });
 
@@ -114,11 +114,10 @@
             link: function (scope, element, attrs) {
                 element.bind('click', function () {
                     var annotation = $parse(attrs.annotation)(scope);
-                    console.log(annotation);
                     _.remove(scope.$parent.annotations, annotation);
                 });
             }
-        }
-    })
+        };
+    });
 
 }(window.angular, window._));

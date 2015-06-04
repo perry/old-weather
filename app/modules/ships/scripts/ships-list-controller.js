@@ -1,4 +1,4 @@
-(function (angular) {
+(function (angular, Packery) {
     'use strict';
 
     var module = angular.module('ships');
@@ -57,7 +57,6 @@
                 }, function (response) {
                     $scope.loading = false;
                     $scope.ships = response;
-                    console.log($scope.ships.length)
                 })
                 ['finally'](function () {
                     $scope.loading = false;
@@ -84,4 +83,4 @@
             }
         };
     });
-}(window.angular));
+}(window.angular, window.Packery));
