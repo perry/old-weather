@@ -1,5 +1,25 @@
 @import 'nib'
 
+// Colour definitions
+
+// warming orange
+$orange = #ff8400
+
+// maritime red
+$red = #e15639
+
+// dark teal
+$dark-teal = #404040
+
+// deep teal
+$deep-teal = #00494d
+
+// lighter deep teal
+$deep-teal-lt = #00797f
+
+// shallow teal
+$shallow-teal = #00b5be
+
 html
     overflow-y: scroll
 
@@ -26,6 +46,29 @@ img
 
 #site-footer
     padding-bottom: 50px
+    .row
+        &.top
+            background: $deep-teal-lt
+            color: $shallow-teal
+        &.middle
+            background: $deep-teal
+        &.bottom
+            background: #00181a
+            font-size: 12px
+            color: #808080
+            a
+                color: #808080
+    .zooniverse-logo
+        display: block
+        width: 60px
+        margin: 0 auto
+        fill: $shallow-teal
+
+    .zooniverse-projects-list
+        h4,
+        li a
+            font-size: 12px
+            color: $shallow-teal
 
 .transcribe-col
     $animation-duration = 1000ms

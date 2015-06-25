@@ -78,8 +78,8 @@
 
         <footer id="site-footer" >
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-xs-4 col-md-3 col-lg-2">
+                <div class="row top">
+                    <div class="col-xs-12">
                         <svg class="zooniverse-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="-45.6 101 703.2 590.1" xml:space="preserve">
                             <g>
                                 <path d="M306 120.6c152.1 0 275.4 123.3 275.4 275.4S458.1 671.4 306 671.4S30.6 548.1 30.6 396S153.9 120.6 306 120.6z M306 212.4 c-101.4 0-183.6 82.2-183.6 183.6S204.6 579.6 306 579.6S489.6 497.4 489.6 396S407.4 212.4 306 212.4z"/>
@@ -89,22 +89,28 @@
                         </svg>
                     </div>
 
-                    <div class="col-xs-8 col-md-9 col-lg-10">
+                    <div class="col-xs-12">
                         <p>The Zooniverse is a collection of web-based citizen science projects that use the efforts of volunteers to help researchers deal with the flood of data that confronts them.</p>
-                        <div class="row" zooniverse-projects-list>
-                            <div class="col-xs-12 col-sm-{{ 12 / data.length }}" ng-repeat="category in ::data" ng-if="!loading && data">
-                                <h4 ng-bind="category.category"></h4>
-                                <ul class="list-unstyled">
-                                    <li ng-repeat="project in category.projects">
-                                        <a ng-href="{{ project.url }}" ng-bind="project.name"></a>
-                                    </li>
-                                </ul>
-                            </div>
+                    </div>
+                </div>
+
+                <div class="row middle">
+                    <div class="zooniverse-projects-list" zooniverse-projects-list>
+                        <div class="col-xs-12 col-sm-{{ 12 / data.length }}" ng-repeat="category in ::data" ng-if="!loading && data">
+                            <h4 ng-bind="category.category"></h4>
+                            <ul class="list-unstyled">
+                                <li ng-repeat="project in category.projects">
+                                    <a ng-href="{{ project.url }}" ng-bind="project.name"></a>
+                                </li>
+                            </ul>
                         </div>
+                    </div>
+                </div>
 
+                <div class="row bottom">
+                    <div class="col-xs-12">
+                        <p><strong>Zoonivese.org</strong> The universe is too big to explore without you</p>
                         <p><a href="https://www.zooniverse.org/privacy">Privacy policy</a> | <a href="https://github.com/zooniverse">Source & bugs</a></p>
-
-                        <p>&copy; 2015 Zooniverse. This project is part of the JISC’s Developing Community Content. <a ui-sref="about.partners">Learn more</a>.</p>
                     </div>
                 </div>
             </div>
