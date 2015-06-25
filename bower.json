@@ -15,7 +15,6 @@
     "angular-animate": "1.4.0",
     "angular-ui-router": "0.2.15",
     "lodash": "3.9.3",
-    "bootswatch": "3.3.2",
     "angular-bootstrap": "0.12.1",
     "svg-pan-zoom": "3.1.3",
     "ng-load": "1.0.1",
@@ -25,7 +24,8 @@
     "panoptes-javascript-lib": "0.0.2",
     "angular-local-storage": "0.2.2",
     "masonry": "3.3.0",
-    "packery": "1.4.1"
+    "packery": "1.4.1",
+    "bootstrap": "3.3.5"
   },
   "resolutions": {
     "angular": "1.4.0",
