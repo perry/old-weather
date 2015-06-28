@@ -14,107 +14,6 @@
     // var imageIDs = ['vol097_137_0','vol097_137_1','vol097_138_0','vol097_138_1','vol097_139_0','vol097_139_1','vol097_140_0','vol097_140_1','vol097_141_0','vol097_141_1','vol097_142_0','vol097_142_1','vol097_143_0','vol097_143_1','vol097_144_0','vol097_144_1','vol097_145_0','vol097_145_1','vol097_146_0','vol097_146_1','vol097_147_0','vol097_147_1','vol097_148_0','vol097_148_1','vol097_149_0','vol097_149_1','vol097_150_0','vol097_150_1','vol097_151_0','vol097_151_1','vol097_152_0','vol097_152_1','vol097_153_0','vol097_153_1','vol097_154_0','vol097_154_1','vol097_155_0','vol097_155_1','vol097_156_0','vol097_156_1','vol097_157_0','vol097_157_1','vol097_158_0','vol097_158_1','vol097_159_0','vol097_159_1','vol097_160_0','vol097_160_1','vol097_161_0','vol097_161_1','vol097_162_0','vol097_162_1','vol097_163_0','vol097_163_1','vol097_164_0','vol097_164_1','vol097_165_0','vol097_165_1','vol097_166_0','vol097_166_1','vol097_167_0','vol097_167_1','vol097_168_0','vol097_168_1','vol097_169_0','vol097_169_1','vol097_170_0','vol097_170_1','vol097_171_0','vol097_171_1','vol097_172_0','vol097_172_1','vol097_173_0','vol097_173_1','vol097_174_0','vol097_174_1','vol097_175_0','vol097_175_1','vol097_176_0','vol097_176_1','vol097_177_0','vol097_177_1','vol097_178_0','vol097_178_1','vol097_179_0','vol097_179_1','vol097_180_0','vol097_180_1','vol097_181_0','vol097_181_1','vol097_182_0','vol097_182_1','vol097_183_0','vol097_183_1','vol097_184_0','vol097_184_1','vol097_185_0','vol097_185_1','vol097_186_0','vol097_186_1','vol097_187_0','vol097_187_1','vol097_188_0','vol097_188_1'];
     // var imageIDs = ['vol097_159_0', 'vol097_137_1','vol097_138_0'];
 
-    var questions = function () {
-        return [
-            {
-                hashKey: Math.random(),
-                id: 0,
-                steps: [
-                    {
-                        id: 0,
-                        title: 'Are there any dates written on the page?',
-                        actions: [
-                            {
-                                title: 'Yes',
-                                value: 1
-                            },
-                            {
-                                title: 'No'
-                            }
-                        ]
-                    },
-                    {
-                        id: 1,
-                        title: 'Draw rectangles around each date you see on the page.',
-                        tool: 'date',
-                        actions: [
-                            {
-                                title: 'Save'
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 1,
-                steps: [
-                    {
-                        id: 0,
-                        title: 'Are there any latitudes or longitudes observed at noon on the page?',
-                        actions: [
-                            {
-                                title: 'Yes',
-                                value: 1
-                            },
-                            {
-                                title: 'No'
-                            }
-                        ]
-                    },
-                    {
-                        id: 1,
-                        title: 'Draw rectangles around each latitude or longitude you see on the page.',
-                        tool: 'location',
-                        actions: [
-                            {
-                                title: 'Save'
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 2,
-                steps: [
-                    {
-                        id: 0,
-                        title: 'Is there any tabular weather data written on the page?',
-                        actions: [
-                            {
-                                title: 'Yes',
-                                value: 1
-                            },
-                            {
-                                title: 'No'
-                            }
-                        ]
-                    },
-                    {
-                        id: 1,
-                        title: 'Draw rectangles around each header cell in the tabular data.',
-                        tool: 'header',
-                        actions: [
-                            {
-                                title: 'Save',
-                                value: 2
-                            }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        title: 'Mark the height of each row in the table.',
-                        tool: 'row',
-                        actions: [
-                            {
-                                title: 'Save'
-                            }
-                        ]
-                    }
-                ]
-            }
-        ];
-    };
-
     var module = angular.module('transcribe', [
         'ngAnimate',
         'ui.router',
@@ -263,47 +162,52 @@
             templateUrl: 'templates/transcribe/_questions.html',
             link: function (scope, element, attrs) {
                 scope.$watch('questions', function () {
-                    if (scope.questions.length > 0) {
-                        scope.activeQuestion = scope.questions[0];
+                    if (scope.questions && scope.questions.tasks) {
+                        scope.tasks = scope.questions.tasks;
+                        scope.activeTask = scope.questions.first_task;
                         scope.questionsCompleted = false;
                     }
                 });
 
-                scope.$watch('activeQuestion', function () {
-                    if (angular.isDefined(scope.activeQuestion)) {
-                        scope.activeStep = scope.activeQuestion.steps[0];
-                    } else {
-                        scope.activeStep = undefined;
-                    }
-                });
-
-                scope.$watch('activeStep', function () {
-                    if (scope.activeStep && angular.isDefined(scope.activeStep.tool)) {
-                        toolFactory.enable(scope.activeStep.tool);
+                scope.$watch('activeTask', function () {
+                    if (scope.activeTask && angular.isDefined(scope.tasks[scope.activeTask].tools)) {
+                        toolFactory.enable(scope.tasks[scope.activeTask].tools[0].label);
                     } else {
                         toolFactory.disable();
                     }
                 });
 
                 scope.confirm = function (value) {
-                    var questionsCount = scope.questions.length;
-                    var activeQuestionIndex = scope.questions.indexOf(scope.activeQuestion);
-
-                    if (angular.isDefined(value)) {
-                        scope.activeStep = _.find(scope.activeQuestion.steps, {id: value});
-                    } else if (activeQuestionIndex < questionsCount - 1) {
-                        scope.activeQuestion = scope.questions[activeQuestionIndex + 1];
+                    if (value && _.isString(value)) {
+                        scope.activeTask = value;
                     } else {
-                        scope.activeQuestion = undefined;
+                        scope.activeTask = undefined;
                         $rootScope.$broadcast('transcribe:questionsComplete');
                     }
                 };
 
                 scope.skipQuestions = function () {
-                    scope.activeQuestion = undefined;
+                    scope.activeTask = undefined;
                     $rootScope.$broadcast('transcribe:questionsComplete');
                 };
             }
+        };
+    });
+
+    module.factory('workflowFactory', function ($q, zooAPI, zooAPISubjectSets, zooAPIWorkflows, localStorageService) {
+        var get = function (subject_set_id) {
+            var deferred = $q.defer();
+            zooAPISubjectSets.get({id: subject_set_id})
+                .then(function (response) {
+                    var workflowID = response[0].links.workflows[0];
+                    zooAPIWorkflows.get(workflowID).then(deferred.resolve, deferred.reject, deferred.notify);
+                });
+
+            return deferred.promise;
+        };
+
+        return {
+            get: get
         };
     });
 
@@ -398,7 +302,8 @@
         };
     });
 
-    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, subjectFactory, svgPanZoomFactory) {
+    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, workflowFactory, subjectFactory, svgPanZoomFactory) {
+        $rootScope.bodyClass = 'annotate';
 
         $scope.loadSubject = function () {
             $rootScope.$broadcast('transcribe:saveSubject', $scope.subject);
@@ -406,8 +311,13 @@
 
             $scope.subject = undefined;
             $scope.isLoading = true;
-            $scope.questions = questions();
+            $scope.questions = null;
             $scope.questionsComplete = false;
+
+            workflowFactory.get($stateParams.subject_set_id)
+                .then(function (response) {
+                    $scope.questions = response;
+                });
 
             subjectFactory.get($stateParams.subject_set_id)
                 .then(function (response) {

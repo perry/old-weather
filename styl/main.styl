@@ -24,9 +24,30 @@ html
     overflow-y: scroll
 
 body
+    position: relative
+    font-family: 'Open Sans', sans-serif
     display: flex
     min-height: 100vh
     flex-direction: column
+    background-color: $shallow-teal
+    background-image: url(../images/home-bg.png)
+    background-repeat: no-repeat
+    background-size: 100% auto
+    background-position: 0 -200px
+    &.page-annotate,
+    &.page-transcribe
+        background-image: none
+    &.page-home
+        background-image: none
+        #site-main
+            background-color: $shallow-teal
+            background-image: url(../images/home-bg.png)
+            background-repeat: no-repeat
+            background-size: cover
+            background-position: 0 0
+
+h1
+    font-family: 'clarendon-text-pro', serif
 
 img
     max-width: 100%
@@ -40,28 +61,65 @@ img
 .glyphicon.mirror
     transform: scaleX(-1)
 
+#site-header
+    .page-home &
+        position: absolute
+        z-index: 10
+        top: 0
+        left: 0
+        width: 100%
+    .header-bottom
+        .container
+            padding-top: 25px
+            padding-bottom: 40px
+        h1
+            margin: 0
+            color:  #ffffff
+            font-size: 24px
+            font-weight: 400
+            line-height: 20px
+            text-align: left
+            strong
+                font-weight: 700
+
+
 #site-main
-    padding-bottom: 100px
     flex: 1
+    position: relative
 
 #site-footer
-    padding-bottom: 50px
-    .row
+    .container-wrapper
         &.top
-            background: $deep-teal-lt
-            color: $shallow-teal
-        &.middle
             background: $deep-teal
+            color: $shallow-teal
+            padding: 36px 0
+            text-align: center
+            font-size: 18px
+            p
+                margin-bottom: 30px
+            .btn
+                color: $shallow-teal
+                border-width: 2px
+                border-color: $shallow-teal
+                background: none
+                &:hover,
+                &:focus,
+                &:active
+                    color: $deep-teal
+                    background: $shallow-teal
+        &.middle
+            background: #003033
+            padding: 23px 0
         &.bottom
             background: #00181a
             font-size: 12px
             color: #808080
+            padding: 20px 0
             a
                 color: #808080
     .zooniverse-logo
-        display: block
         width: 60px
-        margin: 0 auto
+        margin-bottom: 36px
         fill: $shallow-teal
 
     .zooniverse-projects-list
@@ -69,6 +127,93 @@ img
         li a
             font-size: 12px
             color: $shallow-teal
+
+#site-nav
+    background: none
+    border: 0
+    margin: 0
+    color: #fff
+    .navbar-nav
+        > li
+            margin-right: 10px
+            > a,
+            > button
+                color: #fff
+                font-size: 14px
+                font-weight: 700
+                padding: 7px 40px
+                border-radius: 30px
+                border: 2px solid transparent
+                &:hover,
+                &:focus
+                    background-color: rgba(197, 252, 255, 0.25)
+        > .active > a,
+        > .active > a:hover,
+        > .active > a:focus
+            background: none
+            border-color: #c5fcff
+    .navbar-brand
+        height: auto
+        svg
+            width: 42px
+            fill: #c5fcff
+    .navbar-left,
+    .navbar-right
+        margin-top: 15px
+
+.home-content
+    padding: 100px 0
+    h1,
+    p
+        max-width: 580px
+    h1
+        color:  #c5fdff
+        font-size: 48px
+        font-weight: 400
+        line-height: 65px
+        margin-bottom: 40px
+    p
+        color:  #82e5e9
+        font-size: 14px
+        font-weight: 400
+        line-height: 24px
+        margin-bottom: 40px
+    .buttons
+        max-width: 285px
+        .btn
+            width: 100%
+            display: block
+            &.get-started
+                margin-bottom: 15px
+
+.home-project-stats
+    p
+        font-family: 'clarendon-text-pro', serif
+        color: rgba(130, 229, 233, 0.5);
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 24px;
+    .stats
+        padding: 20px 0
+        background: linear-gradient(0deg, #006267 0%, #00797f 100%)
+    .stat
+        line-height: 1
+        .figure
+            font-family: 'clarendon-text-pro', serif
+            color: #c5fdff;
+            font-size: 48px;
+            font-weight: 400;
+            margin-bottom: 10px
+        .title
+            color: #404040;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase
+            text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.17);
+
+.content-section
+    padding: 80px 0
+    background: #ededed
 
 .transcribe-col
     $animation-duration = 1000ms
@@ -126,13 +271,12 @@ img
         position: absolute
         left: 0
         padding: 0 15px
-        transform: translateY(15px);
+        transform: translateY(15px)
         > div
             padding: 25px
             background: #fff
 
 .log
-    background: grey
     max-width: 100%
     width: 100%
     height: 90vh
@@ -145,65 +289,96 @@ img
 .annotation
     rect
         cursor: pointer
-        fill: rgba(#000, 0.3)
-        stroke-width: 1
-        stroke: #000
-    // &:nth-of-type(2n+1)
-    //     rect
-    //         fill: rgba(#0000FF, 0.4)
+        stroke-width: 3
+        stroke: $deep-teal-lt
+        fill: rgba($deep-teal-lt, 0.3)
 
 .questions-panel
     &.animated.questions-complete
         animation-duration: 0
 
+.vertical-center
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+
 [ships-list]
     margin: 0 -5px
     .grid-sizer,
     .item
-        width: 25%
-        @media screen and (max-width: 1200px)
-            width: 33%
+        width: 32%
         @media screen and (max-width: 950px)
-            width: 50%
+            width: 49%
         @media screen and (max-width: 700px)
             width: 100%
+    .gutter-sizer
+        width: 2%
+        @media screen and (max-width: 700px)
+            width: 0
     .item
         background-size: cover
         background-position: center center
+        background-repeat: no-repeat
         position: relative
         border: 5px solid #fff
-        display: block
         height: 250px
         overflow: hidden
-        .cover,
-        .gradient
+        box-shadow: 0 0 0 1px #c0c0c0
+        @extend .vertical-center
+        .cover
             position: absolute
             z-index: 1
             top: 0
             left: 0
             width: 100%
             height: 100%
-            display: block
-        .cover
-            background-color: rgba(38,38,38,0.25)
+            @extend .vertical-center
             transition: background 150ms linear
         &:hover
             .cover
-                background-color: rgba(38,38,38,0.75)
-        .gradient
-            background-image: linear-gradient(top, rgba(#333, 0.8), rgba(#333, 0))
+                background-color: rgba(0, 73, 77, 0.75);
         .content
             text-align: center
-            position: absolute
-            z-index: 2
-            top: 0
-            left: 0
-            width: 100%
-            height: 100%
             color: #fff
             h3
                 color: #fff
+                font-family: 'clarendon-text-pro', serif
+                font-size: 24px
+                font-weight: 400
+                line-height: 24px
+                text-align: center
+                text-transform: uppercase
+                text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.75)
         .buttons
-            position: absolute
-            bottom: 10px
-            width: 100%
+            width: 70%
+            margin: 0 auto
+            .btn
+                display: block
+                margin-bottom: 20px
+                &:last-of-type
+                    margin-bottom: 0
+
+.modal-dialog
+    margin: 100px auto
+.modal-backdrop
+    background-color: $deep-teal
+    &.in
+        opacity 0.7
+
+.btn
+    border: 0
+    font-size: 14px
+    font-weight: 700
+    padding: 11px 28px
+    border: 3px solid transparent
+    &.uppercase
+        text-transform: uppercase

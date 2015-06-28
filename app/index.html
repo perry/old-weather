@@ -7,13 +7,16 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <script src="//use.typekit.net/whf8rcu.js"></script>
+        <script>try{Typekit.load();}catch(e){}</script>
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,600,700" rel="stylesheet" type="text/css">
         <!-- build:css css/app.css -->
         <link href="bower_components/animate.css/animate.css" rel="stylesheet">
         <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
         <link href="css/main.css" rel="stylesheet">
         <!-- endbuild -->
     </head>
-    <body>
+    <body ng-class="bodyClass ? 'page-' + bodyClass : ''">
         <header id="site-header">
             <nav id="site-nav" class="navbar navbar-default" ng-init="isCollapsed = true;">
                 <div class="container-fluid">
@@ -25,7 +28,11 @@
                             <span class="icon-bar"></span>
                         </button>
 
-                        <a ui-sref="home" id="site-logo" class="navbar-brand">Old Weather</a>
+                        <a ui-sref="home" id="site-logo" class="navbar-brand">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" viewBox="0 0 42 42">
+                                <path fillRule="evenodd" d="M 41.98 21C 41.98 21 38.14 23.86 38.14 23.86 38.14 23.86 38.14 22.87 38.14 22.87 37.3 30.57 31.38 36.75 23.81 38 23.81 38 23.98 38 23.98 38 23.98 38 21 41.98 21 41.98 21 41.98 18.02 38 18.02 38 18.02 38 18.19 38 18.19 38 10.92 36.8 5.17 31.05 3.99 23.78 3.99 23.78 3.99 24.02 3.99 24.02 3.99 24.02-0.02 21-0.02 21-0.02 21 3.99 17.98 3.99 17.98 3.99 17.98 3.99 18.22 3.99 18.22 5.17 10.95 10.92 5.2 18.19 4 18.19 4 18.17 4 18.17 4 18.17 4 21 0.17 21 0.17 21 0.17 23.83 4 23.83 4 23.83 4 23.81 4 23.81 4 31.38 5.25 37.3 11.43 38.14 19.13 38.14 19.13 38.14 18.14 38.14 18.14 38.14 18.14 41.98 21 41.98 21ZM 21 5.91C 12.68 5.91 8.91 12.68 8.91 21 8.91 29.32 12.68 36.09 21 36.09 29.32 36.09 33.09 29.32 33.09 21 33.09 12.68 29.32 5.91 21 5.91ZM 28.49 17.53C 27.02 22 25.57 26.8 25.3 27.74 25.3 27.74 23.52 27.74 23.52 27.74 23.52 27.74 21.4 20.9 21.4 20.9 21.4 20.9 19.02 27.74 19.02 27.74 19.02 27.74 17.39 27.74 17.39 27.74 17.39 27.74 14.18 17.36 14.18 17.36 13.99 16.93 13.61 16.89 13.17 16.89 13.17 16.89 12.74 16.89 12.74 16.89 12.74 16.89 12.74 15.74 12.74 15.74 12.74 15.74 17.62 15.74 17.62 15.74 17.62 15.74 17.62 16.89 17.62 16.89 17.62 16.89 16.69 16.89 16.69 16.89 16.38 16.89 16.25 17.19 16.25 17.44 16.25 17.53 17.09 20.18 18.47 24.89 18.47 24.89 18.61 25.58 18.61 25.58 18.61 25.58 18.8 24.82 18.8 24.82 18.8 24.82 20.8 19.04 20.8 19.04 20.8 19.04 20.32 17.36 20.32 17.36 20.13 16.93 19.75 16.89 19.31 16.89 19.31 16.89 18.73 16.89 18.73 16.89 18.73 16.89 18.73 15.74 18.73 15.74 18.73 15.74 24 15.74 24 15.74 24 15.74 24 16.89 24 16.89 24 16.89 22.76 16.89 22.76 16.89 22.46 16.89 22.34 17.19 22.34 17.44 22.34 17.53 23.02 19.7 24.56 24.82 24.56 24.82 24.7 25.58 24.7 25.58 24.7 25.58 24.9 24.77 24.9 24.77 25.95 21.45 27.21 17.53 27.21 17.39 27.21 16.93 26.78 16.89 26.15 16.89 26.15 16.89 25.57 16.89 25.57 16.89 25.57 16.89 25.57 15.74 25.57 15.74 25.57 15.74 30 15.74 30 15.74 30 15.74 30 16.89 30 16.89 29.3 16.93 28.73 16.81 28.49 17.53Z">
+                            </svg>
+                        </a>
                     </div>
 
                     <div class="collapse navbar-collapse navbar-left" collapse="isCollapsed">
@@ -43,59 +50,58 @@
                                </ul>
                            </li>
                            <li><a href="http://blog.oldweather.org">Blog</a></li>
+                           <li><a href="http://forum.oldweather.org">Discuss</a></li>
                         </ul>
                     </div>
 
                     <ul class="nav navbar-nav navbar-right" ng-controller="HeaderUserCtrl">
-                        <li ng-show="!user">
-                            <form class="nav navbar-form" ng-submit="signIn(form)" ng-show="showLoginForm">
-                                <div class="form-group" ng-class="{'has-error': loginError}">
-                                    <input type="text"  class="form-control" ng-model="form.display_name" placeholder="Username">
-                                </div>
-                                <div class="form-group" ng-class="{'has-error': loginError}">
-                                    <input type="password" class="form-control" ng-model="form.password" placeholder="Password">
-                                </div>
-                                <button type="submit" class="btn btn-default">Log in</button>
-                            </form>
-                            <ul class="nav navbar-nav" ng-show="!showLoginForm">
-                                <li><button class="btn btn-link navbar-btn" ng-click="toggleLoginForm()">Log in</button></li>
-                                <li><button class="btn btn-link navbar-btn">Register</button></li>
+                        <li ng-if="!user">
+                            <ul class="nav navbar-nav">
+                                <li><a href="#" ng-click="$event.preventDefault(); openLoginModal();">Log in</a></li>
+                                <li><a href="#" ng-click="$event.preventDefault(); openRegisterModal();">Register</a></li>
                             </ul>
                         </li>
 
-                        <ul ng-show="user">
-                            <p class="navbar-text" ng-bind="'Signed in as ' + user.display_name"></p>
+                        <ul ng-if="user">
+                            <p class="navbar-text" ng-bind="'hello ' + user.display_name"></p>
                             <ul class="nav navbar-nav">
-                                <li><button class="btn btn-link navbar-btn" ng-click="signOut()">Log out</button></li>
+                                <li><a ng-click="signOut()">Log out</a></li>
                             </ul>
                         </ul>
                     </ul>
                 </div>
             </nav>
+
+            <div ui-view="header-bottom" class="header-bottom"></div>
         </header>
 
-        <div ui-view="main" id="site-main" class="container-fluid"></div>
+        <div ui-view="main" id="site-main"></div>
 
-        <footer id="site-footer" >
-            <div class="container-fluid">
-                <div class="row top">
-                    <div class="col-xs-12">
-                        <svg class="zooniverse-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="-45.6 101 703.2 590.1" xml:space="preserve">
-                            <g>
-                                <path d="M306 120.6c152.1 0 275.4 123.3 275.4 275.4S458.1 671.4 306 671.4S30.6 548.1 30.6 396S153.9 120.6 306 120.6z M306 212.4 c-101.4 0-183.6 82.2-183.6 183.6S204.6 579.6 306 579.6S489.6 497.4 489.6 396S407.4 212.4 306 212.4z"/>
-                                <path d="M306 319.5c42.2 0 76.5 34.3 76.5 76.5s-34.3 76.5-76.5 76.5s-76.5-34.3-76.5-76.5S263.8 319.5 306 319.5z"/>
-                                <path d="M657.6 101L325.7 419.4L-45.6 691l331.9-318.5L657.6 101z"/>
-                            </g>
-                        </svg>
-                    </div>
+        <footer id="site-footer">
+            <div class="container-wrapper top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <svg class="zooniverse-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="-45.6 101 703.2 590.1" xml:space="preserve">
+                                <g>
+                                    <path d="M306 120.6c152.1 0 275.4 123.3 275.4 275.4S458.1 671.4 306 671.4S30.6 548.1 30.6 396S153.9 120.6 306 120.6z M306 212.4 c-101.4 0-183.6 82.2-183.6 183.6S204.6 579.6 306 579.6S489.6 497.4 489.6 396S407.4 212.4 306 212.4z"/>
+                                    <path d="M306 319.5c42.2 0 76.5 34.3 76.5 76.5s-34.3 76.5-76.5 76.5s-76.5-34.3-76.5-76.5S263.8 319.5 306 319.5z"/>
+                                    <path d="M657.6 101L325.7 419.4L-45.6 691l331.9-318.5L657.6 101z"/>
+                                </g>
+                            </svg>
+                        </div>
 
-                    <div class="col-xs-12">
-                        <p>The Zooniverse is a collection of web-based citizen science projects that use the efforts of volunteers to help researchers deal with the flood of data that confronts them.</p>
+                        <div class="col-xs-12">
+                            <p>The Zooniverse is a collection of web-based citizen science projects that use the efforts of volunteers to help researchers deal with the flood of data that confronts them.</p>
+                            <div><a href="https://www.zooniverse.org" class="btn btn-default">See the Zooniverse</a></div>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="row middle">
-                    <div class="zooniverse-projects-list" zooniverse-projects-list>
+            <div class="container-wrapper middle">
+                <div class="container">
+                    <div class="row zooniverse-projects-list" zooniverse-projects-list>
                         <div class="col-xs-12 col-sm-{{ 12 / data.length }}" ng-repeat="category in ::data" ng-if="!loading && data">
                             <h4 ng-bind="category.category"></h4>
                             <ul class="list-unstyled">
@@ -106,11 +112,15 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="row bottom">
-                    <div class="col-xs-12">
-                        <p><strong>Zoonivese.org</strong> The universe is too big to explore without you</p>
-                        <p><a href="https://www.zooniverse.org/privacy">Privacy policy</a> | <a href="https://github.com/zooniverse">Source & bugs</a></p>
+            <div class="container-wrapper bottom">
+                <div class="container bottom">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <p><strong>Zoonivese.org</strong> The universe is too big to explore without you</p>
+                            <p><a href="https://www.zooniverse.org/privacy">Privacy policy</a> | <a href="https://github.com/zooniverse">Source & bugs</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -123,6 +133,7 @@
         <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
         <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
         <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
+        <script src="bower_components/angular-fitvids/angular-fitvids.js"></script>
         <script src="bower_components/ng-load/ng-load.js"></script>
         <script src="bower_components/spin.js/spin.js"></script>
         <script src="bower_components/angular-spinner/angular-spinner.js"></script>
@@ -139,6 +150,7 @@
         <script src="modules/zoo-api/scripts/project-service.js"></script>
 
         <script src="modules/auth/scripts/init.js"></script>
+        <script src="modules/auth/scripts/templates.js"></script>
 
         <script src="modules/transcription/scripts/init.js"></script>
         <script src="modules/transcription/scripts/templates.js"></script>

@@ -25,7 +25,8 @@
     "angular-local-storage": "0.2.2",
     "masonry": "3.3.0",
     "packery": "1.4.1",
-    "bootstrap": "3.3.5"
+    "bootstrap": "3.3.5",
+    "angular-fitvids": "git@github.com:jimmyhillis/angular-fitvids.git#~0.1.0"
   },
   "resolutions": {
     "angular": "1.4.0",

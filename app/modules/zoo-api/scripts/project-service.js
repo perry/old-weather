@@ -44,6 +44,39 @@
         };
     });
 
+    module.factory('zooAPIWorkflows', function ($q, localStorageService, zooAPIConfig, zooAPI) {
+        var get = function (filter) {
+            var deferred = $q.defer();
+
+            var cache = localStorageService.get('workflows');
+            if (cache) {
+                if (filter) {
+                    var cacheByID = _.find(cache, filter);
+                    if (angular.isDefined(cacheByID)) {
+                        deferred.notify([cacheByID]);
+                    }
+                } else {
+                    deferred.notify(cache);
+                }
+            } else {
+                cache = [];
+            }
+
+            zooAPI.type('workflows').get(filter)
+                .then(function (response) {
+                    upsert(cache, {id: response.id}, response);
+                    localStorageService.set('workflows', cache);
+                    deferred.resolve(response);
+                });
+
+            return deferred.promise;
+        };
+
+        return {
+            get: get
+        };
+    })
+
     module.factory('zooAPISubjectSets', function ($q, localStorageService, zooAPI, zooAPIProject) {
         var get = function (filter) {
             var deferred = $q.defer();

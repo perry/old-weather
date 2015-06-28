@@ -31,8 +31,7 @@
         };
     });
 
-    module.controller('HeaderUserCtrl', function ($timeout, $scope, authFactory) {
-        $scope.showLoginForm = false;
+    module.controller('HeaderUserCtrl', function ($timeout, $scope, authFactory, $modal) {
         $scope.user = authFactory.getUser();
 
         $scope.$on('auth:signin', function () {
@@ -47,26 +46,40 @@
             });
         });
 
+        $scope.signOut = function () {
+            authFactory.signOut();
+        };
+
+        $scope.openLoginModal = function () {
+            $modal.open({
+                templateUrl: 'templates/auth/login.html',
+                controller: 'LoginModalController'
+                // size: 'lg'
+            });
+        };
+
+        $scope.openRegisterModal = function () {
+            $modal.open({
+                templateUrl: 'templates/auth/register.html'
+                // controller: 'HomeVideoController',
+                // size: 'lg'
+            });
+        };
+    });
+
+    module.controller('LoginModalController', function ($scope, $modalInstance, authFactory) {
         $scope.signIn = function (data) {
             $scope.loginError = false;
 
             authFactory.signIn(data)
                 .then(function (response) {
                     $scope.form = {};
-                    $scope.showLoginForm = false;
+                    $modalInstance.dismiss();
                 }, function (response) {
                     $scope.loginError = true;
                     $scope.$apply();
                 });
 
-        };
-
-        $scope.signOut = function () {
-            authFactory.signOut();
-        };
-
-        $scope.toggleLoginForm = function () {
-            $scope.showLoginForm = !$scope.showLoginForm;
         };
     });
 

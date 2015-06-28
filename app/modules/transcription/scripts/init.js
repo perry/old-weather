@@ -20,7 +20,9 @@
             });
     });
 
-    module.controller('transcriptionCtrl', function ($timeout, $scope, $sce, $stateParams, zooAPISubjectSets, localStorageService, svgPanZoomFactory) {
+    module.controller('transcriptionCtrl', function ($rootScope, $timeout, $scope, $sce, $stateParams, zooAPISubjectSets, localStorageService, svgPanZoomFactory) {
+        $rootScope.bodyClass = 'transcribe';
+
         var subject_set_id = $stateParams.subject_set_id;
         zooAPISubjectSets.get({id: subject_set_id})
             .then(function (response) {

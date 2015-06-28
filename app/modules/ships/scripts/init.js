@@ -16,6 +16,9 @@
                         main: {
                             templateUrl: 'templates/ships/list.html',
                             controller: 'ShipsListCtrl'
+                        },
+                        'header-bottom': {
+                            templateUrl: 'templates/ships/list-header.html'
                         }
                     }
                 })
@@ -25,6 +28,9 @@
                         main: {
                             templateUrl: 'templates/ships/detail.html',
                             controller: 'ShipsDetailCtrl'
+                        },
+                        'header-bottom': {
+                            templateUrl: 'templates/ships/list-header.html'
                         }
                     }
                 });

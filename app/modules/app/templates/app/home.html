@@ -11,17 +11,46 @@
 
 <div
     ng-show="project"
-    class="animated"
+    class="home-content container animated"
     ng-class="{
         'isLoading': !project,
         'fadeIn': project,
         'fadeOut': !project
     }"
 >
-    <div class="page-header">
-        <h1>Welcome to Old Weather</h1>
-    </div>
-    <p ng-bind="project.description"></p>
-
+    <h1>Welcome to<br> Old Weather</h1>
     <p ng-bind="project.introduction"></p>
+    <div class="buttons">
+        <a class="btn btn-default uppercase get-started" ui-sref="ships-list">Get started</a>
+        <button class="btn btn-default uppercase" ng-click="openHomeVideo();"><span class="glyphicon glyphicon-play"></span> What is Old Weather</button>
+    </div>
+</div>
+
+<div class="home-project-stats">
+    <div class="container">
+        <p>Current project statistics</p>
+    </div>
+    <div class="stats">
+        <div class="container">
+            <div class="stat col-sm-3">
+                <div class="figure">{{ project.retired_subjects_count / project.subjects_count }}%</div>
+                <div class="title">Subjects complete</div>
+            </div>
+
+            <div class="stat col-sm-3">
+                <div class="figure">{{ project.links.subject_sets.length }}</div>
+                <div class="title">Total ships</div>
+            </div>
+
+            <div class="stat col-sm-3">
+                <div class="figure">{{ project.subjects_count }}</div>
+                <div class="title">Total log pages</div>
+            </div>
+
+            <div class="stat col-sm-3">
+                <div class="figure">{{ project.classifiers_count }}</div>
+                <div class="title">Active users</div>
+            </div>
+        </div>
+    </div>
 </div>

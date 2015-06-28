@@ -1,27 +1,34 @@
 <div us-spinner ng-if="loading"></div>
 
-<div ng-show="!loading" class="animated fadeIn">
-    <div ships-list>
-        <div class="grid-sizer"></div>
-        <div
-            class="item"
-            ng-repeat="(key, ship) in ships track by key | limitTo:20 | orderBy:columnSort.key:columnSort.reverse"
-            style="background-image: url('{{ ::images[$index] }}')"
-            ng-init="ship.hover = false"
-            ng-mouseenter="ship.hover = true"
-            ng-mouseleave="ship.hover = false"
-        >
-            <div class="cover"></div>
-            <div class="gradient"></div>
-            <div class="content">
-                <h3>{{ ship.display_name }}</h3>
+<div class="content-section" ng-if="!loading">
+    <div class="container">
+
+        <div ng-show="!loading" class="animated fadeIn">
+            <div ships-list>
+                <div class="grid-sizer"></div>
+                <div class="gutter-sizer"></div>
                 <div
-                    class="buttons"
-                    ng-show="ship.hover"
+                    class="item"
+                    ng-repeat="(key, ship) in ships track by key | orderBy:columnSort.key:columnSort.reverse"
+                    style="background-image: url('{{ ::images[$index] }}')"
+                    ng-init="ship.hover = false"
+                    ng-mouseenter="ship.hover = true"
+                    ng-mouseleave="ship.hover = false"
                 >
-                <button class="btn btn-default" ui-sref="ships-detail({id: ship.id})"><i class="glyphicon glyphicon-info-sign"></i></button>
-                <a ui-sref="transcribe({subject_set_id: ship.id})" class="btn btn-default">Annotate</a>
-                <a ui-sref="transcription({subject_set_id: ship.id})" class="btn btn-default">Transcribe</a>
+                    <div class="content">
+                        <h3>{{ ship.display_name }}</h3>
+                    </div>
+
+                    <div class="cover">
+                        <div
+                            class="buttons"
+                            ng-show="ship.hover"
+                        >
+                            <a ui-sref="transcribe({subject_set_id: ship.id})" class="btn btn-default">Annotate</a>
+                            <a ui-sref="transcription({subject_set_id: ship.id})" class="btn btn-default">Transcribe</a>
+                            <a ui-sref="ships-detail({id: ship.id})" class="btn btn-default">More info</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

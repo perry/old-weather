@@ -1,114 +1,109 @@
-<div class="row" ng-if="subject === null">
-    <p>There aren't any log pages to transcribe on this ship. Why not try <a ui-sref="ships-list">another ship</a>?</p>
-</div>
-
-<div class="row" ng-if="subject !== null">
-    <div class="transcribe-col col-sm-3 col-md-2 pull-right">
-        <div
-            class="panel panel-default questions-panel animated"
-            transcribe-questions="questions"
-            ng-show="!questionsComplete && questions && !isLoading"
-            ng-class="{
-                'isLoading': isLoading,
-                'fadeIn': !isLoading,
-                'fadeOut': isLoading,
-                'questions-complete': questionsComplete
-            }"
-        >
-        </div>
-
-        <div ng-show="questionsComplete">
-            <div class="btn-group btn-group-justified">
-                <div class="btn-group">
-                    <button class="btn btn-primary" ng-click="loadSubject()">
-                        I've finished
-                        <span class="glyphicon glyphicon-ok"></span>
-                    </button>
-                </div>
-            </div>
-            <p>Feel free to mark any other data using the tools below.</p>
-            <ul
-                class="nav nav-pills nav-stacked"
-                transcribe-tools
-            ></ul>
-        </div>
+<div class="container-fluid">
+    <div class="row" ng-if="subject === null">
+        <p>There aren't any log pages to transcribe on this ship. Why not try <a ui-sref="ships-list">another ship</a>?</p>
     </div>
 
-    <div class="transcribe-col col-sm-9 col-md-10">
-        <div class="log-container">
-            <span
-                us-spinner
-                ng-show="isLoading"
-                class="animated"
-                ng-class="{
-                    'isLoading': isLoading,
-                    'fadeIn': isLoading,
-                    'fadeOut': !isLoading
-                }"
-            ></span>
-
-            <svg class="log" svg-pan-zoom ng-class="{'annotating': isAnnotating}">
-                <g class="pan-zoom">
-                    <g class="rotate-container" ng-attr-transform="{{ 'rotate(' + rotation + ')'}}">
-                        <g
-                            class="animated image-wrapper"
-                            ng-show="!isLoading"
-                            ng-class="{
-                                'isLoading': isLoading,
-                                'fadeIn': !isLoading,
-                                'fadeOut': isLoading
-                            }"
-                        >
-                            <g class="image">
-                                <image
-                                    xlink:href="{{ trustedSubjectImage }}"
-                                    ng-load="subjectLoaded(); svg.reset();"
-                                    width="1300"
-                                    height="1893"
-                                ></image>
-                            </g>
-                    </g>
-
-                    <g annotations ng-if="!isLoading"></g>
-                </g>
-            </g>
-            </svg>
-
-            <div class="guides" ng-if="showGuides"></div>
-
+    <div class="row" ng-if="subject !== null">
+        <div class="transcribe-col col-sm-3 col-md-2 pull-right">
             <div
-                class="btn-group-vertical log-controls animated"
-                ng-show="!isLoading"
-                ng-class="{
-                    'isLoading': isLoading,
-                    'bounceInRight': !isLoading,
-                    'bounceOutRight': isLoading
-                }"
+                class="panel panel-default questions-panel"
+                transcribe-questions="questions"
+                ng-show="!questionsComplete && questions && !isLoading"
             >
-                <button class="btn btn-default" ng-click="togglePan()" ng-show="isAnnotating || hasMouseEvents()">
-                    <span ng-show="isAnnotating"><span class="glyphicon glyphicon-move"></span> Pan</span>
-                    <span ng-show="!isAnnotating && hasMouseEvents()"><span class="glyphicon glyphicon-screenshot"></span> Draw</span>
-                </button>
-                <button class="btn btn-default" ng-click="panZoom.zoomIn()">
-                    <span class="glyphicon glyphicon-zoom-in"></span> Zoom in
-                </button>
-                <button class="btn btn-default" ng-click="panZoom.zoomOut()">
-                    <span class="glyphicon glyphicon-zoom-out"></span> Zoom out
-                </button>
-                <button class="btn btn-default" ng-click="reset()">
-                    <span class="glyphicon glyphicon-resize-full"></span> Fit page
-                </button>
-                <button class="btn btn-default" ng-click="clearAnnotations()">
-                    <span class="glyphicon glyphicon-trash"></span> Clear
-                </button>
-                <button class="btn btn-default" ng-click="rotate('-0.1')" ng-mousedown="startLongRotation('-0.1')" ng-mouseup="stopLongRotation()" ng-mousemove="stopLongRotation()">
-                    <span class="glyphicon glyphicon-repeat mirror"></span> Rotate CCW
-                </button>
-                <button class="btn btn-default" ng-click="rotate('+0.1')" ng-mousedown="startLongRotation('+0.1')" ng-mouseup="stopLongRotation()" ng-mousemove="stopLongRotation()">
-                    <span class="glyphicon glyphicon-repeat"></span> Rotate CW
-                </button>
-                <button class="btn btn-default" ng-click="toggleGuides()">
-                    <span>Toggle guides</span>
+            </div>
+
+            <div ng-show="questionsComplete">
+                <div class="btn-group btn-group-justified">
+                    <div class="btn-group">
+                        <button class="btn btn-primary" ng-click="loadSubject()">
+                            I've finished
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </div>
+                </div>
+                <p>Feel free to mark any other data using the tools below.</p>
+                <ul
+                    class="nav nav-pills nav-stacked"
+                    transcribe-tools
+                ></ul>
+            </div>
+        </div>
+
+        <div class="transcribe-col col-sm-9 col-md-10">
+            <div class="log-container">
+                <span
+                    us-spinner
+                    ng-show="isLoading"
+                    class="animated"
+                    ng-class="{
+                        'isLoading': isLoading,
+                        'fadeIn': isLoading,
+                        'fadeOut': !isLoading
+                    }"
+                ></span>
+
+                <svg class="log" svg-pan-zoom ng-class="{'annotating': isAnnotating}">
+                    <g class="pan-zoom">
+                        <g class="rotate-container" ng-attr-transform="{{ 'rotate(' + rotation + ')'}}">
+                            <g
+                                class="animated image-wrapper"
+                                ng-show="!isLoading"
+                                ng-class="{
+                                    'isLoading': isLoading,
+                                    'fadeIn': !isLoading,
+                                    'fadeOut': isLoading
+                                }"
+                            >
+                                <g class="image">
+                                    <image
+                                        xlink:href="{{ trustedSubjectImage }}"
+                                        ng-load="subjectLoaded(); svg.reset();"
+                                        width="1300"
+                                        height="1893"
+                                    ></image>
+                                </g>
+                                <g annotations ng-if="!isLoading"></g>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+
+                <div class="guides" ng-if="showGuides"></div>
+
+                <div
+                    class="btn-group-vertical log-controls animated"
+                    ng-show="!isLoading"
+                    ng-class="{
+                        'isLoading': isLoading,
+                        'bounceInRight': !isLoading,
+                        'bounceOutRight': isLoading
+                    }"
+                >
+                    <button class="btn btn-default" ng-click="togglePan()" ng-show="isAnnotating || hasMouseEvents()">
+                        <span ng-show="isAnnotating"><span class="glyphicon glyphicon-move"></span> Pan</span>
+                        <span ng-show="!isAnnotating && hasMouseEvents()"><span class="glyphicon glyphicon-screenshot"></span> Draw</span>
+                    </button>
+                    <button class="btn btn-default" ng-click="panZoom.zoomIn()">
+                        <span class="glyphicon glyphicon-zoom-in"></span> Zoom in
+                    </button>
+                    <button class="btn btn-default" ng-click="panZoom.zoomOut()">
+                        <span class="glyphicon glyphicon-zoom-out"></span> Zoom out
+                    </button>
+                    <button class="btn btn-default" ng-click="reset()">
+                        <span class="glyphicon glyphicon-resize-full"></span> Fit page
+                    </button>
+                    <button class="btn btn-default" ng-click="clearAnnotations()">
+                        <span class="glyphicon glyphicon-trash"></span> Clear
+                    </button>
+                    <button class="btn btn-default" ng-click="rotate('-0.1')" ng-mousedown="startLongRotation('-0.1')" ng-mouseup="stopLongRotation()" ng-mousemove="stopLongRotation()">
+                        <span class="glyphicon glyphicon-repeat mirror"></span> Rotate CCW
+                    </button>
+                    <button class="btn btn-default" ng-click="rotate('+0.1')" ng-mousedown="startLongRotation('+0.1')" ng-mouseup="stopLongRotation()" ng-mousemove="stopLongRotation()">
+                        <span class="glyphicon glyphicon-repeat"></span> Rotate CW
+                    </button>
+                    <button class="btn btn-default" ng-click="toggleGuides()">
+                        <span>Toggle guides</span>
+                    </div>
                 </div>
             </div>
         </div>

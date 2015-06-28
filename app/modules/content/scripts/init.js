@@ -14,7 +14,7 @@
                     abstract: true,
                     views: {
                         main: {
-                            template: '<ui-view>'
+                            template: '<div class="content-section"><div class="container"><ui-view></div></div>'
                         }
                     }
                 })
@@ -38,4 +38,3 @@
     ]);
 
 }(window.angular));
-

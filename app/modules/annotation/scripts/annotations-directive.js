@@ -114,7 +114,7 @@
             link: function (scope, element, attrs) {
                 element.bind('click', function () {
                     var annotation = $parse(attrs.annotation)(scope);
-                    _.remove(scope.$parent.annotations, annotation);
+                    console.log(annotation);
                 });
             }
         };

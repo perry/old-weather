@@ -69,6 +69,7 @@
             link: function (scope, element, attrs) {
                 var pckry = new Packery(element[0], {
                     columnWidth: '.grid-sizer',
+                    gutter: '.gutter-sizer',
                     itemSelector: '.item',
                     percentPosition: true,
                     transitionDuration: 0
