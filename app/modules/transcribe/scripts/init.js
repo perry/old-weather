@@ -211,7 +211,7 @@
         };
     });
 
-    module.factory('subjectFactory', function ($q, zooAPI, localStorageService) {
+    module.factory('subjectFactory', function ($q, $filter, zooAPI, localStorageService) {
         var _getQueueCache = function (subject_set_id) {
             var cache = localStorageService.get('subject_set_queue_' + subject_set_id);
             if (!cache) {
@@ -228,16 +228,13 @@
                 upsert(cache, {id: subject.id}, subject);
             });
 
+            cache = $filter('removeCircularDeps')(cache);
+
             return localStorageService.set('subject_set_queue_' + subject_set_id, cache);
         };
 
         var _loadNewSubjects = function (subject_set_id) {
             var deferred = $q.defer();
-
-            // var subjectSetUpdated = localStorageService.get('subject_set_updated_' + subject_set_id);
-            // if (!subjectSetUpdated) {
-                // subjectSetUpdated = localStorageService.get
-            // }
 
             var lastPage = localStorageService.get('subject_set_page_' + subject_set_id);
             if (!lastPage) {
@@ -302,24 +299,24 @@
         };
     });
 
-    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, workflowFactory, subjectFactory, svgPanZoomFactory) {
+    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory) {
         $rootScope.bodyClass = 'annotate';
 
         $scope.loadSubject = function () {
-            $rootScope.$broadcast('transcribe:saveSubject', $scope.subject);
             $rootScope.$broadcast('transcribe:loadingSubject');
 
+            $scope.subject_set_id = $stateParams.subject_set_id;
             $scope.subject = undefined;
             $scope.isLoading = true;
             $scope.questions = null;
             $scope.questionsComplete = false;
 
-            workflowFactory.get($stateParams.subject_set_id)
+            workflowFactory.get($scope.subject_set_id)
                 .then(function (response) {
                     $scope.questions = response;
                 });
 
-            subjectFactory.get($stateParams.subject_set_id)
+            subjectFactory.get($scope.subject_set_id)
                 .then(function (response) {
                     if (response !== null) {
                         $timeout(function () {
@@ -328,8 +325,6 @@
                             var subjectImage = $scope.subject.locations[0][keys[0]];
                             // TODO: change this. We're cache busting the image.onload event.
                             subjectImage += '?' + new Date().getTime();
-                            subjectImage = 'http://oldweather.s3.amazonaws.com/ow3/final/USRC%20Bear/vol097/vol097_159_0.jpg?' + new Date().getTime();
-                            // subjectImage = 'http://www.cosmik.com/oldweather/charleston_-_1945_july_12_-_b1956_027.jpg';
                             $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
 
                             $rootScope.$broadcast('transcribe:loadedSubject');
@@ -345,6 +340,13 @@
 
         $scope.subjectLoaded = function () {
             $scope.isLoading = false;
+        };
+
+        $scope.saveSubject = function () {
+            annotationsFactory.save($scope.subject.id)
+                .then(function () {
+                    $scope.loadSubject();
+                });
         };
 
         $scope.$on('transcribe:svgPanZoomToggle', function () {

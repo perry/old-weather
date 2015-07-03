@@ -1,35 +1,10 @@
 <div class="container-fluid">
     <div class="row" ng-if="subject === null">
-        <p>There aren't any log pages to transcribe on this ship. Why not try <a ui-sref="ships-list">another ship</a>?</p>
+        <p>There aren't any log pages to annotate on this ship. <a ui-sref="transcription({subject_set_id: subject_set_id})">Transcribe annotations</a>, or find <a ui-sref="ships-list">another ship</a>?</p>
     </div>
 
     <div class="row" ng-if="subject !== null">
-        <div class="transcribe-col col-sm-3 col-md-2 pull-right">
-            <div
-                class="panel panel-default questions-panel"
-                transcribe-questions="questions"
-                ng-show="!questionsComplete && questions && !isLoading"
-            >
-            </div>
-
-            <div ng-show="questionsComplete">
-                <div class="btn-group btn-group-justified">
-                    <div class="btn-group">
-                        <button class="btn btn-primary" ng-click="loadSubject()">
-                            I've finished
-                            <span class="glyphicon glyphicon-ok"></span>
-                        </button>
-                    </div>
-                </div>
-                <p>Feel free to mark any other data using the tools below.</p>
-                <ul
-                    class="nav nav-pills nav-stacked"
-                    transcribe-tools
-                ></ul>
-            </div>
-        </div>
-
-        <div class="transcribe-col col-sm-9 col-md-10">
+        <div class="transcribe-col col-sm-12">
             <div class="log-container">
                 <span
                     us-spinner
@@ -42,7 +17,7 @@
                     }"
                 ></span>
 
-                <svg class="log" svg-pan-zoom ng-class="{'annotating': isAnnotating}">
+                <svg class="log annotate" svg-pan-zoom ng-class="{'annotating': isAnnotating}">
                     <g class="pan-zoom">
                         <g class="rotate-container" ng-attr-transform="{{ 'rotate(' + rotation + ')'}}">
                             <g
@@ -55,6 +30,7 @@
                                 }"
                             >
                                 <g class="image">
+                                    <image subject class="subject"></image>
                                     <image
                                         xlink:href="{{ trustedSubjectImage }}"
                                         ng-load="subjectLoaded(); svg.reset();"
@@ -108,4 +84,33 @@
             </div>
         </div>
     </div>
+
+
+    <div class="workflow-col">
+        <span class="workflow-title">Annotation</span>
+
+        <div
+            class="questions-panel"
+            transcribe-questions="questions"
+            ng-show="!questionsComplete && questions && !isLoading"
+        >
+        </div>
+
+        <div ng-show="questionsComplete">
+            <div class="btn-group btn-group-justified">
+                <div class="btn-group">
+                    <button class="btn btn-orange btn-finish" ng-click="saveSubject()">
+                        I've finished with this page
+                    </button>
+                </div>
+            </div>
+
+            <p>Feel free to mark any other data using the tools below.</p>
+            <ul
+                class="nav nav-pills nav-stacked"
+                transcribe-tools
+            ></ul>
+        </div>
+    </div>
+
 </div>

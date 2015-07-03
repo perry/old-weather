@@ -1,5 +1,11 @@
 <div us-spinner ng-if="loading"></div>
 
+<div class="pre-content-section" ng-if="!loading">
+    <div class="container">
+        <p>These are the ships of <strong>oldWeather</strong>. Find a vessel and start processing those log books!</p>
+    </div>
+</div>
+
 <div class="content-section" ng-if="!loading">
     <div class="container">
 
@@ -24,9 +30,9 @@
                             class="buttons"
                             ng-show="ship.hover"
                         >
-                            <a ui-sref="transcribe({subject_set_id: ship.id})" class="btn btn-default">Annotate</a>
-                            <a ui-sref="transcription({subject_set_id: ship.id})" class="btn btn-default">Transcribe</a>
-                            <a ui-sref="ships-detail({id: ship.id})" class="btn btn-default">More info</a>
+                            <a ui-sref="transcribe({subject_set_id: ship.id})" class="btn btn-teal">Annotate</a>
+                            <a ui-sref="transcription({subject_set_id: ship.id})" class="btn btn-teal">Transcribe</a>
+                            <a ui-sref="ships-detail({id: ship.id})" class="btn btn-skeleton teal">More info</a>
                         </div>
                     </div>
                 </div>

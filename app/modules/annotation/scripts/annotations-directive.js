@@ -36,10 +36,6 @@
                     }
                 };
 
-                var saveAnnotations = function (e, subject) {
-                    annotationsFactory.sync();
-                };
-
                 var createCells = function (row) {
                     var headers = _.where(scope.annotations, {type: 'header'});
                     _.each(headers, function (header) {
@@ -72,7 +68,7 @@
                     annotationsFactory.get(scope.$parent.subject.id)
                         .then(function (response) {
                             if (response) {
-                                scope.annotations = response;
+                                scope.annotations = response.annotations;
                             }
                         });
                 };
@@ -82,11 +78,27 @@
                     annotationsFactory.clear(null, scope.$parent.subject);
                 };
 
+                scope.removeAnnotation = function (annotation) {
+                    _.remove(scope.annotations, {_id: annotation._id});
+                    annotationsFactory.remove(annotation._id, scope.$parent.subject);
+                    scope.$apply();
+                };
+
+                scope.selectAnnotation = function (annotation) {
+                    var index = _.indexOf(scope.annotations, annotation);
+
+                    _.each(scope.annotations, function (a, i) {
+                        if (index !== i) { a.selected = false; }
+                    });
+
+                    scope.annotations[index].selected = !scope.annotations[index].selected;
+
+                    scope.$apply();
+                };
+
                 scope.$on('transcribe:clearAnnotations', clearAnnotations);
 
                 scope.$on('transcribe:loadedSubject', getAnnotations);
-
-                scope.$on('transcribe:saveSubject', saveAnnotations);
 
                 scope.$on('svgDrawing:add', storeAnnotations);
 
@@ -109,12 +121,15 @@
         };
     });
 
-    module.directive('annotation', function ($parse) {
+    module.directive('annotation', function ($window, $parse) {
         return {
             link: function (scope, element, attrs) {
-                element.bind('click', function () {
+                element.bind('click', function (e) {
                     var annotation = $parse(attrs.annotation)(scope);
-                    console.log(annotation);
+                    // scope.$parent.selectAnnotation(annotation);
+                    if ($window.confirm('Delete annotation?')) {
+                        scope.$parent.removeAnnotation(annotation);
+                    }
                 });
             }
         };

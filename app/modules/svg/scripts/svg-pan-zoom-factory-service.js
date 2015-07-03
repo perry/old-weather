@@ -65,6 +65,7 @@
                 return self.rotation;
             },
             zoomToRect: function (rect) {
+                self.svgInstance.resize();
                 var sizes = self.svgInstance.getSizes();
                 var realZoom = sizes.realZoom;
 

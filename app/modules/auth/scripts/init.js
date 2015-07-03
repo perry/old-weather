@@ -3,7 +3,7 @@
 
     var module = angular.module('auth', []);
 
-    module.factory('authFactory', function ($rootScope, localStorageService) {
+    module.factory('authFactory', function ($rootScope, $filter, localStorageService, zooAPI) {
         var _auth = window.zooAuth;
 
         if (localStorageService.get('user') === null) {
@@ -13,13 +13,21 @@
         var signIn = function (args) {
             return _auth.signIn(args)
                 .then(function (response) {
-                    localStorageService.set('user', response);
+                    var data = $filter('removeCircularDeps')(response);
+                    localStorageService.set('user', data);
+                    response.get('avatar')
+                        .then(function (avatar) {
+                            var avatarData = $filter('removeCircularDeps')(avatar[0]);
+                            localStorageService.set('avatar', avatarData);
+                            $rootScope.$broadcast('auth:avatar');
+                        });
                     $rootScope.$broadcast('auth:signin');
                 });
         };
 
         var signOut = function () {
             localStorageService.set('user', null);
+            localStorageService.set('avatar', null);
             $rootScope.$broadcast('auth:signout');
             return _auth.signOut();
         };
@@ -27,16 +35,24 @@
         return {
             signIn: signIn,
             signOut: signOut,
-            getUser: function () { return localStorageService.get('user'); }
+            getUser: function () { return localStorageService.get('user'); },
+            getAvatar: function () { return localStorageService.get('avatar'); }
         };
     });
 
     module.controller('HeaderUserCtrl', function ($timeout, $scope, authFactory, $modal) {
         $scope.user = authFactory.getUser();
+        $scope.avatar = authFactory.getAvatar();
 
         $scope.$on('auth:signin', function () {
             $timeout(function () {
                 $scope.user = authFactory.getUser();
+            });
+        });
+
+        $scope.$on('auth:avatar', function () {
+            $timeout(function () {
+                $scope.avatar = authFactory.getAvatar();
             });
         });
 

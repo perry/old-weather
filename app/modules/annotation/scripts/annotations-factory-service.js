@@ -13,13 +13,15 @@
         }
     };
 
-    module.factory('annotationsFactory', function ($rootScope, $stateParams, $q, zooAPISubjectSets, localStorageService, zooAPI) {
+    module.factory('annotationsFactory', function ($window, $filter, $rootScope, $stateParams, $q, zooAPISubjectSets, localStorageService, zooAPI) {
 
-        var self = this;
+        var classification;
 
         var annotationsPrefix = 'annotation_subject_id_';
 
         var create = function (subject_id) {
+            var deferred = $q.defer();
+
             var subject_set_id = $stateParams.subject_set_id;
             zooAPISubjectSets.get({id: subject_set_id})
                 .then(function (response) {
@@ -44,19 +46,18 @@
                             obj.links.workflow = workflow.id;
                             obj.metadata.workflow_version = workflow.version;
 
-                            self.classification = zooAPI.type('classifications').create(obj);
+                            classification = obj;
+                            deferred.resolve(classification);
                         });
                 });
 
+            return deferred.promise;
         };
 
         var storeData = function (data, subject) {
             var id = subject.id;
             var storageKey = annotationsPrefix + id;
-            var arr = localStorageService.get(storageKey);
-            if (!arr) {
-                arr = [];
-            }
+            var classificationObject = localStorageService.get(storageKey);
 
             var list = localStorageService.get('annotations_list');
             if (!list) {
@@ -69,45 +70,68 @@
             }
             localStorageService.set('annotations_list', list);
 
-            upsert(arr, {_id: data._id}, data);
+            upsert(classificationObject.annotations, {_id: data._id}, data);
 
-            localStorageService.set(storageKey, arr);
-
-            // var obj = {
-            //     'annotations': arr,
-            //     'completed': false,
-            //     'metadata': self.classification.metadata
-            // };
-            // obj.metadata.finished_at = new Date().toISOString();
-            //
-            // self.classification.update(obj)
+            localStorageService.set(storageKey, classificationObject);
         };
 
-        var syncData = function () {
-            // var obj = {
-            //     'completed': true,
-            //     'metadata': self.classification.metadata
-            // };
-            // obj.metadata.finished_at = new Date().toISOString();
-            // self.classification.update(obj);
-            // self.classification.save()
-            //     .then(function (response) {
-            //         console.log(response);
-            //         self.classification.get('subjects')
-            //             .then(function (response) {
-            //                 console.log(response);
-            //                 self.classification.destroy();
-            //             })
-            //     })
+        var save = function (id) {
+            var deferred = $q.defer();
+
+            var storageKey = annotationsPrefix + id;
+            var classification = localStorageService.get(storageKey);
+
+            if (classification.annotations.length === 0) {
+                if($window.confirm('You haven\'t added any annotations, are you sure you want to finish?')) {
+                    var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
+                    _.remove(subject_set_queue, {id: id});
+                    localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
+
+                    deferred.resolve();
+                }
+            } else {
+
+                classification.metadata.finished_at = new Date().toISOString();
+                classification.completed = true;
+
+                var resource = zooAPI.type('classifications').create(classification);
+                resource.save()
+                    .then(function (response) {
+                        response = $filter('removeCircularDeps')(response);
+                        localStorageService.set(storageKey, response);
+
+                        var annoList = localStorageService.get('annotations_list');
+                        var obj = _.find(annoList, {subject_id: id, subject_set_id: $stateParams.subject_set_id});
+                        obj.classification = response.id;
+                        upsert(annoList, {subject_id: id}, obj);
+                        localStorageService.set('annotations_list', annoList);
+
+                        var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
+                        _.remove(subject_set_queue, {id: id});
+                        localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
+
+                        deferred.resolve(response);
+                    });
+
+            }
+
+            return deferred.promise;
         };
 
         var get = function (id) {
-            // create(id)
             var storageKey = annotationsPrefix + id;
             var deferred = $q.defer();
 
             var data = localStorageService.get(storageKey);
-            deferred.resolve(data);
+            if (data && data.annotations) {
+                deferred.resolve(data);
+            } else {
+                create(id)
+                    .then(function (response) {
+                        localStorageService.set(storageKey, response);
+                        deferred.resolve(response);
+                    });
+            }
 
             return deferred.promise;
         };
@@ -122,11 +146,23 @@
             storeData(data, subject);
         };
 
+        var remove = function (annotationID, subject) {
+            var id = subject.id;
+            var storageKey = annotationsPrefix + id;
+
+            var classificationObj = localStorageService.get(storageKey);
+            _.remove(classificationObj.annotations, {_id: annotationID});
+            localStorageService.set(storageKey, classificationObj);
+            $rootScope.$broadcast('annotations:remove', annotationID);
+        };
+
         var clear = function (data, subject) {
             var id = subject.id;
             var storageKey = annotationsPrefix + id;
             if (data === null) {
-                localStorageService.set(storageKey, []);
+                var classificationObj = localStorageService.get(storageKey);
+                classificationObj.annotations = [];
+                localStorageService.set(storageKey, classificationObj);
             }
 
             // Remove the subject from the annotations list.
@@ -145,9 +181,10 @@
             create: create,
             get: get,
             add: add,
+            remove: remove,
             clear: clear,
             update: update,
-            sync: syncData
+            save: save
         };
 
         return obj;

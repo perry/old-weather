@@ -46,6 +46,81 @@ body
             background-size: cover
             background-position: 0 0
 
+.page-annotate,
+.page-transcribe
+    #site-header,
+    #site-main
+        position: relative
+        padding-right: 300px
+        &:after
+            content: ''
+            position: absolute
+            z-index: 1
+            height: 100%
+            width: 300px
+            background: #f2fbfc
+            top: 0
+            right: 0
+    #site-nav
+        .navbar-right
+            position: absolute
+            z-index: 10
+            right: -300px + 15px
+        .user
+            .navbar-text
+                color:  #00b5be
+                strong
+                    color:  #00494d
+
+    .authentication-buttons
+        display: none
+
+.workflow-col
+    width: 300px
+    padding: 0 15px
+    position: absolute
+    z-index: 10
+    top: 0
+    right: 0
+    color:  #00b5be
+    font-size: 14px
+    font-weight: 400
+    line-height: 20px
+    text-align: center
+    .workflow-title
+        display: block
+        margin-bottom: 20px
+        font-family: 'clarendon-text-pro', serif
+        color:  #00b5be
+        font-size: 24px
+        font-weight: 400
+        line-height: 20px
+        text-align: center
+
+    .title
+        color:  #00b5be
+        font-size: 14px
+        font-weight: 700
+        line-height: 20px
+        text-align: center
+        margin-bottom: 20px
+
+    .action
+        .buttons
+            display: flex
+            margin-bottom: 5px
+            .btn
+                flex: 1
+                margin-right: 5px
+                &:last-of-type
+                    margin-right: 0
+    .btn-finish
+        margin-bottom: 20px
+
+
+    .nav-pills
+        text-align: left
+
 h1
     font-family: 'clarendon-text-pro', serif
 
@@ -98,15 +173,7 @@ img
             p
                 margin-bottom: 30px
             .btn
-                color: $shallow-teal
                 border-width: 2px
-                border-color: $shallow-teal
-                background: none
-                &:hover,
-                &:focus,
-                &:active
-                    color: $deep-teal
-                    background: $shallow-teal
         &.middle
             background: #003033
             padding: 23px 0
@@ -160,6 +227,19 @@ img
     .navbar-left,
     .navbar-right
         margin-top: 15px
+    .navbar-right
+        margin-right: 0
+    .user
+        line-height: 1
+        .navbar-text
+            font-size: 14px
+            font-weight: 700
+            text-align: right
+            color: #fff
+        .avatar
+            width: 40px
+            height: 40px
+            border-radius: 40px
 
 .home-content
     padding: 100px 0
@@ -211,6 +291,13 @@ img
             text-transform: uppercase
             text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.17);
 
+.pre-content-section
+    padding: 25px 0
+    background: #fff
+    color:  #969696
+    font-size: 14px
+    p
+        margin: 0
 .content-section
     padding: 80px 0
     background: #ededed
@@ -274,7 +361,9 @@ img
         transform: translateY(15px)
         > div
             padding: 25px
-            background: #fff
+            border-radius: 4px
+            background-color: rgba(255, 255, 255, 0.95)
+            box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.35)
 
 .log
     max-width: 100%
@@ -292,6 +381,14 @@ img
         stroke-width: 3
         stroke: $deep-teal-lt
         fill: rgba($deep-teal-lt, 0.3)
+    &.selected
+        rect
+            stroke: #fff
+            fill: rgba(0,0,0,0)
+    .cross
+        fill: none
+        stroke-width: 3
+        stroke: #000
 
 .questions-panel
     &.animated.questions-complete
@@ -359,7 +456,7 @@ img
                 text-transform: uppercase
                 text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.75)
         .buttons
-            width: 70%
+            width: 50%
             margin: 0 auto
             .btn
                 display: block
@@ -376,9 +473,51 @@ img
 
 .btn
     border: 0
-    font-size: 14px
     font-weight: 700
     padding: 11px 28px
     border: 3px solid transparent
     &.uppercase
         text-transform: uppercase
+    &.btn-orange
+        border-color: $orange
+        background: $orange
+        color: #fff
+        &:hover,
+        &:focus,
+        &:active
+            border-color: $red
+            background: $red
+    &.btn-teal
+        background: $shallow-teal
+        border-color: $shallow-teal
+        color: #fff
+        &:hover,
+        &:focus,
+        &:active
+            background: $deep-teal-lt
+            border-color: $deep-teal-lt
+    &.btn-skeleton
+        background: none
+        &.white
+            border-color: #fff
+            color: #fff
+            &:hover,
+            &:focus,
+            &:active
+                background: #fff
+                color: $dark-teal
+        &.teal
+            color: $shallow-teal
+            border-color: $shallow-teal
+            background: none
+            &:hover,
+            &:focus,
+            &:active
+                color: #fff
+                background: $shallow-teal
+
+.more-video-modal
+    position: absolute
+    left: 50%
+    bottom: 0
+    transform: translate3d(-50%, 150%, 0)

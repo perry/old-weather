@@ -21,7 +21,25 @@
         return $window.zooAPI;
     });
 
-    module.factory('zooAPIProject', function ($q, localStorageService, zooAPIConfig, zooAPI) {
+    module.filter('removeCircularDeps', function () {
+        return function (val) {
+            var process = function (object) {
+                return _.omit(object, function (value, key) { return key.charAt(0) === '_'; });
+            };
+
+            if (_.isArray(val)) {
+                _.each(val, function (item, index) {
+                    val[index] = process(val[index]);
+                });
+            } else {
+                val = process(val);
+            }
+
+            return val;
+        };
+    });
+
+    module.factory('zooAPIProject', function ($filter, $q, localStorageService, zooAPIConfig, zooAPI) {
         var get = function () {
             var deferred = $q.defer();
 
@@ -32,7 +50,8 @@
 
             zooAPI.type('projects').get({display_name: zooAPIConfig.display_name})
                 .then(function (response) {
-                    localStorageService.set('project', response[0]);
+                    var data = $filter('removeCircularDeps')(response[0]);
+                    localStorageService.set('project', data);
                     deferred.resolve(localStorageService.get('project'));
                 });
 
@@ -44,7 +63,7 @@
         };
     });
 
-    module.factory('zooAPIWorkflows', function ($q, localStorageService, zooAPIConfig, zooAPI) {
+    module.factory('zooAPIWorkflows', function ($q, $filter, localStorageService, zooAPIConfig, zooAPI) {
         var get = function (filter) {
             var deferred = $q.defer();
 
@@ -65,6 +84,7 @@
             zooAPI.type('workflows').get(filter)
                 .then(function (response) {
                     upsert(cache, {id: response.id}, response);
+                    cache = $filter('removeCircularDeps')(cache);
                     localStorageService.set('workflows', cache);
                     deferred.resolve(response);
                 });
@@ -75,9 +95,9 @@
         return {
             get: get
         };
-    })
+    });
 
-    module.factory('zooAPISubjectSets', function ($q, localStorageService, zooAPI, zooAPIProject) {
+    module.factory('zooAPISubjectSets', function ($q, $filter, localStorageService, zooAPI, zooAPIProject) {
         var get = function (filter) {
             var deferred = $q.defer();
 
@@ -135,6 +155,7 @@
                                 });
                             }
 
+                            cache = $filter('removeCircularDeps')(cache);
                             localStorageService.set('subject_sets', cache);
 
                             deferred.resolve(subjectSets);
