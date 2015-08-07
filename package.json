@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/perry/old-weather-rebuild.git"
+    "url": "https://github.com/zooniverse/old-weather.git"
   },
   "author": "",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/perry/old-weather-rebuild/issues"
+    "url": "https://github.com/zooniverse/old-weather/issues"
   },
-  "homepage": "https://github.com/perry/old-weather-rebuild",
+  "homepage": "https://github.com/zooniverse/old-weather",
   "devDependencies": {
     "gulp": "3.8.11",
     "gulp-angular-templatecache": "^1.6.0",
