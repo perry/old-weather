@@ -4,8 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## Added
+### Added
 - Logout link to nav
+
+### Changed
+- Hidden 'Toggle Guides' button until we can work out what it does
 
 ### Fixed
 - Stopped padding being overridden on home content
