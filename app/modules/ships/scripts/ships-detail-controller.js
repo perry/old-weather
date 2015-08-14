@@ -16,7 +16,7 @@
                 zooAPISubjectSets.get({id: $stateParams.id})
                     .then(function (response) {
                         $scope.ship = response[0];
-                        $scope.shipInfo = ShipsDetailConstants[$scope.ship.metadata.shortName] || false; // ShipsDetailConstants['Ammen']
+                        $scope.shipInfo = ShipsDetailConstants[$scope.ship.metadata.shortName] || false;
                     }, function () {
                         $state.go('404');
                     });

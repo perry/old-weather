@@ -20,6 +20,12 @@ $deep-teal-lt = #00797f
 // shallow teal
 $shallow-teal = #00b5be
 
+// Mixins / extensions
+$double-border
+    border: 5px solid #fff
+    box-shadow: 0 0 0 1px #c0c0c0
+
+
 html
     overflow-y: scroll
 
@@ -421,14 +427,13 @@ img
         @media screen and (max-width: 700px)
             width: 0
     .item
+        @extend $double-border
         background-size: cover
         background-position: center center
         background-repeat: no-repeat
         position: relative
-        border: 5px solid #fff
         height: 250px
         overflow: hidden
-        box-shadow: 0 0 0 1px #c0c0c0
         @extend .vertical-center
         .cover
             position: absolute
@@ -522,7 +527,6 @@ img
     transform: translate3d(-50%, 150%, 0)
 
 .ship-basicinfo
-
     .datum
         color: $deep-teal-lt
         margin-bottom: 0
@@ -537,7 +541,23 @@ img
         text-align: center
         // Corresponds to screen-md-min
         // TODO: import bootstrap-styl, and get this as a variable
-        @media (max-width: 992px)
-            margin-top: 20px
         @media (min-width: 992px)
             text-align: right
+
+.ship-basicinfo.-full
+    .buttons
+        // Corresponds to screen-md-min
+        // TODO: import bootstrap-styl, and get this as a variable
+        @media (max-width: 992px)
+            margin-top: 20px
+
+.img-responsive
+    @extend $double-border
+
+.ship-bio
+    color: $deep-teal-lt
+    h4
+        font-weight: bold
+        margin-top: 0
+        @media (max-width: 768px)
+            margin-top: 30px

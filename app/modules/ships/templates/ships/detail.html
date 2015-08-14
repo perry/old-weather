@@ -1,23 +1,18 @@
 <div class="pre-content-section" ng-if="!loading">
     <div class="container">
-        <div class="ship-basicinfo row">
+        <div class="ship-basicinfo -full row" ng-show="shipInfo">
 
-            <dl class="col-xs-12" ng-show="!shipInfo">
-                <dt>Voyage</dt>
-                <dd>{{ ::ship.display_name }}</dd>
-            </dl>
-
-            <dl class="col-xs-12 col-sm-6 col-md-3 datum -name" ng-show="shipInfo">
+            <dl class="col-xs-12 col-sm-6 col-md-4 datum -name">
                 <dt>Ship Name</dt>
                 <dd>{{ ::shipInfo.fullName }}</dd>
             </dl>
 
-            <dl class="col-xs-6 col-sm-3 col-md-3 datum" ng-show="shipInfo">
+            <dl class="col-xs-6 col-sm-3 col-md-2 datum">
                 <dt>Class</dt>
                 <dd>{{ ::shipInfo.shipClass }}</dd>
             </dl>
 
-            <dl class="col-xs-6 col-sm-3 col-md-2 datum" ng-show="shipInfo">
+            <dl class="col-xs-6 col-sm-3 col-md-2 datum">
                 <dt>Tonnage</dt>
                 <dd>{{ ::shipInfo.tonnage }}</dd>
             </dl>
@@ -27,6 +22,37 @@
                 <a href="#" class="btn btn-skeleton teal">Transcribe</a>
             </div>
 
+        </div>
+
+        <div class="ship-basicinfo row" ng-show="!shipInfo">
+
+            <dl class="col-xs-12 col-sm-7 datum -name" >
+                <dt>Voyage</dt>
+                <dd>{{ ::ship.display_name }}</dd>
+            </dl>
+
+            <div class="col-xs-12 col-sm-5 buttons">
+                <a href="#" class="btn btn-skeleton teal">Annotate</a>
+                <a href="#" class="btn btn-skeleton teal">Transcribe</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="content-section" ng-if="!loading && shipInfo">
+    <div class="container">
+        <div class="row ship-bio">
+            <section class="col-xs-12 col-sm-8">
+                <img ng-src="{{ shipInfo.imageUrl }}" class="img-responsive">
+            </section>
+            <section class="col-xs-12 col-sm-4">
+                <h4>Description</h4>
+                <p ng-repeat="para in shipInfo.bio" ng-bind="para"></p>
+                <p>
+                    <a href="{{ shipInfo.url }}" target="_blank">Learn more about the {{ ::shipInfo.fullName }} at Naval-History.net</a>
+                </p>
+            </section>
         </div>
     </div>
 </div>
