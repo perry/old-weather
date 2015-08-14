@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Stopped padding being overridden on home content
+- Correct links on ship info page
 
 ## [0.1.0] - 14-08-2015
 ### Added
