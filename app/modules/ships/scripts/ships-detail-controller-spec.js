@@ -61,6 +61,7 @@
                 $scope.$digest();
                 expect($state.go).toHaveBeenCalledWith('404');
             });
+
         });
 
         describe('Without $stateParams.id', function () {

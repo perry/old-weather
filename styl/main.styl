@@ -20,6 +20,12 @@ $deep-teal-lt = #00797f
 // shallow teal
 $shallow-teal = #00b5be
 
+// Mixins / extensions
+$double-border
+    border: 5px solid #fff
+    box-shadow: 0 0 0 1px #c0c0c0
+
+
 html
     overflow-y: scroll
 
@@ -30,9 +36,9 @@ body
     min-height: 100vh
     flex-direction: column
     background-color: $shallow-teal
-    background-image: url(../images/home-bg.png)
-    background-repeat: no-repeat
-    background-size: 100% auto
+    background-image: url(../images/home-bg.png), url(../images/home-bg-tile.png)
+    background-repeat: no-repeat, repeat-y
+    background-size: 100% auto, 100% auto
     background-position: 0 -200px
     &.page-annotate,
     &.page-transcribe
@@ -167,9 +173,9 @@ img
         &.top
             background: $deep-teal
             color: $shallow-teal
+            font-size: 18px
             padding: 36px 0
             text-align: center
-            font-size: 18px
             p
                 margin-bottom: 30px
             .btn
@@ -179,8 +185,8 @@ img
             padding: 23px 0
         &.bottom
             background: #00181a
-            font-size: 12px
             color: #808080
+            font-size: 12px
             padding: 20px 0
             a
                 color: #808080
@@ -205,12 +211,12 @@ img
             margin-right: 10px
             > a,
             > button
+                border: 2px solid transparent
+                border-radius: 30px
                 color: #fff
                 font-size: 14px
                 font-weight: 700
                 padding: 7px 40px
-                border-radius: 30px
-                border: 2px solid transparent
                 &:hover,
                 &:focus
                     background-color: rgba(197, 252, 255, 0.25)
@@ -222,8 +228,8 @@ img
     .navbar-brand
         height: auto
         svg
-            width: 42px
             fill: #c5fcff
+            width: 42px
     .navbar-left,
     .navbar-right
         margin-top: 15px
@@ -321,7 +327,6 @@ img
             animation-delay: $animation-duration
 
 .log-container
-
     position: relative
     font-size: 0
     overflow: hidden
@@ -422,14 +427,13 @@ img
         @media screen and (max-width: 700px)
             width: 0
     .item
+        @extend $double-border
         background-size: cover
         background-position: center center
         background-repeat: no-repeat
         position: relative
-        border: 5px solid #fff
         height: 250px
         overflow: hidden
-        box-shadow: 0 0 0 1px #c0c0c0
         @extend .vertical-center
         .cover
             position: absolute
@@ -521,3 +525,39 @@ img
     left: 50%
     bottom: 0
     transform: translate3d(-50%, 150%, 0)
+
+.ship-basicinfo
+    .datum
+        color: $deep-teal-lt
+        margin-bottom: 0
+        dt
+            font-weight: normal
+        &.-name
+            dd
+                font-family: 'Domine', serif
+                font-size: 24px
+                font-weight: bold
+    .buttons
+        text-align: center
+        // Corresponds to screen-md-min
+        // TODO: import bootstrap-styl, and get this as a variable
+        @media (min-width: 992px)
+            text-align: right
+
+.ship-basicinfo.-full
+    .buttons
+        // Corresponds to screen-md-min
+        // TODO: import bootstrap-styl, and get this as a variable
+        @media (max-width: 992px)
+            margin-top: 20px
+
+.img-responsive
+    @extend $double-border
+
+.ship-bio
+    color: $deep-teal-lt
+    h4
+        font-weight: bold
+        margin-top: 0
+        @media (max-width: 768px)
+            margin-top: 30px

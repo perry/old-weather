@@ -11,11 +11,12 @@
      *
      */
     module.controller('ShipsDetailCtrl',
-        function ($scope, $stateParams, $state, zooAPISubjectSets) {
+        function ($scope, $stateParams, $state, ShipsDetailConstants, zooAPISubjectSets) {
             if (angular.isDefined($stateParams.id)) {
                 zooAPISubjectSets.get({id: $stateParams.id})
                     .then(function (response) {
                         $scope.ship = response[0];
+                        $scope.shipInfo = ShipsDetailConstants[$scope.ship.metadata.shortName] || false;
                     }, function () {
                         $state.go('404');
                     });
