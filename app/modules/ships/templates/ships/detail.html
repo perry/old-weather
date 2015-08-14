@@ -45,13 +45,13 @@
     <div class="container" ng-if="shipInfo">
         <div class="row ship-bio">
             <section class="col-xs-12 col-sm-8">
-                <img ng-src="{{ shipInfo.imageUrl }}" class="img-responsive">
+                <img ng-src="{{ ::shipInfo.imageUrl }}" class="img-responsive">
             </section>
             <section class="col-xs-12 col-sm-4">
                 <h4>Description</h4>
-                <p ng-repeat="para in shipInfo.bio">{{ para }}</p>
+                <p ng-repeat="para in ::shipInfo.bio">{{ para }}</p>
                 <p>
-                    <a href="{{ shipInfo.url }}" target="_blank">Learn more about the {{ ::shipInfo.fullName }} at Naval-History.net</a>
+                    <a href="{{ ::shipInfo.url }}" target="_blank">Learn more about the {{ ::shipInfo.fullName }} at Naval-History.net</a>
                 </p>
             </section>
         </div>
