@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+## Added
+- Logout link to nav
+
 ## [0.1.0] - 14-08-2015
 ### Added
 - Added ship info page, and supporting constants file / styling
