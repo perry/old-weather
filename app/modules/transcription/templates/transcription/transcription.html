@@ -60,12 +60,19 @@
 
     <div class="input-area" ng-show="!showAllAnnotations" ng-style="{'top': uiPositionTop + 'px'}">
         <div>
-            <form ng-submit="$event.preventDefault(); nextAnnotation()">
-                <input class="form-control input-lg" type="text" ng-model="annotationContent" autofocus>
+
+            <form ng-submit="$event.preventDefault(); nextAnnotation()" ng-show="annotations[0]['type'] !== 'location'">
+                <input class="form-control input-lg" type="text" ng-model="annotations[0].content" autofocus>
             </form>
+
+            <form class="latlong-input form-inline" lat-long ng-submit="$event.preventDefault(); nextAnnotation()" ng-show="annotations[0]['type'] === 'location'">
+                <lat-long ng-model="annotations[0]" autofocus>
+            </form>
+
             <button ng-click="prevAnnotation()" class="btn btn-teal">Prev</button>
             <!-- <button ng-click="toggleAllAnnotations()" class="btn btn-default">Show all</button> -->
             <button ng-click="nextAnnotation()" class="btn btn-teal">Next</button>
+
         </div>
     </div>
 
