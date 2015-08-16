@@ -93,6 +93,7 @@
         };
 
         $scope.save = function () {
+            console.log('save()', $scope.annotationContent)
             $scope.annotations[0].content = $scope.annotationContent;
             $scope.annotationContent = null;
         };
@@ -137,6 +138,43 @@
                         });
                 });
         };
+    });
+
+    module.directive('latLong', function () {
+        return {
+            scope: {
+                type: '='
+            },
+            restrict: 'E',
+            require: 'ngModel',
+            templateUrl: 'templates/transcription/_lat-long.html',
+            link: function (scope, element, attrs, ngModelCtrl) {
+
+                ngModelCtrl.$formatters.push(function (modelValue) {
+                    modelValue = modelValue || '';
+                    var value = {};
+                    if (modelValue.indexOf('°') > 0) {
+                        value.degrees = modelValue.substr(0, modelValue.indexOf('°'));
+                    }
+                    return value;
+                });
+
+                ngModelCtrl.$render = function () {
+                    scope.degrees = parseInt(ngModelCtrl.$viewValue.degrees, 10);
+                }
+
+                scope.$watch('degrees', function() {
+                    ngModelCtrl.$setViewValue({
+                          degrees: scope.degrees
+                    });
+                });
+
+                ngModelCtrl.$parsers.push(function(viewValue) {
+                    return viewValue.degrees + '°';
+                });
+
+            }
+        }
     });
 
 }(window.angular, window._));
