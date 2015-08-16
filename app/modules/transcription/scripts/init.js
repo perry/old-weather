@@ -93,7 +93,6 @@
         };
 
         $scope.save = function () {
-            console.log('save()', $scope.annotationContent)
             $scope.annotations[0].content = $scope.annotationContent;
             $scope.annotationContent = null;
         };
@@ -102,6 +101,24 @@
             $scope.showAllAnnotations = true;
             $scope.panZoom.fit();
             $scope.panZoom.center();
+        };
+
+        var annotationInput = document.getElementById('annotation-input');
+
+        $scope.insertChar = function (insertValue) {
+            var input = annotationInput;
+            if (document.selection) {
+                input.focus();
+                document.selection.createRange().text = insertValue;
+            } else if (input.selectionStart || input.selectionStart === '0') {
+                var endPos = input.selectionStart + 1;
+                input.value = input.value.substring(0, input.selectionStart) + insertValue + input.value.substring(input.selectionEnd, input.value.length);
+                input.selectionStart = endPos;
+                input.selectionEnd = endPos;
+                input.focus();
+            } else {
+                input.value += insertValue;
+            }
         };
 
         $scope.finish = function () {
@@ -138,43 +155,6 @@
                         });
                 });
         };
-    });
-
-    module.directive('latLong', function () {
-        return {
-            scope: {
-                type: '='
-            },
-            restrict: 'E',
-            require: 'ngModel',
-            templateUrl: 'templates/transcription/_lat-long.html',
-            link: function (scope, element, attrs, ngModelCtrl) {
-
-                ngModelCtrl.$formatters.push(function (modelValue) {
-                    modelValue = modelValue || '';
-                    var value = {};
-                    if (modelValue.indexOf('°') > 0) {
-                        value.degrees = modelValue.substr(0, modelValue.indexOf('°'));
-                    }
-                    return value;
-                });
-
-                ngModelCtrl.$render = function () {
-                    scope.degrees = parseInt(ngModelCtrl.$viewValue.degrees, 10);
-                }
-
-                scope.$watch('degrees', function() {
-                    ngModelCtrl.$setViewValue({
-                          degrees: scope.degrees
-                    });
-                });
-
-                ngModelCtrl.$parsers.push(function(viewValue) {
-                    return viewValue.degrees + '°';
-                });
-
-            }
-        }
     });
 
 }(window.angular, window._));
