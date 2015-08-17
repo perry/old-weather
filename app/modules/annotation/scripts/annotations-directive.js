@@ -124,7 +124,8 @@
     module.directive('annotation', function ($window, $parse) {
         return {
             link: function (scope, element, attrs) {
-                element.bind('click', function (e) {
+                element.bind('mousedown', function (e) {
+                    e.stopPropagation();
                     var annotation = $parse(attrs.annotation)(scope);
                     // scope.$parent.selectAnnotation(annotation);
                     if ($window.confirm('Delete annotation?')) {

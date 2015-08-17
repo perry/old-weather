@@ -46,8 +46,8 @@
         };
 
         var startDraw = function (event) {
-            // Only start drawing if panZoom is disabled.
-            if (!svgPanZoomFactory.status()) {
+            // Only start drawing if panZoom is disabled, and it's a primary mouse click
+            if (!svgPanZoomFactory.status() && event.which === 1) {
                 event.preventDefault();
 
                 if (self.drawing) {
