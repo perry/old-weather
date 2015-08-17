@@ -36,9 +36,11 @@
                     }
                 };
 
+                var tempCells = {};
+
                 var createCells = function (row) {
                     var headers = _.where(scope.annotations, {type: 'header'});
-                    _.each(headers, function (header) {
+                    _.each(headers, function (header, index) {
                         // If the row is below the header
                         if (row.y >= (header.y + header.height)) {
                             var obj = {
@@ -49,11 +51,12 @@
                                 rotation: header.rotation
                             };
 
-                            var existing = _.find(scope.annotations, {x: obj.x, y: obj.y});
+                            var existing = _.find(scope.annotations, { _id: tempCells[index] });
 
                             if (angular.isUndefined(existing)) {
                                 obj._id = _.uniqueId() + new Date().getTime();
                                 addAnnotation(obj);
+                                tempCells[index] = obj._id;
                             } else {
                                 obj._id = existing._id;
                                 updateAnnotation(obj, existing);
@@ -114,6 +117,7 @@
                     if (data.type === 'row') {
                         createCells(rect);
                     }
+                    tempCells = {};
                 });
 
                 getAnnotations();
