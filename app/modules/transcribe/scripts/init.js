@@ -299,7 +299,7 @@
         };
     });
 
-    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory) {
+    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory) {
         $rootScope.bodyClass = 'annotate';
 
         $scope.loadSubject = function () {
@@ -346,6 +346,13 @@
             annotationsFactory.save($scope.subject.id)
                 .then(function () {
                     $scope.loadSubject();
+                });
+        };
+
+        $scope.saveSubjectAndTranscribe = function () {
+            annotationsFactory.save($scope.subject.id)
+                .then(function () {
+                    $state.go('transcription', { subject_set_id: $scope.subject_set_id });
                 });
         };
 
