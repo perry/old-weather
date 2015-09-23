@@ -4,7 +4,7 @@
     var module = angular.module('ships');
 
     /**
-     * @ngdoc constant
+     * @ngdoc object
      * @name ships.constant:ShipsDetailConstant
      *
      * @description
