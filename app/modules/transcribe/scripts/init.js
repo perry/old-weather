@@ -33,6 +33,35 @@
             });
     });
 
+    module.config(function logAllEvents($provide) {
+        $provide.decorator('$rootScope', function($delegate) {
+            var Scope = $delegate.constructor;
+            var origBroadcast = Scope.prototype.$broadcast;
+            var origEmit = Scope.prototype.$emit;
+
+            Scope.prototype.$broadcast = function() {
+                logEvent('$broadcast', arguments);
+                return origBroadcast.apply(this, arguments);
+            };
+
+            Scope.prototype.$emit = function() {
+                logEvent('$emit', arguments);
+                return origEmit.apply(this, arguments);
+            };
+            return $delegate;
+        });
+
+        function logEvent(type, args) {
+            var eventArgs = Array.prototype.slice.call(args);
+            var message = [type, eventArgs.shift()].join(', ');
+            if (eventArgs.length > 0) {
+                console.log(message, eventArgs);
+            } else {
+                console.log(message);
+            }
+        }
+    })
+
     module.directive('transcribeTools', function (svgPanZoomFactory, svgDrawingFactory, toolFactory) {
         return {
             restrict: 'A',
@@ -47,6 +76,13 @@
                     {
                         id: 'row',
                         title: 'Table row'
+                    },
+                    {
+                        id: 'cell',
+                        title: 'Table cell'
+                    },
+                    {
+                        id: 'useGrid'
                     },
                     {
                         id: 'date',
@@ -133,9 +169,10 @@
         };
     });
 
-    module.factory('toolFactory', function (svgPanZoomFactory, svgDrawingFactory) {
+    module.factory('toolFactory', function (svgPanZoomFactory, svgDrawingFactory, svgGridFactory) {
         var enable = function (tool) {
             svgPanZoomFactory.disable();
+            console.log(tool)
             svgDrawingFactory.bindMouseEvents({type: tool});
         };
 
@@ -150,7 +187,64 @@
         };
     });
 
-    module.directive('transcribeQuestions', function ($rootScope, toolFactory) {
+    module.factory('gridFactory', function (annotationsFactory, localStorageService, zooAPI, zooAPIProject) {
+
+        var _createAnnotations = function (id) {
+            return annotationsFactory.get(id)
+                .then(function (response) {
+                    // Remove all those that aren't dates, and set the temp grid attribute on them
+                    var tempGrid = _.filter(angular.copy(response.annotations), function (annotation) {
+                        annotation.temp = true;
+                        return annotation.type !== 'date';
+                    });
+                    console.log(tempGrid)
+                    return tempGrid;
+                })
+        }
+
+        var save = function (id) {
+            return _createAnnotations(id)
+                .then(function (response) {
+                    console.log(response)
+                    localStorageService.set('grid', response);
+                    return response;
+                });
+        }
+
+        var load = function (id) {
+            annotationsFactory.addMultiple(localStorageService.get('grid'), id);
+        }
+
+        // var save = function (id) {
+        //     var annotations;
+        //     return _createAnnotations(id)
+        //         .then(function (response) {
+        //             annotations = response;
+        //         })
+        //         .then(zooAPIProject.get)
+        //         .then(function (project) {
+        //             console.log(project)
+        //             var grid = zooAPI.type('project_preferences').create({
+        //                 links: {
+        //                     project: project.id
+        //                 },
+        //                 preferences: {
+        //                     grid: annotations
+        //                 }
+        //             });
+        //             console.log(grid)
+        //             return grid.save();
+        //         });
+
+        return {
+            save: save,
+            load: load
+        };
+
+    });
+
+
+    module.directive('transcribeQuestions', function ($rootScope, gridFactory, toolFactory, authFactory) {
         return {
             restrict: 'A',
             scope: {
@@ -167,12 +261,49 @@
                 });
 
                 scope.$watch('activeTask', function () {
+
+                    console.log(scope.activeTask)
+
+                    // Skip grid tasks if we're not logged in
+                    if (scope.activeTask && scope.tasks[scope.activeTask].skip && !authFactory.getUser()) {
+                        scope.confirm(scope.tasks[scope.activeTask].skip);
+                    }
+
+                    if (scope.activeTask && angular.isDefined(scope.tasks[scope.activeTask].onload)) {
+                        scope.tasks[scope.activeTask].onload();
+                    }
+
                     if (scope.activeTask && angular.isDefined(scope.tasks[scope.activeTask].tools)) {
                         toolFactory.enable(scope.tasks[scope.activeTask].tools[0].label);
                     } else {
                         toolFactory.disable();
                     }
+
+                    if (scope.activeTask === 'T5-use-grid') {
+                        gridFactory.load(scope.$parent.subject.id)
+                    }
+
                 });
+
+
+                scope.loadGrid = function () {
+                    if (answer === 'Yes') {
+                        gridFactory.load(scope.$parent.subject.id);
+                    }
+
+                    scope.confirm(next);
+                };
+
+                scope.saveGrid = function (answer, next) {
+
+                    if (answer === 'Yes') {
+                        gridFactory.save(scope.$parent.subject.id);
+                    }
+
+                    // In practice this will be undefined as this is the last task,
+                    // but this is consistent with the current API.
+                    scope.confirm(next);
+                };
 
                 scope.confirm = function (value) {
                     if (value && _.isString(value)) {
@@ -191,17 +322,74 @@
         };
     });
 
-    module.factory('workflowFactory', function ($q, zooAPI, zooAPISubjectSets, zooAPIWorkflows, localStorageService) {
+    module.factory('workflowFactory', function ($q, authFactory, zooAPI, zooAPISubjectSets, zooAPIWorkflows, localStorageService, gridFactory) {
         var get = function (subject_set_id) {
             var deferred = $q.defer();
             zooAPISubjectSets.get({id: subject_set_id})
                 .then(function (response) {
                     var workflowID = response[0].links.workflows[0];
-                    zooAPIWorkflows.get(workflowID).then(deferred.resolve, deferred.reject, deferred.notify);
+                    zooAPIWorkflows.get(workflowID)
+                        .then(addReuseGridTask)
+                        .then(deferred.resolve, deferred.reject, deferred.notify);
                 });
 
             return deferred.promise;
         };
+
+        function addReuseGridTask(workflow) {
+            workflow.tasks.T4.answers[0].next = 'T5-use-grid';
+            workflow.tasks.T6.next = 'T6-save-grid';
+            workflow.tasks['T5-use-grid'] = {
+                grid: true,
+                skip: 'T5',
+                question: 'Would you like to use this grid?',
+                answers: [
+                    {
+                        label: 'Yes',
+                        next: 'T5-adjust-grid'
+                    },
+                    {
+                        label: 'No',
+                        next: 'T5'
+                    }
+                ]
+            };
+            workflow.tasks['T5-adjust-grid'] = {
+                grid: true,
+                instruction: 'If you need to, move the grid into the correct position.',
+                next: 'T5-edit-grid'
+            };
+            workflow.tasks['T5-edit-grid'] = {
+                grid: true,
+                instruction: 'Draw or remove any additional cells.',
+                next: 'T6-save-grid',
+                type: 'drawing',
+                tools: [
+                    {
+                        color: '#00ff00',
+                        details: [],
+                        label: 'cell',
+                        type: 'rectangle'
+                    }
+                ]
+            };
+            workflow.tasks['T6-save-grid'] = {
+                grid: true,
+                // Skip to the end...
+                skip: undefined,
+                question: 'Would you like to save this grid for future use?',
+                answers: [
+                    {
+                        // We'll handle grid saving from the annotations factory
+                        label: 'Yes'
+                    },
+                    {
+                        label: 'No'
+                    }
+                ]
+            };
+            return workflow;
+        }
 
         return {
             get: get
@@ -340,6 +528,7 @@
         };
 
         $scope.saveSubject = function () {
+            console.log($scope)
             annotationsFactory.save($scope.subject.id)
                 .then(function () {
                     $scope.loadSubject();

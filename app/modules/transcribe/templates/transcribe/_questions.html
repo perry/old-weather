@@ -12,7 +12,53 @@
         ng-repeat="(key, task) in tasks"
         ng-show="key === activeTask"
     >
-        <div class="buttons" ng-if="!task.instruction">
+
+        <div class="buttons" ng-if="!task.instruction && key === 'T5-use-grid'">
+            GRID use!
+            <button
+                class="btn btn-teal"
+                ng-repeat="answer in task.answers"
+                ng-click="loadGrid(answer.label, answer.next)"
+            >
+                {{ answer.label }}
+            </button>
+        </div>
+
+        <div class="buttons" ng-if="!task.instruction && key === 'T5-adjust-grid'">
+            GRID adjust!
+            <button
+                class="btn btn-teal"
+                ng-repeat="answer in task.answers"
+                ng-click="confirm(answer.next)"
+            >
+                {{ answer.label }}
+            </button>
+        </div>
+
+        <div class="buttons" ng-if="!task.instruction && key === 'T5-edit-grid'">
+            GRID edit!
+            <button
+                class="btn btn-teal"
+                ng-repeat="answer in task.answers"
+                ng-click="confirm(answer.next)"
+            >
+                {{ answer.label }}
+            </button>
+        </div>
+
+        <div class="buttons" ng-if="!task.instruction && key === 'T6-save-grid'">
+            GRID SAVING!
+            <button
+                class="btn btn-teal"
+                ng-repeat="answer in task.answers"
+                ng-click="saveGrid(answer.label, answer.next)"
+            >
+                {{ answer.label }}
+            </button>
+        </div>
+
+
+        <div class="buttons" ng-if="!task.instruction && !task.grid">
             <button
                 class="btn btn-teal"
                 ng-repeat="answer in task.answers"

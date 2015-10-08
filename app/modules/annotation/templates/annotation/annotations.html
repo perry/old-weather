@@ -9,5 +9,6 @@
         ry="5"
         type="{{ a.type }}"
         ng-if="a.type !== 'row'"
+        ng-class="{ '-temp': a.temp === true }"
     ></rect>
 </g>

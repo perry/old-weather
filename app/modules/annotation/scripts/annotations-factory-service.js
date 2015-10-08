@@ -76,10 +76,15 @@
         };
 
         var save = function (id) {
+
+            console.log('saving')
+
             var deferred = $q.defer();
 
             var storageKey = annotationsPrefix + id;
             var classification = localStorageService.get(storageKey);
+
+            console.log('classification', classification)
 
             if (classification.annotations.length === 0) {
                 if($window.confirm('You haven\'t added any annotations, are you sure you want to finish?')) {
@@ -141,6 +146,13 @@
             storeData(data, subject);
         };
 
+        var addMultiple = function (data, subject) {
+            $rootScope.$broadcast('annotations:add', data);
+            data.forEach(function (annotation) {
+                storeData(annotation, subject);
+            });
+        };
+
         var update = function (data, subject) {
             $rootScope.$broadcast('annotations:update', data);
             storeData(data, subject);
@@ -184,7 +196,8 @@
             remove: remove,
             clear: clear,
             update: update,
-            save: save
+            save: save,
+            addMultiple: addMultiple
         };
 
         return obj;
