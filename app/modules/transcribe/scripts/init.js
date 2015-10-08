@@ -60,7 +60,7 @@
                 console.log(message);
             }
         }
-    })
+    });
 
     module.directive('transcribeTools', function (svgPanZoomFactory, svgDrawingFactory, toolFactory) {
         return {
@@ -172,7 +172,7 @@
     module.factory('toolFactory', function (svgPanZoomFactory, svgDrawingFactory, svgGridFactory) {
         var enable = function (tool) {
             svgPanZoomFactory.disable();
-            console.log(tool)
+            console.log(tool);
             svgDrawingFactory.bindMouseEvents({type: tool});
         };
 
@@ -187,7 +187,7 @@
         };
     });
 
-    module.factory('gridFactory', function (annotationsFactory, localStorageService, zooAPI, zooAPIProject) {
+    module.factory('gridFactory', function ($rootScope, annotationsFactory, localStorageService, zooAPI, zooAPIProject) {
 
         var _createAnnotations = function (id) {
             return annotationsFactory.get(id)
@@ -199,8 +199,8 @@
                     });
                     console.log(tempGrid)
                     return tempGrid;
-                })
-        }
+                });
+        };
 
         var save = function (id) {
             return _createAnnotations(id)
@@ -209,11 +209,14 @@
                     localStorageService.set('grid', response);
                     return response;
                 });
-        }
+        };
 
         var load = function (id) {
-            annotationsFactory.addMultiple(localStorageService.get('grid'), id);
-        }
+            var grid = localStorageService.get('grid');
+            grid.forEach(function (cell) {
+                $rootScope.$broadcast('svgDrawing:add', cell);
+            })
+        };
 
         // var save = function (id) {
         //     var annotations;
@@ -262,15 +265,11 @@
 
                 scope.$watch('activeTask', function () {
 
-                    console.log(scope.activeTask)
+                    console.log(scope.activeTask);
 
                     // Skip grid tasks if we're not logged in
                     if (scope.activeTask && scope.tasks[scope.activeTask].skip && !authFactory.getUser()) {
                         scope.confirm(scope.tasks[scope.activeTask].skip);
-                    }
-
-                    if (scope.activeTask && angular.isDefined(scope.tasks[scope.activeTask].onload)) {
-                        scope.tasks[scope.activeTask].onload();
                     }
 
                     if (scope.activeTask && angular.isDefined(scope.tasks[scope.activeTask].tools)) {
@@ -280,13 +279,14 @@
                     }
 
                     if (scope.activeTask === 'T5-use-grid') {
-                        gridFactory.load(scope.$parent.subject.id)
+                        console.log('loading grid from watch task')
+                        gridFactory.load(scope.$parent.subject.id);
                     }
 
                 });
 
 
-                scope.loadGrid = function () {
+                scope.loadGrid = function (answer, next) {
                     if (answer === 'Yes') {
                         gridFactory.load(scope.$parent.subject.id);
                     }
