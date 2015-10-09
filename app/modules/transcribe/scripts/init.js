@@ -189,60 +189,36 @@
 
     module.factory('gridFactory', function ($rootScope, annotationsFactory, localStorageService, zooAPI, zooAPIProject) {
 
-        var _createAnnotations = function (id) {
-            return annotationsFactory.get(id)
-                .then(function (response) {
-                    // Remove all those that aren't dates, and set the temp grid attribute on them
-                    var tempGrid = _.filter(angular.copy(response.annotations), function (annotation) {
-                        annotation.temp = true;
-                        return annotation.type !== 'date';
-                    });
-                    console.log(tempGrid)
-                    return tempGrid;
-                });
+        var factory;
+        var _grid = [];
+
+        factory = {
+            use: useGrid,
+            get: getGrid,
+            hide: hideGrid,
+            show: showGrid,
         };
 
-        var save = function (id) {
-            return _createAnnotations(id)
-                .then(function (response) {
-                    console.log(response)
-                    localStorageService.set('grid', response);
-                    return response;
-                });
-        };
+        return factory;
 
-        var load = function (id) {
-            var grid = localStorageService.get('grid');
-            grid.forEach(function (cell) {
+        function hideGrid() {
+            _grid = [];
+        }
+
+        function showGrid() {
+            _grid = localStorageService.get('grid');
+        }
+
+        function getGrid() {
+            return _grid;
+        }
+
+        function useGrid() {
+            _grid.forEach(function (cell) {
                 $rootScope.$broadcast('svgDrawing:add', cell);
             })
-        };
+        }
 
-        // var save = function (id) {
-        //     var annotations;
-        //     return _createAnnotations(id)
-        //         .then(function (response) {
-        //             annotations = response;
-        //         })
-        //         .then(zooAPIProject.get)
-        //         .then(function (project) {
-        //             console.log(project)
-        //             var grid = zooAPI.type('project_preferences').create({
-        //                 links: {
-        //                     project: project.id
-        //                 },
-        //                 preferences: {
-        //                     grid: annotations
-        //                 }
-        //             });
-        //             console.log(grid)
-        //             return grid.save();
-        //         });
-
-        return {
-            save: save,
-            load: load
-        };
 
     });
 
@@ -265,8 +241,6 @@
 
                 scope.$watch('activeTask', function () {
 
-                    console.log(scope.activeTask);
-
                     // Skip grid tasks if we're not logged in
                     if (scope.activeTask && scope.tasks[scope.activeTask].skip && !authFactory.getUser()) {
                         scope.confirm(scope.tasks[scope.activeTask].skip);
@@ -279,8 +253,11 @@
                     }
 
                     if (scope.activeTask === 'T5-use-grid') {
-                        console.log('loading grid from watch task')
-                        gridFactory.load(scope.$parent.subject.id);
+                        // console.log('loading grid from watch task')
+                        // gridFactory.load(scope.$parent.subject.id);
+                        gridFactory.show();
+                        console.log('scope grid', scope.$parent.grid)
+                        console.log('gridfactory', gridFactory.get())
                     }
 
                 });
@@ -288,9 +265,10 @@
 
                 scope.loadGrid = function (answer, next) {
                     if (answer === 'Yes') {
-                        gridFactory.load(scope.$parent.subject.id);
+                        gridFactory.use();
                     }
 
+                    gridFactory.hide();
                     scope.confirm(next);
                 };
 
@@ -484,7 +462,7 @@
         };
     });
 
-    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory) {
+    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
         $rootScope.bodyClass = 'annotate';
 
         $scope.loadSubject = function () {
@@ -495,6 +473,7 @@
             $scope.isLoading = true;
             $scope.questions = null;
             $scope.questionsComplete = false;
+            $scope.grid = gridFactory.get;
 
             workflowFactory.get($scope.subject_set_id)
                 .then(function (response) {
@@ -556,9 +535,6 @@
             }
         };
 
-        $scope.toggleGuides = function () {
-            $scope.showGuides = !$scope.showGuides;
-        };
     });
 
 }(window.angular, window._));

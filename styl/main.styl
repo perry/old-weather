@@ -408,6 +408,23 @@ img
         stroke-width: 3
         stroke: #000
 
+.grid-annotation
+    rect
+        stroke-width: 3
+        stroke: $red
+        fill: rgba($red, 0.3)
+        animation-duration: 2.2s
+        animation-fill-mode: both
+        animation-iteration-count: infinite
+        animation-name: flash
+
+@keyframes flash
+    0%, 50%, 100%
+        opacity: 1
+    25%, 75%
+        opacity: 0.5
+
+
 .questions-panel
     &.animated.questions-complete
         animation-duration: 0
