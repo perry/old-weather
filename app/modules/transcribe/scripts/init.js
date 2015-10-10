@@ -33,35 +33,6 @@
             });
     });
 
-    module.config(function logAllEvents($provide) {
-        $provide.decorator('$rootScope', function($delegate) {
-            var Scope = $delegate.constructor;
-            var origBroadcast = Scope.prototype.$broadcast;
-            var origEmit = Scope.prototype.$emit;
-
-            Scope.prototype.$broadcast = function() {
-                logEvent('$broadcast', arguments);
-                return origBroadcast.apply(this, arguments);
-            };
-
-            Scope.prototype.$emit = function() {
-                logEvent('$emit', arguments);
-                return origEmit.apply(this, arguments);
-            };
-            return $delegate;
-        });
-
-        function logEvent(type, args) {
-            var eventArgs = Array.prototype.slice.call(args);
-            var message = [type, eventArgs.shift()].join(', ');
-            if (eventArgs.length > 0) {
-                console.log(message, eventArgs);
-            } else {
-                console.log(message);
-            }
-        }
-    });
-
     module.directive('transcribeTools', function (svgPanZoomFactory, svgDrawingFactory, toolFactory) {
         return {
             restrict: 'A',
@@ -80,9 +51,6 @@
                     {
                         id: 'cell',
                         title: 'Table cell'
-                    },
-                    {
-                        id: 'useGrid'
                     },
                     {
                         id: 'date',
@@ -194,7 +162,7 @@
         var _grids = localStorageService.get('grids') || [];
 
         factory = {
-            delete: deleteGrid,
+            del: deleteGrid,
             get: getGrid,
             hide: hideGrid,
             list: listGrids,
@@ -307,7 +275,7 @@
                 }
 
                 scope.deleteGrid = function (index) {
-                    gridFactory.delete(index);
+                    gridFactory.del(index);
                     if (gridFactory.list().length) {
                         scope.showGrid(0);
                     } else {

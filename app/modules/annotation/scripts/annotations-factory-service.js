@@ -77,14 +77,10 @@
 
         var save = function (id) {
 
-            console.log('saving')
-
             var deferred = $q.defer();
 
             var storageKey = annotationsPrefix + id;
             var classification = localStorageService.get(storageKey);
-
-            console.log('classification', classification)
 
             if (classification.annotations.length === 0) {
                 if($window.confirm('You haven\'t added any annotations, are you sure you want to finish?')) {
