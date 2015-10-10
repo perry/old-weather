@@ -140,7 +140,6 @@
     module.factory('toolFactory', function (svgPanZoomFactory, svgDrawingFactory, svgGridFactory) {
         var enable = function (tool) {
             svgPanZoomFactory.disable();
-            console.log(tool);
             svgDrawingFactory.bindMouseEvents({type: tool});
         };
 
