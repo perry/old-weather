@@ -187,43 +187,69 @@
         };
     });
 
-    module.factory('gridFactory', function ($rootScope, annotationsFactory, localStorageService, zooAPI, zooAPIProject) {
+    module.factory('gridFactory', function ($timeout, annotationsFactory, localStorageService, zooAPI, zooAPIProject) {
 
         var factory;
-        var _grid = [];
+        var _currentGrid = [];
+        var _grids = localStorageService.get('grids') || [];
 
         factory = {
-            use: useGrid,
+            delete: deleteGrid,
             get: getGrid,
             hide: hideGrid,
+            list: listGrids,
+            save: saveGrid,
             show: showGrid,
+            use: useGrid,
         };
 
         return factory;
 
+        // Returns all the grids in local storage
+        function listGrids() {
+            return _grids;
+        }
+
+        // Hides the grid from view
         function hideGrid() {
-            _grid = [];
+            _currentGrid = [];
         }
 
-        function showGrid() {
-            _grid = localStorageService.get('grid');
+        // Show a grid with a given ID
+        function showGrid(id) {
+            id = id || 0;
+            _currentGrid = _grids[id];
         }
 
+        // Return the _currentGrid so it can be bound to the view
         function getGrid() {
-            return _grid;
+            return _currentGrid;
         }
 
+        // Copy the content of the grid as annotations
         function useGrid() {
-            _grid.forEach(function (cell) {
+            _currentGrid.forEach(function (cell) {
                 $rootScope.$broadcast('svgDrawing:add', cell);
             })
+        }
+
+        // Save the grid to local storage for reuse
+        function saveGrid(data) {
+            _grids.push(angular.copy(data));
+            localStorageService.set('grids', _grids);
+        }
+
+        // Delete grid from local storage
+        function deleteGrid(index) {
+            _grids.splice(index, 1);
+            localStorageService.set('grids', _grids);
         }
 
 
     });
 
 
-    module.directive('transcribeQuestions', function ($rootScope, gridFactory, toolFactory, authFactory) {
+    module.directive('transcribeQuestions', function ($rootScope, $timeout, annotationsFactory, gridFactory, toolFactory, authFactory) {
         return {
             restrict: 'A',
             scope: {
@@ -231,6 +257,9 @@
             },
             templateUrl: 'templates/transcribe/_questions.html',
             link: function (scope, element, attrs) {
+
+                scope.grids = [];
+
                 scope.$watch('questions', function () {
                     if (scope.questions && scope.questions.tasks) {
                         scope.tasks = scope.questions.tasks;
@@ -253,15 +282,15 @@
                     }
 
                     if (scope.activeTask === 'T5-use-grid') {
-                        // console.log('loading grid from watch task')
-                        // gridFactory.load(scope.$parent.subject.id);
-                        gridFactory.show();
-                        console.log('scope grid', scope.$parent.grid)
-                        console.log('gridfactory', gridFactory.get())
+                        if (gridFactory.list().length === 0) {
+                            scope.confirm(scope.tasks[scope.activeTask].skip);
+                        } else {
+                            scope.grids = gridFactory.list();
+                            scope.showGrid(0);
+                        }
                     }
 
                 });
-
 
                 scope.loadGrid = function (answer, next) {
                     if (answer === 'Yes') {
@@ -272,10 +301,27 @@
                     scope.confirm(next);
                 };
 
-                scope.saveGrid = function (answer, next) {
+                scope.showGrid = function (index) {
+                    scope.active = index;
+                    gridFactory.show(index);
+                }
 
+                scope.deleteGrid = function (index) {
+                    gridFactory.delete(index);
+                    if (gridFactory.list().length) {
+                        scope.showGrid(0);
+                    } else {
+                        gridFactory.hide();
+                        scope.confirm(scope.tasks[scope.activeTask].skip);
+                    }
+                };
+
+                scope.saveGrid = function (answer, next) {
                     if (answer === 'Yes') {
-                        gridFactory.save(scope.$parent.subject.id);
+                        annotationsFactory.get(scope.$parent.subject.id)
+                            .then(function (response) {
+                                gridFactory.save(response.annotations);
+                            });
                     }
 
                     // In practice this will be undefined as this is the last task,
@@ -507,7 +553,6 @@
         };
 
         $scope.saveSubject = function () {
-            console.log($scope)
             annotationsFactory.save($scope.subject.id)
                 .then(function () {
                     $scope.loadSubject();

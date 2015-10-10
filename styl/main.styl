@@ -120,6 +120,7 @@ body
                 margin-right: 5px
                 &:last-of-type
                     margin-right: 0
+
     .btn-finish
         margin-bottom: 20px
 
@@ -549,6 +550,15 @@ img
             &:active
                 color: #fff
                 background: $shallow-teal
+        &.red
+            color: $red
+            border-color: $red
+            background: none
+            &:hover,
+            &:focus,
+            &:active
+                color: #fff
+                background: $red
 
 .more-video-modal
     position: absolute
@@ -595,3 +605,23 @@ img
 .logging-in
     padding: 0 15px
     color: #fff
+
+.grid-buttons
+    @extend .workflow-col .action .buttons
+
+    .select
+        @extend .btn
+        @extend .btn.btn-skeleton
+        border-radius: 4px
+        margin-right: 5px
+        flex: 1
+
+    .select.-active
+        @extend .btn.btn-orange
+
+    .delete
+        @extend .btn
+        @extend .btn.btn-skeleton
+        @extend .btn.btn-skeleton.red
+        border-radius: 4px
+        padding: 11px

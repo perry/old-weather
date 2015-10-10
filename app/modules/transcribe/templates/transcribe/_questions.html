@@ -14,13 +14,28 @@
     >
 
         <div class="buttons" ng-if="!task.instruction && key === 'T5-use-grid'">
-            GRID use!
             <button
                 class="btn btn-teal"
                 ng-repeat="answer in task.answers"
                 ng-click="loadGrid(answer.label, answer.next)"
             >
                 {{ answer.label }}
+            </button>
+        </div>
+
+        <div class="grid-buttons" ng-if="!task.instruction && key === 'T5-use-grid'" ng-repeat="grid in grids track by $index">
+            <button
+                class="select"
+                ng-click="showGrid($index)"
+                ng-class="{ '-active': active === $index }"
+            >
+                Grid {{ $index }}
+            </button>
+            <button
+                class="delete"
+                ng-click="deleteGrid($index)"
+            >
+                Delete
             </button>
         </div>
 
