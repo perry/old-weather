@@ -187,7 +187,7 @@
         };
     });
 
-    module.factory('gridFactory', function ($timeout, annotationsFactory, localStorageService, zooAPI, zooAPIProject) {
+    module.factory('gridFactory', function ($rootScope, annotationsFactory, localStorageService, zooAPI, zooAPIProject) {
 
         var factory;
         var _currentGrid = [];
