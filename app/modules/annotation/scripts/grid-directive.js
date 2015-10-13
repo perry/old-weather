@@ -7,7 +7,7 @@
         return {
             restrict: 'A',
             templateUrl: 'templates/annotation/grid.html'
-        }
+        };
     });
 
 }(window.angular, window._));

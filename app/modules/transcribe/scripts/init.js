@@ -197,7 +197,7 @@
         function useGrid() {
             _currentGrid.forEach(function (cell) {
                 $rootScope.$broadcast('svgDrawing:add', cell);
-            })
+            });
         }
 
         // Save the grid to local storage for reuse
@@ -271,7 +271,7 @@
                 scope.showGrid = function (index) {
                     scope.active = index;
                     gridFactory.show(index);
-                }
+                };
 
                 scope.deleteGrid = function (index) {
                     gridFactory.del(index);
