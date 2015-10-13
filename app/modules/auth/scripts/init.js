@@ -3,41 +3,134 @@
 
     var module = angular.module('auth', []);
 
-    module.factory('authFactory', function ($rootScope, $filter, localStorageService, zooAPI) {
-        var _auth = window.zooAuth;
+
+    module.config(function ($stateProvider, $urlRouterProvider) {
+
+        $urlRouterProvider.when(/\/access_token/, fixAuthUrl);
+
+        $stateProvider.state('completeAuth', {
+            url: '/auth',
+            views: {
+                main: {
+                    template: '<div class="logging-in">Logging in...</div>',
+                    controller: CompleteAuthController
+                }
+            }
+        });
+
+        function CompleteAuthController($location, authFactory) {
+            authFactory.completeSignIn($location.search());
+        }
+
+        function fixAuthUrl($match) {
+            return '/auth?' + $match.input.substr(1);
+        }
+
+    });
+
+    module.factory('authFactory', function ($filter, $interval, $location, $modal, $rootScope, $window, localStorageService, zooAPI, zooAPIConfig) {
 
         if (localStorageService.get('user') === null) {
             localStorageService.set('user', null);
         }
 
-        var signIn = function (args) {
-            return _auth.signIn(args)
+        if (localStorageService.get('auth') === null) {
+            localStorageService.set('auth', null);
+        } else {
+            var auth = localStorageService.get('auth');
+            if (0 < (Math.floor(Date.now() / 1000) - auth.token_start) < auth.expires_in) {
+                _setToken(auth.access_token);
+                _startTimer();
+                _setUserData();
+            } else {
+                signOut();
+            }
+        }
+
+        function completeSignIn(params) {
+            localStorageService.set('auth', {
+                access_token: params.access_token,
+                token_start: Date.now(),
+                // Convert to milliseconds for consistency
+                expires_in: params.expires_in * 1000
+            });
+            _setToken(params.access_token);
+            _startTimer();
+            return _setUserData()
+                .then(function () {
+                    $window.location.href = localStorageService.get('redirectOnSignIn');
+                });
+        }
+
+        function signIn() {
+            localStorageService.set('redirectOnSignIn', $location.absUrl());
+            $window.location.href = zooAPI.root.match(/^(.*)\/[^/]*$/)[1] +
+                '/oauth/authorize' +
+                '?response_type=token' +
+                '&client_id=' +
+                zooAPIConfig.app_id +
+                '&redirect_uri=' +
+                $location.absUrl().match(/.+?(?=\/\#\/)/)[0];
+        }
+
+        function _setToken(token) {
+            zooAPI.headers.Authorization = 'Bearer ' + token;
+        }
+
+        function _setUserData() {
+            return zooAPI.type('me').get()
                 .then(function (response) {
-                    var data = $filter('removeCircularDeps')(response);
+
+                    var data = $filter('removeCircularDeps')(response[0]);
                     localStorageService.set('user', data);
-                    response.get('avatar')
+                    $rootScope.$broadcast('auth:signin');
+
+                    return response[0].get('avatar')
                         .then(function (avatar) {
                             var avatarData = $filter('removeCircularDeps')(avatar[0]);
                             localStorageService.set('avatar', avatarData);
                             $rootScope.$broadcast('auth:avatar');
+                        }, function () {
+                            return;
                         });
-                    $rootScope.$broadcast('auth:signin');
+                }, function (error) {
+                    console.warn('Error logging in', error);
+                    return;
                 });
-        };
+        }
 
-        var signOut = function () {
+        function signOut() {
+            delete zooAPI.headers.Authorization;
+            localStorageService.set('auth', null);
             localStorageService.set('user', null);
             localStorageService.set('avatar', null);
+            zooAPI.auth.signOut();
             $rootScope.$broadcast('auth:signout');
-            return _auth.signOut();
-        };
+        }
+
+        function _startTimer() {
+            var auth = localStorageService.get('auth');
+            var expiry = auth.token_start + auth.expires_in - Date.now();
+            $interval(function () {
+                signOut();
+                $modal.open({
+                    templateUrl: 'templates/auth/session-expired.html',
+                    controller: 'SessionExpiredModalController'
+                });
+            }, expiry, 1);
+        }
 
         return {
             signIn: signIn,
             signOut: signOut,
+            completeSignIn: completeSignIn,
             getUser: function () { return localStorageService.get('user'); },
             getAvatar: function () { return localStorageService.get('avatar'); }
         };
+    });
+
+    module.controller('SessionExpiredModalController', function ($scope, $modalInstance) {
+        $scope.close = $modalInstance.dismiss;
     });
 
     module.controller('HeaderUserCtrl', function ($timeout, $scope, authFactory, $modal) {
@@ -62,41 +155,8 @@
             });
         });
 
-        $scope.signOut = function () {
-            authFactory.signOut();
-        };
-
-        $scope.openLoginModal = function () {
-            $modal.open({
-                templateUrl: 'templates/auth/login.html',
-                controller: 'LoginModalController'
-                // size: 'lg'
-            });
-        };
-
-        $scope.openRegisterModal = function () {
-            $modal.open({
-                templateUrl: 'templates/auth/register.html'
-                // controller: 'HomeVideoController',
-                // size: 'lg'
-            });
-        };
-    });
-
-    module.controller('LoginModalController', function ($scope, $modalInstance, authFactory) {
-        $scope.signIn = function (data) {
-            $scope.loginError = false;
-
-            authFactory.signIn(data)
-                .then(function (response) {
-                    $scope.form = {};
-                    $modalInstance.dismiss();
-                }, function (response) {
-                    $scope.loginError = true;
-                    $scope.$apply();
-                });
-
-        };
+        $scope.signOut = authFactory.signOut;
+        $scope.signIn = authFactory.signIn;
     });
 
 }(window.angular, window.zooAuth));

@@ -53,10 +53,10 @@
                     </div>
 
                     <ul class="nav navbar-nav navbar-right" ng-controller="HeaderUserCtrl">
+
                         <li ng-if="!user" class="authentication-buttons">
                             <ul class="nav navbar-nav">
-                                <li><a href="#" ng-click="$event.preventDefault(); openLoginModal();">Log in</a></li>
-                                <!-- <li><a href="#" ng-click="$event.preventDefault(); openRegisterModal();">Register</a></li> -->
+                                <li><a href="#" ng-click="$event.preventDefault(); signIn();">Log in</a></li>
                             </ul>
                         </li>
 
@@ -68,7 +68,9 @@
                             </div>
                             <img ng-if="avatar" ng-src="{{ avatar.src }}" class="avatar">
                         </li>
+
                     </ul>
+
                 </div>
             </nav>
 

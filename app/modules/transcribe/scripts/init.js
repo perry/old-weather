@@ -69,6 +69,12 @@
                         icon: 'cloud'
                     },
                     {
+                        id: 'sea-ice',
+                        title: 'Sea Ice',
+                        icon: 'asterisk',
+                        tooltip: 'Record any mentions of sea ice'
+                    },
+                    {
                         id: 'refueling',
                         title: 'Refueling',
                         icon: 'oil',
@@ -85,12 +91,6 @@
                         title: 'Animals',
                         icon: 'piggy-bank',
                         tooltip: 'Enter any mentions of animals sighted or captured'
-                    },
-                    {
-                        id: 'sea-ice',
-                        title: 'Sea Ice',
-                        icon: 'asterisk',
-                        tooltip: 'Record any mentions of sea ice'
                     },
                     {
                         id: 'mentions',

@@ -1,3 +1,9 @@
+help:
+	@echo "Usage"
+	@echo "  make install          - install the NPM and Bower requirements"
+	@echo "  make run              - run the development server"
+	@echo "  make deploy-preview   - deploy site and docs to demo.zooniverse.org/oldweather"
+
 install:
 	npm install
 	bower install
@@ -22,3 +28,6 @@ deploy-app: build-app sync-app
 deploy-docs: build-docs sync-docs
 
 deploy: deploy-app deploy-docs
+
+run:
+	gulp

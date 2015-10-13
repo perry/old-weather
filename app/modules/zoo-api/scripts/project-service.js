@@ -14,7 +14,8 @@
     };
 
     module.constant('zooAPIConfig', {
-        display_name: 'oldweather'
+        display_name: 'oldweather',
+        app_id: '0cee9a29027e78cc7f9df99a3d6b0d00aaf3bbfad014a4bb73bf29f30b46575f'
     });
 
     module.factory('zooAPI', function ($window) {

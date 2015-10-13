@@ -11,5 +11,6 @@
     "nonbsp": true,
     "quotmark": "single",
     "undef": true,
-    "unused": "vars"
+    "unused": "vars",
+    "latedef": "nofunc"
 }
