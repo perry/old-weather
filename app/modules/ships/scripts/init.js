@@ -8,7 +8,8 @@
 
     module.config([
         '$stateProvider',
-        function ($stateProvider) {
+        '$urlRouterProvider',
+        function ($stateProvider, $urlRouterProvider) {
             $stateProvider
                 .state('ships-list', {
                     url: '/ships',
@@ -34,6 +35,8 @@
                         }
                     }
                 });
+
+            $urlRouterProvider.when('/classify', '/ships');
         }
     ]);
 
