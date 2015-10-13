@@ -337,7 +337,8 @@
                 answers: [
                     {
                         label: 'Yes',
-                        next: 'T5-adjust-grid'
+                        // next: 'T5-adjust-grid'
+                        next: 'T5-edit-grid'
                     },
                     {
                         label: 'No',
@@ -345,11 +346,12 @@
                     }
                 ]
             };
-            workflow.tasks['T5-adjust-grid'] = {
-                grid: true,
-                instruction: 'If you need to, move the grid into the correct position.',
-                next: 'T5-edit-grid'
-            };
+            // Commented out while we focus on getting this out of the door
+            // workflow.tasks['T5-adjust-grid'] = {
+            //     grid: true,
+            //     instruction: 'If you need to, move the grid into the correct position.',
+            //     next: 'T5-edit-grid'
+            // };
             workflow.tasks['T5-edit-grid'] = {
                 grid: true,
                 instruction: 'Draw or remove any additional cells.',
