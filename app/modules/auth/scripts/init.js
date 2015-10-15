@@ -104,7 +104,7 @@
             localStorageService.set('auth', null);
             localStorageService.set('user', null);
             localStorageService.set('avatar', null);
-            zooAPI.auth.signOut();
+            $window.zooAuth.signOut();
             $rootScope.$broadcast('auth:signout');
         }
 
