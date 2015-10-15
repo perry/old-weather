@@ -72,11 +72,6 @@ body
             position: absolute
             z-index: 10
             right: -300px + 15px
-        .user
-            .navbar-text
-                color:  #00b5be
-                strong
-                    color:  #00494d
 
     .authentication-buttons
         display: none
@@ -189,8 +184,13 @@ img
             color: #808080
             font-size: 12px
             padding: 20px 0
+            text-align: center
+            @media (min-width: 768px)
+                text-align: left
             a
                 color: #808080
+            p
+                margin-bottom: 3px
     .zooniverse-logo
         width: 60px
         margin-bottom: 36px
@@ -201,6 +201,33 @@ img
         li a
             font-size: 12px
             color: $shallow-teal
+        h4
+            font-weight: bold
+            line-height: 20px
+            margin: 0
+
+    .sharing
+        display: flex
+        align-items: center
+        list-style-type: none
+        justify-content: center
+        margin-bottom: 0
+        margin-top: 10px
+        @media (min-width: 768px)
+            justify-content: flex-end
+            margin-top: 0
+        a
+            display: block
+        a .icon
+            height: 20px
+            margin-left: 20px
+            width: 20px
+
+        a .icon path
+            fill: grey
+
+        a:hover .icon path
+            fill: #fff
 
 #site-nav
     background: none
@@ -250,6 +277,17 @@ img
                 text-decoration: underline
                 &:hover
                     text-decoration: none
+
+
+        .page-annotate &,
+        .page-transcribe &
+            .text,
+            .logout
+                color:  #00b5be
+            strong
+                color:  #00494d
+
+
         .avatar
             border-radius: 40px
             height: 40px

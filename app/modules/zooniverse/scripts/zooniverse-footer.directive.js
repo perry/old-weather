@@ -3,16 +3,16 @@
 
     var module = angular.module('zooniverse');
 
-    module.directive('zooniverseProjectsList', function (ZooniverseProjectsFactory) {
+    module.directive('zooniverseFooter', function (ZooniverseFooterFactory) {
         return {
             restrict: 'A',
             scope: true,
             link: function (scope, element, attrs) {
                 scope.loading = true;
 
-                ZooniverseProjectsFactory.get()
-                    .then(function (response) {
-                        scope.data = response.data;
+                ZooniverseFooterFactory.load()
+                    .then(function () {
+                        scope.data = ZooniverseFooterFactory.get();
                     })
                     ['finally'](function () {
                         scope.loading = false;
