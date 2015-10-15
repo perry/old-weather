@@ -79,7 +79,7 @@
 
         <div ui-view="main" id="site-main"></div>
 
-        <footer id="site-footer">
+        <footer id="site-footer" zooniverse-footer>
             <div class="container-wrapper top">
                 <div class="container">
                     <div class="row">
@@ -94,8 +94,10 @@
                         </div>
 
                         <div class="col-xs-12">
-                            <p>The Zooniverse is a collection of web-based citizen science projects that use the efforts of volunteers to help researchers deal with the flood of data that confronts them.</p>
-                            <div><a href="https://www.zooniverse.org" class="btn btn-skeleton teal">See the Zooniverse</a></div>
+                            <p ng-bind="::data.description"></p>
+                            <div>
+                                <a href="https://www.zooniverse.org" class="btn btn-skeleton teal" ng-bind="::data.buttonText"></a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -103,8 +105,8 @@
 
             <div class="container-wrapper middle">
                 <div class="container">
-                    <div class="row zooniverse-projects-list" zooniverse-projects-list>
-                        <div class="col-xs-6 col-sm-{{ 12 / data.length }}" ng-repeat="category in ::data" ng-if="!loading && data">
+                    <div class="row zooniverse-projects-list">
+                        <div class="col-xs-6 col-sm-{{ 12 / data.length }}" ng-repeat="category in ::data.projectsList" ng-if="!loading && data">
                             <h4 ng-bind="category.category"></h4>
                             <ul class="list-unstyled">
                                 <li ng-repeat="project in category.projects">
@@ -120,8 +122,8 @@
                 <div class="container bottom">
                     <div class="row">
                         <div class="col-xs-12 col-sm-6">
-                            <p><strong>Zoonivese.org</strong> The universe is too big to explore without you</p>
-                            <p><a href="https://www.zooniverse.org/privacy">Privacy policy</a> | <a href="https://github.com/zooniverse">Source & bugs</a></p>
+                            <p><strong>Zoonivese.org</strong> {{ data.strapline }}</p>
+                            <p><a href="https://www.zooniverse.org/privacy">Privacy policy</a> | <a href="https://github.com/zooniverse">Source &amp; bugs</a></p>
                         </div>
 
                         <ul class="col-xs-12 col-sm-6 sharing">
@@ -217,8 +219,8 @@
         <script src="modules/transcribe/scripts/templates.js"></script>
 
         <script src="modules/zooniverse/scripts/init.js"></script>
-        <script src="modules/zooniverse/scripts/projects-footer-list-factory-service.js"></script>
-        <script src="modules/zooniverse/scripts/projects-footer-list-directive.js"></script>
+        <script src="modules/zooniverse/scripts/zooniverse-footer.factory.js"></script>
+        <script src="modules/zooniverse/scripts/zooniverse-footer.directive.js"></script>
         <!-- endbuild -->
 
         <script>
