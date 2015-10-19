@@ -15,10 +15,12 @@
 
     module.constant('zooAPIConfig', {
         display_name: 'oldweather',
-        app_id: '0cee9a29027e78cc7f9df99a3d6b0d00aaf3bbfad014a4bb73bf29f30b46575f'
+        app_id: '2b10a14e8f11eefb130a275f01898c8406600834bff1063bb1b7938795acc8a3'
     });
 
-    module.factory('zooAPI', function ($window) {
+    module.factory('zooAPI', function ($window, zooAPIConfig) {
+        $window.zooAPI.root = 'https://panoptes.zooniverse.org/api';
+        $window.zooAPI.appID = zooAPIConfig.app_id;
         return $window.zooAPI;
     });
 
