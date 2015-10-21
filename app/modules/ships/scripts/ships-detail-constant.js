@@ -34,6 +34,17 @@
                 'She became stuck in ice while wintering in 1853, and eventually abandoned in 1855. It\'s believed she was crushed by the ice and sank.'
             ]
         },
+        'bear': {
+            fullName: 'USS Bear',
+            shipClass: 'Steam cutter',
+            tonnage: '703 tons',
+            url: 'http://www.naval-history.net/OW-US/Bear/USS_Bear.htm',
+            imageUrl: 'http://www.naval-history.net/OW-US/Bear/USRC_Bear04.jpg',
+            bio: [
+                'Built in 1874 in Scotland as a whaling and sealing ship, after which it was bought by the US Navy for the Greely Arctic rescue msission.',
+                'She was later transferred to the Revenue Cutter Service of the Treasury Department for service with the Alaskan Patrol. She finally sank in tow off Nova Scotia in 1963.'
+            ]
+        },
         'hassler': {
             fullName: 'USC & GSS Ferdinand R. Hassler',
             shipClass: 'Steamer',
