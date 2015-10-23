@@ -120,7 +120,10 @@
 
             zooAPIProject.get()
                 .then(function (response) {
-                    var options = {project_id: response.id};
+                    var options = {
+                        project_id: response.id,
+                        'metadata.active': true
+                    };
                     // An array that will contain subject sets returned from out API call.
                     var subjectSets = [];
 
