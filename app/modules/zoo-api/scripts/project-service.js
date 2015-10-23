@@ -137,6 +137,9 @@
                     };
 
                     var processResponse = function (sets) {
+
+                        sets = _.sortBy(sets, 'display_name');
+
                         var meta = sets[0]._meta.subject_sets;
 
                         angular.forEach(sets, function (s) {
