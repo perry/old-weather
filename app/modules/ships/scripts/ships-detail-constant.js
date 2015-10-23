@@ -45,6 +45,17 @@
                 'She was later transferred to the Revenue Cutter Service of the Treasury Department for service with the Alaskan Patrol. She finally sank in tow off Nova Scotia in 1963.'
             ]
         },
+        'eastwind': {
+            fullName: 'USCGC Eastwind',
+            shipClass: 'Diesel-electric cutter',
+            tonnage: '6,515 tons',
+            url: 'http://www.naval-history.net/OW-US/Eastwind/USCGC_Eastwind.htm',
+            imageUrl: 'http://www.naval-history.net/OW-US/Eastwind/USCGC_Eastwind2WW2.jpg',
+            bio: [
+                'Hunted for German weather stations on Greenland during the war, later taking part in various operations in the Arctic and Antarctic, including rescue and icebreaking missions.',
+                'She was decommissioned and sold in 1968.'
+            ]
+        },
         'hassler': {
             fullName: 'USC & GSS Ferdinand R. Hassler',
             shipClass: 'Steamer',
@@ -54,6 +65,28 @@
             bio: [
                 'Named after Ferdinand Hassler, 1770-1843, first Superintendent of the United States Coast Survey.',
                 'A scientific vessel, she conducted hydrographic surveys off the West Coast and Alaska for nearly twenty years. She was subsequently sold to a civilian operator and was sunk on her first voyage.'
+            ]
+        },
+        'northland': {
+            fullName: 'USCGC Northland',
+            shipClass: 'Diesel auxiliary cutter with auxiliary sails',
+            tonnage: '2,150 tons',
+            url: 'http://www.naval-history.net/OW-US/Northland/USCGC_Northland.htm',
+            imageUrl: 'http://www.naval-history.net/OW-US/Northland/USCGC_Northland1PostWW1.jpg',
+            bio: [
+                'Served on the Bering Sea patrol, and later patrolled Greenland during WW2.',
+                'After the war, she was bought by Israel, and later became the first vessel of the fledgling Israeli Navy in 1948, as the Matzpen. She was decommissioned and scrapped in 1962.'
+            ]
+        },
+        'northwind': {
+            fullName: 'USCGC Northwind',
+            shipClass: 'Diesel-electric cutter',
+            tonnage: '6,515 tons',
+            url: 'http://www.naval-history.net/OW-US/Northwind/USCGC_Northwind.htm',
+            imageUrl: 'http://www.naval-history.net/OW-US/Northwind/USCGC_Northwind2WW2.JPG',
+            bio: [
+                'Stationed at Seattle, WA for polar ice operations and the Bering Sea Patrol for nearly 30 years, during which time she took part in various surveys and scientific expeditions.',
+                'She was decommissioned in 1989 and assigned to James River Reserve Fleet. She was later sold for scrap.'
             ]
         },
         'polaris': {
