@@ -3,3 +3,4 @@ app/css
 templates.js
 .tmp/
 coverage/
+node_modules/
