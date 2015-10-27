@@ -16,10 +16,10 @@
                 return self.svgInstance;
             },
             viewport: function () {
-                return self.el.getElementsByClassName('svg-pan-zoom_viewport')[0];
+                return self.el.querySelectorAll('.svg-pan-zoom_viewport')[0];
             },
             rotateContainer: function () {
-                return self.el.getElementsByClassName('rotate-container')[0];
+                return self.el.querySelectorAll('.rotate-container')[0];
             },
             status: function () {
                 return self.svgInstance.isZoomEnabled() || self.svgInstance.isPanEnabled();
