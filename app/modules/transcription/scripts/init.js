@@ -3,7 +3,6 @@
 
     var module = angular.module('transcription', [
         'ui.router',
-        'ngLoad',
         'angularSpinner'
     ]);
 
@@ -59,6 +58,7 @@
                         var subjectImage = subject.locations[0][keys[0]];
                         subjectImage += '?' + new Date().getTime();
                         $scope.subjectImage = $sce.trustAsResourceUrl(subjectImage);
+                        $scope.loadHandler = $scope.subjectLoaded();
                     });
             } else {
                 $scope.annotations = null;
