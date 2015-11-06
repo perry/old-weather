@@ -12,7 +12,7 @@
     };
 
     var module = angular.module('transcribe', [
-        'ngAnimate',
+        // 'ngAnimate',
         'ui.router',
         'angularSpinner',
         'svg',
