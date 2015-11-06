@@ -5,6 +5,7 @@
 
     module.directive('grid', function (annotationsFactory) {
         return {
+            replace: true,
             restrict: 'A',
             templateUrl: 'templates/annotation/grid.html'
         };

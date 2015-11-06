@@ -5,6 +5,7 @@
 
     module.directive('annotations', function (annotationsFactory) {
         return {
+            replace: true,
             restrict: 'A',
             scope: true,
             templateUrl: 'templates/annotation/annotations.html',
