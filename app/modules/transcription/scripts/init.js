@@ -48,7 +48,14 @@
 
                 var annotation = localStorageService.get('annotation_subject_id_' + subject_id);
                 $scope.annotations = annotation.annotations;
-                _.remove($scope.annotations, {type: 'header'});
+                
+                // This is presumably to allow saving of header rows, but this 
+                // feature never got implemented. I'm not quite sure why there 
+                // are separate entries for rows and cells (possibly to do 
+                // subsequent rows off that data) but we want to be able to 
+                // transcribe cells.
+                // _.remove($scope.annotations, {type: 'header'});
+
                 _.remove($scope.annotations, {type: 'row'});
 
                 zooAPI.type('subjects').get({id: subject_id})

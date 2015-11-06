@@ -59,10 +59,7 @@
             var storageKey = annotationsPrefix + id;
             var classificationObject = localStorageService.get(storageKey);
 
-            var list = localStorageService.get('annotations_list');
-            if (!list) {
-                list = [];
-            }
+            var list = localStorageService.get('annotations_list') || [];
             var obj = {subject_id: subject.id, subject_set_id: $stateParams.subject_set_id};
             var item = _.find(list, obj);
             if (angular.isUndefined(item)) {
