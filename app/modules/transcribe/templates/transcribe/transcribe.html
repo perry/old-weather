@@ -33,7 +33,7 @@
                                     <image subject class="subject"></image>
                                     <image
                                         xlink:href="{{ trustedSubjectImage }}"
-                                        ng-load="subjectLoaded(); svg.reset();"
+                                        ng-attr-onload="{{ loadHandler }} svg.reset();"
                                         width="1300"
                                         height="1893"
                                     ></image>

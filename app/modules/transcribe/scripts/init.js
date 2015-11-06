@@ -14,7 +14,6 @@
     var module = angular.module('transcribe', [
         'ngAnimate',
         'ui.router',
-        'ngLoad',
         'angularSpinner',
         'svg',
         'annotation'
@@ -505,7 +504,7 @@
                             // TODO: change this. We're cache busting the image.onload event.
                             subjectImage += '?' + new Date().getTime();
                             $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
-
+                            $scope.loadHandler = $scope.subjectLoaded();
                             $rootScope.$broadcast('transcribe:loadedSubject');
                         });
                     } else {
