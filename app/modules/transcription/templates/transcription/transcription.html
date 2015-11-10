@@ -65,9 +65,19 @@
                 <input id="annotation-input" class="form-control input-lg" type="text" ng-model="annotationContent" autofocus>
             </form>
 
-            <button ng-click="prevAnnotation()" class="btn btn-teal">Prev</button>
+            <button
+                ng-disabled="annotations[0].$$hashKey === first"
+                ng-click="prevAnnotation()"
+                class="btn btn-teal"
+            >Prev</button>
+
             <!-- <button ng-click="toggleAllAnnotations()" class="btn btn-default">Show all</button> -->
-            <button ng-click="nextAnnotation()" class="btn btn-teal">Next</button>
+
+            <button 
+                ng-disabled="annotations[0].$$hashKey === last"
+                ng-click="nextAnnotation()" 
+                class="btn btn-teal"
+            >Next</button>
 
             <button ng-click="insertChar('″')" class="btn btn-skeleton teal pull-right" ng-show="annotations[0].type === 'location'">&Prime;</button>
             <button ng-click="insertChar('′')" class="btn btn-skeleton teal pull-right" ng-show="annotations[0].type === 'location'">&prime;</button>
