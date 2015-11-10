@@ -64,8 +64,10 @@
                         var keys = Object.keys(subject.locations[0]);
                         var subjectImage = subject.locations[0][keys[0]];
                         subjectImage += '?' + new Date().getTime();
-                        $scope.subjectImage = $sce.trustAsResourceUrl(subjectImage);
-                        $scope.loadHandler = $scope.subjectLoaded();
+                        $timeout(function () {
+                            $scope.subjectImage = $sce.trustAsResourceUrl(subjectImage);
+                            $scope.loadHandler = $scope.subjectLoaded();
+                        }, 0);
                     });
             } else {
                 $scope.annotations = null;
