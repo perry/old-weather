@@ -106,7 +106,7 @@
             <div class="container-wrapper middle">
                 <div class="container">
                     <div class="row zooniverse-projects-list">
-                        <div class="col-xs-6 col-sm-{{ 12 / data.length }}" ng-repeat="category in ::data.projectsList" ng-if="!loading && data">
+                        <div class="col-xs-6 col-sm-{{ 12 / data.projectsList.length }}" ng-repeat="category in ::data.projectsList" ng-if="!loading && data">
                             <h4 ng-bind="category.category"></h4>
                             <ul class="list-unstyled">
                                 <li ng-repeat="project in category.projects">
