@@ -388,7 +388,7 @@
         };
     });
 
-    module.factory('subjectFactory', function ($q, $filter, zooAPI, localStorageService) {
+    module.factory('subjectFactory', function ($q, $filter, zooAPI, localStorageService, zooAPIProject, $timeout) {
         var _getQueueCache = function (subject_set_id) {
             var cache = localStorageService.get('subject_set_queue_' + subject_set_id);
             if (!cache) {
@@ -418,20 +418,41 @@
                 lastPage = 0;
             }
 
-            zooAPI.type('subjects').get({
-                page: lastPage + 1,
-                page_size: 20,
-                subject_set_id: subject_set_id
-            })
-            .then(function (response) {
-                if (response.length > 0) {
-                    _addToQueue(subject_set_id, response);
+            var _getSubjectsPage = function (project) {
+                return zooAPI.type('subjects').get({
+                    sort: 'queued',
+                    workflow_id: project.links.workflows[0],
+                    page: lastPage + 1,
+                    page_size: 20,
+                    subject_set_id: subject_set_id
+                }).then(function (res) {
+                    return res;
+                });
+            }
 
-                    localStorageService.set('subject_set_page_' + subject_set_id, (lastPage + 1));
-                }
+            var project;
 
-                deferred.resolve();
-            });
+            zooAPIProject.get()
+                .then(function (response) {
+                    project = response;
+                    return _getSubjectsPage(response);
+                })
+                .then(function (response) {
+                    return response;
+                }, function (response) {
+                    return $timeout(_getSubjectsPage, 3000, true, project);
+                })
+                .then(function (response) {
+                    if (response.length > 0) {
+                        _addToQueue(subject_set_id, response);
+
+                        localStorageService.set('subject_set_page_' + subject_set_id, (lastPage + 1));
+                        deferred.resolve();
+                    } else {
+                        deferred.reject();
+                    }
+
+                });
 
             return deferred.promise;
         };
