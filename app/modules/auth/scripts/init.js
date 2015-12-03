@@ -70,7 +70,7 @@
                 '&client_id=' +
                 zooAPIConfig.app_id +
                 '&redirect_uri=' +
-                $location.absUrl().match(/.+?(?=\/\#\/)/)[0];
+                $location.absUrl().match(/.+?(?=\#\/)/)[0];
         }
 
         function _setToken(token) {
