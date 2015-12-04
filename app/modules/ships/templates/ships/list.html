@@ -15,8 +15,8 @@
                 <div class="gutter-sizer"></div>
                 <div
                     class="item"
-                    ng-repeat="(key, ship) in ships track by key | orderBy:columnSort.key:columnSort.reverse"
-                    style="background-image: url('{{ ::images[$index] }}')"
+                    ng-repeat="(key, ship) in ::ships track by key | orderBy:columnSort.key:columnSort.reverse"
+                    style="background-image: url('{{ ::ship.metadata.imageUrl }}')"
                     ng-init="ship.hover = false"
                     ng-mouseenter="ship.hover = true"
                     ng-mouseleave="ship.hover = false"

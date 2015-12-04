@@ -1,4 +1,4 @@
-(function (angular, Packery) {
+(function (angular, Packery, _) {
     'use strict';
 
     var module = angular.module('ships');
@@ -11,8 +11,7 @@
      * Controller for ships listing.
      */
     module.controller('ShipsListCtrl',
-        function ($scope, zooAPISubjectSets) {
-            $scope.images = ['http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png','http://i.imgur.com/uAkFMOV.png','http://i.imgur.com/zbZAg6u.jpg','http://i.imgur.com/9yFAYzM.jpg', 'http://i.imgur.com/W27jk0D.png', 'http://i.imgur.com/iZYI5Uo.png', 'http://i.imgur.com/qMv1WPB.png'];
+        function ($scope, zooAPISubjectSets, ShipsDetailConstants) {
 
             // An array of objects containing the table header information.
             $scope.headers = [
@@ -60,6 +59,13 @@
                 })
                 ['finally'](function () {
                     $scope.loading = false;
+                    $scope.ships = $scope.ships.map(function (ship) {
+                        var extraInfo = ShipsDetailConstants[ship.metadata.shortName]
+                            || ShipsDetailConstants[ship.display_name.split(' ')[0].toLowerCase()]
+                            || {};
+                        ship.metadata = _.extend(ship.metadata, extraInfo);
+                        return ship;
+                    });
                 });
         }
     );
@@ -84,4 +90,4 @@
             }
         };
     });
-}(window.angular, window.Packery));
+}(window.angular, window.Packery, window._));
