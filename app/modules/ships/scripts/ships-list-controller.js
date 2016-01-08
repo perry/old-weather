@@ -60,9 +60,9 @@
                 ['finally'](function () {
                     $scope.loading = false;
                     $scope.ships = $scope.ships.map(function (ship) {
-                        var extraInfo = ShipsDetailConstants[ship.metadata.shortName]
-                            || ShipsDetailConstants[ship.display_name.split(' ')[0].toLowerCase()]
-                            || {};
+                        var extraInfo = ShipsDetailConstants[ship.metadata.shortName] || 
+                            ShipsDetailConstants[ship.display_name.split(' ')[0].toLowerCase()] ||
+                            {};
                         ship.metadata = _.extend(ship.metadata, extraInfo);
                         return ship;
                     });

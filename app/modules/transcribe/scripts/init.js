@@ -428,7 +428,7 @@
                 }).then(function (res) {
                     return res;
                 });
-            }
+            };
 
             var project;
 
