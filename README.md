@@ -2,6 +2,12 @@
 
 The fifth incarnation of OW, built as a custom Angular app. This is a little different from other Zoo apps as it uses a `Makefile` along with Gulp to carry out build / deployment tasks.
 
+## Requirements
+
+- Node / NPM
+- Bower
+- s3cmd
+
 ## Installation
 
 1. Clone the repo
@@ -13,7 +19,7 @@ Running `make run` starts the project at `http://localhost:8000/`, and the ngDoc
 
 ## Deployment
 
-- Requires `s3cmd`, and the `AMAZON_ACCESS_KEY_ID` and `AMAZON_SECRET_ACCESS_KEY` environment variables set.
+- Requires the environment variables `AMAZON_ACCESS_KEY_ID` and `AMAZON_SECRET_ACCESS_KEY`
 
 Running `make deploy-preview` deploys both project and docs to `http://demo.zooniverse.org/oldweather/` and `http://demo.zooniverse.org/oldweatherdocs/` respectively.
 
