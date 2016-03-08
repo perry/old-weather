@@ -6,7 +6,9 @@ The fifth incarnation of OW, built as a custom Angular app. This is a little dif
 
 - Node / NPM
 - Bower
+  * `npm install -g bower`
 - s3cmd
+  * `brew install s3cmd` if on OS X
 
 ## Installation
 
@@ -24,6 +26,9 @@ Running `make run` starts the project at `http://localhost:8000/`, and the ngDoc
 Running `make deploy-preview` deploys both project and docs to `http://demo.zooniverse.org/oldweather/` and `http://demo.zooniverse.org/oldweatherdocs/` respectively.
 
 Running `make deploy-production` deploys the project only to `http://www.oldweather.org`
+
+- If you get errors when trying to deploy and you haven't run the dev `make run` cmd, then run the default gulp task to build the required files.
+  - `gulp`
 
 ## Gotchas / weirdnesses
 
