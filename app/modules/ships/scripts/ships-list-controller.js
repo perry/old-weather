@@ -56,6 +56,7 @@
                 }, function (response) {
                     $scope.loading = false;
                     $scope.ships = response;
+
                 })
                 ['finally'](function () {
                     $scope.loading = false;

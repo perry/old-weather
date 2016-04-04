@@ -56,6 +56,17 @@
                 'She was decommissioned and sold in 1968.'
             ]
         },
+        'farragut': {
+            fullName: 'USS Farragut',
+            shipClass: 'Destroyer (DD 348) Farragut-class',
+            tonnage: '2,365 tons',
+            url: 'http://www.naval-history.net/OW-US/Farragut/USS_Farragut.htm',
+            imageUrl: 'https://naval-history-net.oldweather.org/OW-US/Farragut/USS_Farragut-1943.jpg',
+            bio: [
+                'Commissioned in 1934, the Farragut won 14 battle stars during World War 2, and saw action at Pearl Harbor, Guadalcanal and Iwo Jima.',
+                'She was decommissioned and sold for scrap in 1947.'
+            ]
+        },
         'hassler': {
             fullName: 'USC & GSS Ferdinand R. Hassler',
             shipClass: 'Steamer',

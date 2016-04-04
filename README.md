@@ -30,6 +30,19 @@ Running `make deploy-production` deploys the project only to `http://www.oldweat
 - If you get errors when trying to deploy and you haven't run the dev `make run` cmd, then run the default gulp task to build the required files.
   - `gulp`
 
+## Adding new subject sets
+
+1. Upload your new set to Panoptes
+1. Associate the new subject set with the `Annotation` workflow in the workflow editor
+1. Modify your subject set metadata to include the following data (both strings):
+    ```
+    metadata: {
+        active: "true",
+        shortName: "SHIP_NAME"
+    }
+    ```
+1. Add any extra info to `ShipsDetailConstants` as required
+
 ## Gotchas / weirdnesses
 
 - The build task _doesn't_ rebuild the project templates, so if you're just looking to do a simple HTML change, you'll need to e.g. run the dev server for those changes to take effect.

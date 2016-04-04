@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Logout link to nav
+- Ship info on the USS Farragut, instructions on adding new sets
 
 ### Changed
 - Hidden 'Toggle Guides' button until we can work out what it does
