@@ -3,7 +3,7 @@
 
     var module = angular.module('annotation');
 
-    module.directive('annotations', function (annotationsFactory) {
+    module.directive('annotations', function (annotationsFactory, $modal) {
         return {
             replace: true,
             restrict: 'A',
@@ -78,9 +78,20 @@
                 };
 
                 var clearAnnotations = function () {
+                  if(confirmAction()) {
                     scope.annotations = [];
                     annotationsFactory.clear(null, scope.$parent.subject);
+                  }
                 };
+
+                scope.confirmAction = function () {
+                  console.log('confirmAction()');
+                  $modal.open({
+                    templateUrl: 'templates/confirmation-modal.html',
+                    // controller: 'ConfirmActionCtrl',
+                    size: 'sm'
+                  });
+                }
 
                 scope.removeAnnotation = function (annotation) {
                     _.remove(scope.annotations, {_id: annotation._id});
@@ -133,9 +144,14 @@
                     e.stopPropagation();
                     var annotation = $parse(attrs.annotation)(scope);
                     // scope.$parent.selectAnnotation(annotation);
-                    if ($window.confirm('Delete annotation?')) {
-                        scope.$parent.removeAnnotation(annotation);
-                    }
+
+                    // stop using window.confim()
+                    // if ($window.confirm('Delete annotation?')) {
+                    //     scope.$parent.removeAnnotation(annotation);
+                    // }
+
+                    // instead, display pop-up
+                    scope.confirmAction();
                 });
             }
         };
