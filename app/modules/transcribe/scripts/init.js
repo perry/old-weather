@@ -571,4 +571,17 @@
 
     });
 
+    module.controller('confirmActionCtrl', function ($scope) {
+      console.log('$scope = ', $scope);
+
+      $scope.confirmation = false;
+      $scope.setConfirmation = function(value) {
+        console.log('BUTTONN CLICKED!, value = ', value);
+        $scope.confirmation = value;
+        $scope.$close();
+        console.log('SCOPE IS NOW: ', $scope);
+      }
+
+    });
+
 }(window.angular, window._));

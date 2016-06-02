@@ -84,11 +84,15 @@
                   }
                 };
 
-                scope.confirmAction = function () {
-                  console.log('confirmAction()');
+                /* CONFIRM ACTION USING A POP-UP MODAL */
+
+                scope.confirmAction = function (msg) {
+                  console.log('confirmAction(), msg = ', msg);
+                  console.log('SCOPE = ', scope);
+                  scope.msg = msg;
                   $modal.open({
                     templateUrl: 'templates/confirmation-modal.html',
-                    // controller: 'ConfirmActionCtrl',
+                    controller: 'confirmActionCtrl',
                     size: 'sm'
                   });
                 }
@@ -151,7 +155,7 @@
                     // }
 
                     // instead, display pop-up
-                    scope.confirmAction();
+                    scope.confirmAction('Sascha, delete annotation?');
                 });
             }
         };
