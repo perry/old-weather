@@ -84,19 +84,6 @@
                   }
                 };
 
-                /* CONFIRM ACTION USING A POP-UP MODAL */
-
-                scope.confirmAction = function (msg) {
-                  console.log('confirmAction(), msg = ', msg);
-                  console.log('SCOPE = ', scope);
-                  scope.msg = msg;
-                  $modal.open({
-                    templateUrl: 'templates/confirmation-modal.html',
-                    controller: 'confirmActionCtrl',
-                    size: 'sm'
-                  });
-                }
-
                 scope.removeAnnotation = function (annotation) {
                     _.remove(scope.annotations, {_id: annotation._id});
                     annotationsFactory.remove(annotation._id, scope.$parent.subject);
@@ -141,8 +128,11 @@
         };
     });
 
+
     module.directive('annotation', function ($window, $parse) {
         return {
+            controller: 'AnnotationController',
+            // templateUrl: 'templates/confirmation-modal.html',
             link: function (scope, element, attrs) {
                 element.bind('mousedown', function (e) {
                     e.stopPropagation();
@@ -154,8 +144,11 @@
                     //     scope.$parent.removeAnnotation(annotation);
                     // }
 
-                    // instead, display pop-up
-                    scope.confirmAction('Sascha, delete annotation?');
+                    scope.confirmAction( function(isConfirmed){
+                      if(isConfirmed){
+                        scope.$parent.removeAnnotation(annotation);
+                      }
+                    });
                 });
             }
         };
