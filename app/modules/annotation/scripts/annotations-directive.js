@@ -3,7 +3,7 @@
 
     var module = angular.module('annotation');
 
-    module.directive('annotations', function (annotationsFactory, $modal) {
+    module.directive('annotations', function (annotationsFactory) {
         return {
             replace: true,
             restrict: 'A',
