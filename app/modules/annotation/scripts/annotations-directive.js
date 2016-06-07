@@ -8,6 +8,7 @@
             replace: true,
             restrict: 'A',
             scope: true,
+            controller: 'AnnotationController',
             templateUrl: 'templates/annotation/annotations.html',
             link: function (scope, element, attrs) {
 
@@ -78,16 +79,23 @@
                 };
 
                 var clearAnnotations = function () {
-                  if(confirmAction()) {
-                    scope.annotations = [];
-                    annotationsFactory.clear(null, scope.$parent.subject);
-                  }
+                  console.log('clearAnnotations()');
+                  scope.confirmAction('Clear all annotations?', function(isConfirmed){
+                    if(isConfirmed){
+                      scope.annotations = [];
+                      annotationsFactory.clear(null, scope.$parent.subject);
+                    }
+                  });
+
+                  // if(confirmAction()) {
+                  //   scope.annotations = [];
+                  //   annotationsFactory.clear(null, scope.$parent.subject);
+                  // }
                 };
 
                 scope.removeAnnotation = function (annotation) {
                     _.remove(scope.annotations, {_id: annotation._id});
                     annotationsFactory.remove(annotation._id, scope.$parent.subject);
-                    scope.$apply();
                 };
 
                 scope.selectAnnotation = function (annotation) {
@@ -98,7 +106,6 @@
                     });
 
                     scope.annotations[index].selected = !scope.annotations[index].selected;
-
                     scope.$apply();
                 };
 
@@ -131,26 +138,18 @@
 
     module.directive('annotation', function ($window, $parse) {
         return {
-            controller: 'AnnotationController',
-            // templateUrl: 'templates/confirmation-modal.html',
-            link: function (scope, element, attrs) {
-                element.bind('mousedown', function (e) {
-                    e.stopPropagation();
-                    var annotation = $parse(attrs.annotation)(scope);
-                    // scope.$parent.selectAnnotation(annotation);
-
-                    // stop using window.confim()
-                    // if ($window.confirm('Delete annotation?')) {
-                    //     scope.$parent.removeAnnotation(annotation);
-                    // }
-
-                    scope.confirmAction( function(isConfirmed){
-                      if(isConfirmed){
-                        scope.$parent.removeAnnotation(annotation);
-                      }
-                    });
-                });
-            }
+          // controller: 'AnnotationController', // apparently not necessary? --STI
+          link: function (scope, element, attrs) {
+            element.bind('mousedown', function (e) {
+              e.stopPropagation();
+              var annotation = $parse(attrs.annotation)(scope);
+              scope.confirmAction('Delete annotation?', function(isConfirmed){
+                if(isConfirmed){
+                  scope.$parent.removeAnnotation(annotation);
+                }
+              });
+            });
+          }
         };
     });
 

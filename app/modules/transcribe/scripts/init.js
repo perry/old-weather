@@ -564,23 +564,8 @@
         });
 
         $scope.clearAnnotations = function () {
-            if (window.confirm('Remove all annotations?')) {
-                $rootScope.$broadcast('transcribe:clearAnnotations');
-            }
+            $rootScope.$broadcast('transcribe:clearAnnotations');
         };
-
-    });
-
-    module.controller('confirmActionCtrl', function ($scope) {
-      console.log('$scope = ', $scope);
-
-      $scope.confirmation = false;
-      $scope.setConfirmation = function(value) {
-        console.log('BUTTONN CLICKED!, value = ', value);
-        $scope.confirmation = value;
-        $scope.$close();
-        console.log('SCOPE IS NOW: ', $scope);
-      }
 
     });
 
