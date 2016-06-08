@@ -3,12 +3,12 @@
 
     var module = angular.module('annotation');
 
-    module.directive('annotations', function (annotationsFactory) {
+    module.directive('annotations', ['confirmationModalFactory', 'annotationsFactory', function (confirmationFactory, annotationsFactory) {
         return {
             replace: true,
             restrict: 'A',
             scope: true,
-            controller: 'AnnotationController',
+            // controller: 'AnnotationController',
             templateUrl: 'templates/annotation/annotations.html',
             link: function (scope, element, attrs) {
 
@@ -133,10 +133,12 @@
                 getAnnotations();
             }
         };
-    });
+    }]);
 
 
-    module.directive('annotation', function ($window, $parse) {
+    module.directive('annotation', function (confirmationModalFactory, $window, $parse) {
+        console.log('Annotation directive...');
+        confirmationModalFactory.deployModal();
         return {
           // controller: 'AnnotationController', // apparently not necessary? --STI
           link: function (scope, element, attrs) {
