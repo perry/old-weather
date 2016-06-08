@@ -3,15 +3,18 @@
 
     var module = angular.module('confirmationModal');
 
-    module.factory('confirmationModalFactory', function(){
-      // $scope.msg = 'Loading message...'
-
-      var deployModal = function() {
-        console.log('confirmationModalFactory.deployModal()');
+    module.controller('ConfirmationModalController', function(confirmationModalFactory, $scope){
+      $scope.confirmAction = function() {
+        console.log('ConfirmationModalController.confirmAction()');
       }
 
-      return {deployModal: deployModal};
+      confirmationModalFactory.deployModal();
 
+    });
+
+    // module.controller('ConfirmationModalController', function($scope, $modal){
+    //   // $scope.msg = 'Loading message...'
+    //
     //   $scope.confirmAction = function(msg, callback) {
     //     console.log('ConfirmationModalController::confirmAction()');
     //     // $scope.msg = msg;
@@ -41,6 +44,6 @@
     //     $scope.$close(false);
     //   }
     //
-    });
+    // });
 
 }(window.angular));
