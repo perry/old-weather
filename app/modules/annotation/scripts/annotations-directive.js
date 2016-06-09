@@ -89,6 +89,8 @@
                 scope.removeAnnotation = function (annotation) {
                     _.remove(scope.annotations, {_id: annotation._id});
                     annotationsFactory.remove(annotation._id, scope.$parent.subject);
+                    
+                    scope.$apply();
                 };
 
                 scope.selectAnnotation = function (annotation) {
