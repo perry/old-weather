@@ -3,44 +3,39 @@
 
     var module = angular.module('confirmationModal');
 
-    module.factory('confirmationModalFactory', function(){
-      // $scope.msg = 'Loading message...'
+    module.factory('confirmationModalFactory', [ '$modal', '$controller', function($modal,$controller){
 
-      var deployModal = function() {
-        console.log('confirmationModalFactory.deployModal()');
+      var message = 'Are you sure?'; // set default message
+
+      var setMessage = function(msg) {
+        message = msg;
       }
 
-      return {deployModal: deployModal};
+      var getMessage = function() {
+        return message;
+      }
 
-    //   $scope.confirmAction = function(msg, callback) {
-    //     console.log('ConfirmationModalController::confirmAction()');
-    //     // $scope.msg = msg;
-    //     // // $scope.$apply();
-    //     //
-    //     // console.log('confirmAction(), msg = ', msg);
-    //     // console.log('$SCOPE IS ', $scope);
-    //     //
-    //     // var modalInstance = $modal.open({
-    //     //   templateUrl: 'templates/confirmation-modal.html',
-    //     //   controller: 'AnnotationController',
-    //     //   size: 'sm'
-    //     // });
-    //     //
-    //     // modalInstance.result.then(function(isConfirmed) {
-    //     //   callback(isConfirmed);
-    //     // });
-    //   }
-    //
-    //   $scope.confirm = function() {
-    //     console.log('ConfirmationModalController::confirm()');
-    //     $scope.$close(true);
-    //   }
-    //
-    //   $scope.cancel = function() {
-    //     console.log('ConfirmationModalController::cancel()');
-    //     $scope.$close(false);
-    //   }
-    //
-    });
+      var deployModal = function(msg, callback) {
+        setMessage(msg);
+
+        var modalInstance = $modal.open({
+          templateUrl: 'templates/confirmation-modal.html',
+          controller: 'ConfirmationModalController',
+          size: 'sm'
+        });
+
+        modalInstance.result.then(function(isConfirmed) {
+          callback(isConfirmed);
+        });
+      }
+
+      return {
+        deployModal: deployModal,
+        message: message,
+        setMessage: setMessage,
+        getMessage: getMessage
+      };
+
+    }]);
 
 }(window.angular));

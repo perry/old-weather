@@ -13,7 +13,7 @@
         }
     };
 
-    module.factory('annotationsFactory', function ($window, $filter, $rootScope, $stateParams, $q, zooAPISubjectSets, localStorageService, zooAPI) {
+    module.factory('annotationsFactory', function (confirmationModalFactory, $window, $filter, $rootScope, $stateParams, $q, zooAPISubjectSets, localStorageService, zooAPI) {
 
         var classification;
 
@@ -80,13 +80,15 @@
             var classification = localStorageService.get(storageKey);
 
             if (classification.annotations.length === 0) {
-                if($window.confirm('You haven\'t added any annotations, are you sure you want to finish?')) {
+
+                confirmationModalFactory.deployModal('You haven\'t added any annotations, are you sure you want to finish?', function(isConfirmed){
+                  if(isConfirmed){
                     var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
                     _.remove(subject_set_queue, {id: id});
                     localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
-
                     deferred.resolve();
-                }
+                  }
+                });
             } else {
 
                 classification.metadata.finished_at = new Date().toISOString();

@@ -3,12 +3,11 @@
 
     var module = angular.module('annotation');
 
-    module.directive('annotations', ['confirmationModalFactory', 'annotationsFactory', function (confirmationFactory, annotationsFactory) {
+    module.directive('annotations', ['confirmationModalFactory', 'annotationsFactory', function (confirmationModalFactory, annotationsFactory) {
         return {
             replace: true,
             restrict: 'A',
             scope: true,
-            // controller: 'AnnotationController',
             templateUrl: 'templates/annotation/annotations.html',
             link: function (scope, element, attrs) {
 
@@ -79,18 +78,12 @@
                 };
 
                 var clearAnnotations = function () {
-                  console.log('clearAnnotations()');
-                  scope.confirmAction('Clear all annotations?', function(isConfirmed){
+                  confirmationModalFactory.deployModal('Clear all annotations?', function(isConfirmed){
                     if(isConfirmed){
                       scope.annotations = [];
                       annotationsFactory.clear(null, scope.$parent.subject);
                     }
                   });
-
-                  // if(confirmAction()) {
-                  //   scope.annotations = [];
-                  //   annotationsFactory.clear(null, scope.$parent.subject);
-                  // }
                 };
 
                 scope.removeAnnotation = function (annotation) {
@@ -137,15 +130,12 @@
 
 
     module.directive('annotation', function (confirmationModalFactory, $window, $parse) {
-        console.log('Annotation directive...');
-        confirmationModalFactory.deployModal();
         return {
-          // controller: 'AnnotationController', // apparently not necessary? --STI
           link: function (scope, element, attrs) {
             element.bind('mousedown', function (e) {
               e.stopPropagation();
               var annotation = $parse(attrs.annotation)(scope);
-              scope.confirmAction('Delete annotation?', function(isConfirmed){
+              confirmationModalFactory.deployModal('Delete annotation?', function(isConfirmed){
                 if(isConfirmed){
                   scope.$parent.removeAnnotation(annotation);
                 }
