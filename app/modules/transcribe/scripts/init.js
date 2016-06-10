@@ -564,9 +564,7 @@
         });
 
         $scope.clearAnnotations = function () {
-            if (window.confirm('Remove all annotations?')) {
-                $rootScope.$broadcast('transcribe:clearAnnotations');
-            }
+            $rootScope.$broadcast('transcribe:clearAnnotations');
         };
 
     });

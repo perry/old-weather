@@ -23,7 +23,7 @@ Running `make run` starts the project at `http://localhost:8000/`, and the ngDoc
 
 - Requires the environment variables `AMAZON_ACCESS_KEY_ID` and `AMAZON_SECRET_ACCESS_KEY`
 
-Running `make deploy-preview` deploys both project and docs to `http://demo.zooniverse.org/oldweather/` and `http://demo.zooniverse.org/oldweatherdocs/` respectively.
+Running `make deploy-preview` deploys both project and docs to `https://preview.zooniverse.org/oldweather` and `https://preview.zooniverse.org/oldweatherdocs` respectively.
 
 Running `make deploy-production` deploys the project only to `http://www.oldweather.org`
 

@@ -3,7 +3,7 @@
 
     var module = angular.module('annotation');
 
-    module.directive('annotations', function (annotationsFactory) {
+    module.directive('annotations', ['confirmationModalFactory', 'annotationsFactory', function (confirmationModalFactory, annotationsFactory) {
         return {
             replace: true,
             restrict: 'A',
@@ -78,13 +78,18 @@
                 };
 
                 var clearAnnotations = function () {
-                    scope.annotations = [];
-                    annotationsFactory.clear(null, scope.$parent.subject);
+                  confirmationModalFactory.deployModal('Clear all annotations?', function(isConfirmed){
+                    if(isConfirmed){
+                      scope.annotations = [];
+                      annotationsFactory.clear(null, scope.$parent.subject);
+                    }
+                  });
                 };
 
                 scope.removeAnnotation = function (annotation) {
                     _.remove(scope.annotations, {_id: annotation._id});
                     annotationsFactory.remove(annotation._id, scope.$parent.subject);
+                    
                     scope.$apply();
                 };
 
@@ -96,7 +101,6 @@
                     });
 
                     scope.annotations[index].selected = !scope.annotations[index].selected;
-
                     scope.$apply();
                 };
 
@@ -124,20 +128,22 @@
                 getAnnotations();
             }
         };
-    });
+    }]);
 
-    module.directive('annotation', function ($window, $parse) {
+
+    module.directive('annotation', function (confirmationModalFactory, $window, $parse) {
         return {
-            link: function (scope, element, attrs) {
-                element.bind('mousedown', function (e) {
-                    e.stopPropagation();
-                    var annotation = $parse(attrs.annotation)(scope);
-                    // scope.$parent.selectAnnotation(annotation);
-                    if ($window.confirm('Delete annotation?')) {
-                        scope.$parent.removeAnnotation(annotation);
-                    }
-                });
-            }
+          link: function (scope, element, attrs) {
+            element.bind('mousedown', function (e) {
+              e.stopPropagation();
+              var annotation = $parse(attrs.annotation)(scope);
+              confirmationModalFactory.deployModal('Delete annotation?', function(isConfirmed){
+                if(isConfirmed){
+                  scope.$parent.removeAnnotation(annotation);
+                }
+              });
+            });
+          }
         };
     });
 
