@@ -1,6 +1,6 @@
 (function (angular) {
     'use strict';
 
-    angular.module('annotation', ['confirmationModal']);
+    angular.module('confirmationModal', []);
 
 }(window.angular));
