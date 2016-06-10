@@ -422,7 +422,7 @@
                 return zooAPI.type('subjects').get({
                     sort: 'queued',
                     workflow_id: project.links.workflows[0],
-                    page: lastPage + 1,
+                    // page: lastPage + 1,
                     page_size: 20,
                     subject_set_id: subject_set_id
                 }).then(function (res) {
