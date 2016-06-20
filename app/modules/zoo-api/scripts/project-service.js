@@ -19,8 +19,13 @@
     });
 
     module.factory('zooAPI', function ($window, zooAPIConfig) {
-        $window.zooAPI.root = 'https://panoptes.zooniverse.org/api';
-        $window.zooAPI.appID = zooAPIConfig.app_id;
+        // Set API root depending on environment
+        var isProd = window.location.hostname === 'www.oldweather.org' || window.location.hostname === 'oldweather.org';
+        $window.zooAPI.root = isProd ? 'https://panoptes.zooniverse.org/api' : 'https://panoptes-staging.zooniverse.org/api';
+        // Send Old Weather app id when in production
+        if (isProd) {
+            $window.zooAPI.appID = zooAPIConfig.app_id;
+        }
         return $window.zooAPI;
     });
 
