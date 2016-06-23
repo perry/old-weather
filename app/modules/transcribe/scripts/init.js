@@ -419,13 +419,15 @@
             }
 
             var _getSubjectsPage = function (project) {
+                console.log('Fetching next batch of subjects...'); // --STI
                 return zooAPI.type('subjects').get({
                     sort: 'queued',
                     workflow_id: project.links.workflows[0],
                     // page: lastPage + 1,
-                    page_size: 20,
+                    page_size: 1,
                     subject_set_id: subject_set_id
                 }).then(function (res) {
+                    console.log('Subject(s): ', res); // --STI
                     return res;
                 });
             };
