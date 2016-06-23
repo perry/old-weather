@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "postinstall": "gulp hookmeup",
+    "postinstall": "bower install && gulp hookmeup",
     "test": "gulp test-ci"
   },
   "repository": {
@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/zooniverse/old-weather",
   "devDependencies": {
+    "bower": "^1.7.9",
     "gulp": "^3.8.11",
     "gulp-angular-templatecache": "^1.6.0",
     "gulp-chmod": "1.2.0",
