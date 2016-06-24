@@ -1,8 +1,8 @@
 {
-  "name": "sequential-subjects",
+  "name": "subject-set-util",
   "version": "1.0.0",
   "description": "",
-  "main": "ow-subject-uploader.js",
+  "main": "index.js",
   "author": "",
   "license": "ISC",
   "dependencies": {

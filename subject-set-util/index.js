@@ -68,9 +68,48 @@ prompt.get({
   let credentials = result;
 
   console.log('Using credentials: ', credentials);
+  console.log('Argv = ', argv);
 
   auth.signIn(credentials).then(() => {
-    console.log('User logged in sucessfully!');
+
+    getAllSubjectsInSet(argv.subjectSet).then( function(subjects) {
+      let newSubjects = addNextLinksToSubjectSet(subjects);
+      console.log('NEW SUBJECTS = ', JSON.stringify(newSubjects) ); // dumps the JSON of modified subjects (w/ linked list)
+    });
+
+
+/*  STILL NEED TO WORK THIS CODE IN:
+
+    // >>> update subjects >>>
+    async.forEachOfSeries(subjects, updateSubjectMetadata,
+      function(err) {
+        if (err) { console.log('ERROR: ', err); }
+        console.log('DONE');
+    });
+    // <<< update subjects <<<`
+
+
+    // >>> update subject sets >>>
+    api.type('subject_sets').get({id: '3776'}).update({metadata:{active: 'true', shortName: 'The Other Bear'}}).save()
+      .catch( function(err) {
+        console.log('ERROR: ', err);
+      })
+      .then( function(res) {
+        console.log('Requested Subject(s): ', res);
+      });
+    // <<< update subject sets <<<
+
+
+    // >>> upload subjects >>>
+    async.forEachOfSeries(newSubjects, uploadSubject,
+      function(err) {
+        if (err) { console.log('ERROR: ', err); }
+        console.log('DONE');
+    });
+    // <<< upload subjects <<<`
+*/
+
+
   });
 
 
@@ -79,61 +118,11 @@ prompt.get({
 
 
 
-return;
 
 
-
-
-const OW_STAGING_PROJECT_ID = 195;
+// const OW_STAGING_PROJECT_ID = 195;
 const subjectSetType = api.type('subject_sets');
 const subjectType = api.type('subjects');
-
-// var newSubjects = require('./bear-data.json');
-
-// use limited number of subjects
-// newSubjects = [ newSubjects[0], newSubjects[1], newSubjects[2], newSubjects[3] ];
-
-var subjects = require('./bear-data-staging-linked.json');
-// subjects = [ subjects[0], subjects[1], subjects[2], subjects[3], subjects[4] ];
-
-
-// auth.signIn(credentials).then(() => {
-//   console.log('User logged in sucessfully!');
-//
-//   // dumpSubjectSet(3776);
-//
-//   // var newSubjects = addNextLinksToSubjectSet(subjects);
-//   // console.log('NEW SUBJECTS: ', JSON.stringify(newSubjects) );
-//
-//   // >>> update subjects >>>
-//   async.forEachOfSeries(subjects, updateSubjectMetadata,
-//     function(err) {
-//       if (err) { console.log('ERROR: ', err); }
-//       console.log('DONE');
-//   });
-//   // <<< update subjects <<<`
-//
-//
-//   // // >>> update subject sets >>>
-//   // api.type('subject_sets').get({id: '3776'}).update({metadata:{active: 'true', shortName: 'The Other Bear'}}).save()
-//   //   .catch( function(err) {
-//   //     console.log('ERROR: ', err);
-//   //   })
-//   //   .then( function(res) {
-//   //     console.log('Requested Subject(s): ', res);
-//   //   });
-//   // // <<< update subject sets <<<
-//
-//   // // >>> upload subjects >>>
-//   // async.forEachOfSeries(newSubjects, uploadSubject,
-//   //   function(err) {
-//   //     if (err) { console.log('ERROR: ', err); }
-//   //     console.log('DONE');
-//   // });
-//   // // <<< upload subjects <<<`
-//
-// });
-
 
 function updateSubjectMetadata(subject, index, callback) {
   console.log('Updating page ', index);
@@ -185,26 +174,9 @@ function uploadSubject(subject, index, callback) {
 
 }
 
-/* DUMP SUBJECT SET */
-function dumpSubjectSet(subjectSetId) {
-  console.log('Dumping all subjects sets...');
-
-  getAllSubjectsInSet(subjectSetId)
-    .catch( function(err) { console.log('ERROR: ', err) })
-    .then( function(subjects) {
-      console.log('SUBJECTS: ', subjects);
-      // var subjects = subjects;
-      // newSubjects = addNextLinksToSubjectSet(subjects);
-      console.log('SUBJECTS = ', JSON.stringify(subjects) );
-      console.log(JSON.stringify(newSubjects) ); // print out subjects
-  });
-
-}
 
 function addNextLinksToSubjectSet(subjects) {
   console.log('Adding Next Links to Subject Set: ', subjects);
-
-  // return;
 
   // Filter subjects without page number, then sort by ship & page number
   subjects = subjects.filter(subject => typeof subject.metadata.pageNumber !== 'undefined')
@@ -290,7 +262,10 @@ function getAllSubjectsInSet(subjectSetId) {
         subjects.push.apply(subjects, subjectPage);
       }
       return Promise.resolve(subjects);
-    });;
+    })
+    .catch( function(err){
+      console.log('ERROR: ', err);
+    });
 }
 
 function getAllSubjectsInProject(projectId) {
