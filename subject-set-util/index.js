@@ -13,10 +13,10 @@ const async  = require('async');
 const prompt = require('prompt');
 const argv   = require('yargs')
   .usage('Usage: $0 --project [project_id] --subject-set [subject-set-id]')
-  .option('run', {
-    demand: true,
-    choices: ['getSubjectsInSet', 'createLinkedListInSet', 'updateSubjectsInSet']
-  })
+  // .option('run', {
+  //   demand: true,
+  //   choices: ['getSubjectsInSet', 'createLinkedListInSet', 'updateSubjectsInSet']
+  // })
   .option('project', {
     demand: true,
     describe: 'Project ID',
