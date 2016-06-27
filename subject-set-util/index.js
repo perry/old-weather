@@ -67,14 +67,19 @@ prompt.get({
   // set acquired credentials
   let credentials = result;
 
-  console.log('Using credentials: ', credentials);
-  console.log('Argv = ', argv);
+  // For debugging...
+  // console.log('Using credentials: ', credentials);
+  // console.log('Argv = ', argv);
 
   auth.signIn(credentials).then(() => {
 
     getAllSubjectsInSet(argv.subjectSet).then( function(subjects) {
-      let newSubjects = addNextLinksToSubjectSet(subjects);
-      console.log('NEW SUBJECTS = ', JSON.stringify(newSubjects) ); // dumps the JSON of modified subjects (w/ linked list)
+      var updatedSubjects = addNextLinksToSubjectSet(subjects);
+      async.forEachOfSeries(updatedSubjects, updateSubjectMetadata,
+        function(err) {
+          if (err) { console.log('ERROR: ', err); }
+          console.log('DONE');
+      });
     });
 
 
@@ -115,38 +120,28 @@ prompt.get({
 
 });
 
-
-
-
-
-
 // const OW_STAGING_PROJECT_ID = 195;
 const subjectSetType = api.type('subject_sets');
 const subjectType = api.type('subjects');
 
+
+// updates an existing subject by replacing `locations` and `metadata` hashes
 function updateSubjectMetadata(subject, index, callback) {
   console.log('Updating page ', index);
-
-  // console.log('SUBJECT: ', subject);
-
-  // subject.metadata;
-
   api.type('subjects').get({id: subject.id}).update({
-    locations: subject.locations,
-    metadata: subject.metadata
-  }).save()
-    .then( function(newSubject) {
-      // console.log('UPDATED SUBJECT: ', newSubject);
-      // console.log("ZOONIVERSE_ID", subject.toJSON().id );
-      console.log('Finished updating.');
+      // Note: we only need to send `locations` and `metadata` to update subject
+      locations: subject.locations,
+      metadata: subject.metadata
+    })
+    .save() // note: commenting keeps changes local
+    .then( function(subject) {
+      // console.log('Finished updating subject: ', subject);
       callback(null);
     })
-    .catch(function(error) {
+    .catch( function(error) {
      console.log("Error updating subject data! ", error);
      callback(error);
-    //  process.exit(1);
    });
-
 }
 
 function uploadSubject(subject, index, callback) {
@@ -176,38 +171,40 @@ function uploadSubject(subject, index, callback) {
 
 
 function addNextLinksToSubjectSet(subjects) {
-  console.log('Adding Next Links to Subject Set: ', subjects);
+  console.log('Adding Next Links to Subject Set');
 
-  // Filter subjects without page number, then sort by ship & page number
-  subjects = subjects.filter(subject => typeof subject.metadata.pageNumber !== 'undefined')
+  subjects = subjects
+
+    // skip subjects missing page number
+    .filter(subject => {
+      var hasPageNumber = (typeof subject.metadata.pageNumber !== 'undefined' && subject.metadata.pageNumber !== null);
+      if (!hasPageNumber) {
+        console.log('Warning: Skipped subject (' + subject.id + '); missing metadata.pageNumber');
+      }
+      return hasPageNumber;
+    })
+
+    // sort by page number
     .sort((subject1, subject2) => {
-      if( parseInt(subject1.metadata.pageNumber) > parseInt(subject2.metadata.pageNumber) ) {
-        return 1;
-      }
-      if( parseInt(subject1.metadata.pageNumber) < parseInt(subject2.metadata.pageNumber) ) {
-        return -1;
-      }
-      else {
-        return 0;
-      }
-    });
+      let page1 = parseInt(subject1.metadata.pageNumber),
+          page2 = parseInt(subject2.metadata.pageNumber);
+      if( page1 > page2 ) { return 1; }
+      if( page1 < page2 ) { return -1; }
+      else { return 0; }
+    })
 
-    subjects.map((subject, i) => {
-
-      subject.metadata.prevSubjectId = null;
+    // add next/prev subject ids
+    .map((subject, i) => {
+      subject.metadata.prevSubjectId = null; // TO DO: maybe make this into an array?
       subject.metadata.nextSubjectId = null;
-
       const prevSubject = subjects[i-1];
-      if (prevSubject) {
-        subject.metadata.prevSubjectId = prevSubject.id;
-      }
-      const nextSubject = subjects[i + 1];
-      if (nextSubject) { //&& nextSubject.subject_set_id === subject.subject_set_id) {
-        subject.metadata.nextSubjectId = nextSubject.id;
-      }
-      // return subject;
+      const nextSubject = subjects[i+1];
+      if (prevSubject) { subject.metadata.prevSubjectId = prevSubject.id; }
+      if (nextSubject) { subject.metadata.nextSubjectId = nextSubject.id; }
+      return subject;
     });
 
+  console.log('NEW SUBJECTS = ', subjects);
   return subjects;
 }
 
