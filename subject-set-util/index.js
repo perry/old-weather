@@ -27,12 +27,19 @@ const argv   = require('yargs')
     describe: 'Subject set ID',
     type: 'integer'
   })
+  .option('env', {
+    describe: 'Sets run environment',
+    default: 'staging',
+    choices: ['staging', 'development', 'production']
+  })
   .option('prompt', {
     describe: 'Prompt for username/password. Checks ENV for user/pass by default',
     default: false,
     type: 'boolean'
   })
   .argv;
+
+console.log('Setting Node environment to "%s"', argv.env);
 
 // delete credentials from ENV when requesting prompt
 if(argv.prompt) {
