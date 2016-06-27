@@ -13,16 +13,19 @@ const async  = require('async');
 const prompt = require('prompt');
 const argv   = require('yargs')
   .usage('Usage: $0 --project [project_id] --subject-set [subject-set-id]')
-  // .option('run', {
-  //   demand: true,
-  //   choices: ['getSubjectsInSet', 'createLinkedListInSet', 'updateSubjectsInSet']
-  // })
+  .option('link-pages', {
+    alias: 'l',
+    describe: 'Creates linked list among in subject set to support sequential pages',
+    type: 'boolean'
+  })
   .option('project', {
+    alias: 'p',
     demand: true,
     describe: 'Project ID',
     type: 'integer'
   })
   .option('subject-set', {
+    alias: 's',
     demand: true,
     describe: 'Subject set ID',
     type: 'integer'
@@ -32,11 +35,29 @@ const argv   = require('yargs')
     default: 'staging',
     choices: ['staging', 'development', 'production']
   })
+  .option('active', {
+    describe: 'Updates subject set "active" property; "false" will take the subject set offline',
+    // type: 'boolean'
+  })
+  .option('short-name', {
+    describe: 'Updates subject set "shortName" property',
+    type: 'string'
+  })
+  .check( function(argv) {
+    if (typeof argv.shortName == 'boolean') {
+      throw 'Option "shortName" must have a string value';
+    }
+    return true;
+  })
   .option('prompt', {
     describe: 'Prompt for username/password. Checks ENV for user/pass by default',
     default: false,
     type: 'boolean'
   })
+  .implies('active', 'short-name')
+  .implies('short-name', 'active')
+  .epilogue('Copyright 2016 Zooniverse')
+  .wrap(null)
   .argv;
 
 console.log('Setting Node environment to "%s"', argv.env);
@@ -80,14 +101,27 @@ prompt.get({
 
   auth.signIn(credentials).then(() => {
 
-    getAllSubjectsInSet(argv.subjectSet).then( function(subjects) {
-      var updatedSubjects = addNextLinksToSubjectSet(subjects);
-      async.forEachOfSeries(updatedSubjects, updateSubjectMetadata,
-        function(err) {
-          if (err) { console.log('ERROR: ', err); }
-          console.log('DONE');
+    // create a linked-list in subject set
+    if (argv.linkPages) {
+      getAllSubjectsInSet(argv.subjectSet).then( function(subjects) {
+        var updatedSubjects = addNextLinksToSubjectSet(subjects);
+        async.forEachOfSeries(updatedSubjects, updateSubjectMetadata,
+          function(err) {
+            if (err) { console.log('ERROR: ', err); }
+            console.log('DONE');
+        });
       });
-    });
+    }
+
+    // change "active" status of subject set
+    else if (typeof argv.active !== "undefined" && argv.active !== null) {
+      console.log('Updating subject set status...');
+      updateSubjectSetActiveStatus();
+    }
+
+    else {
+      getSubjectSet();
+    }
 
 
 /*  STILL NEED TO WORK THIS CODE IN:
@@ -131,6 +165,18 @@ prompt.get({
 const subjectSetType = api.type('subject_sets');
 const subjectType = api.type('subjects');
 
+function getSubjectSet() {
+  api.type('subject_sets').get({id: argv.subjectSet})
+    .then( function(subject_set) {
+      console.log('Retrieved Subject Set ', subject_set);
+      callback(null);
+    })
+    .catch( function(error) {
+     console.log("Error fetching subject set! ", error);
+     callback(error);
+   });
+
+}
 
 // updates an existing subject by replacing `locations` and `metadata` hashes
 function updateSubjectMetadata(subject, index, callback) {
@@ -176,6 +222,18 @@ function uploadSubject(subject, index, callback) {
 
 }
 
+function updateSubjectSetActiveStatus() {
+  let shortName = argv.shortName ? argv.shortName :  '';
+  api.type('subject_sets').get({id: argv.subjectSet}).update({metadata:{active: argv.active, shortName: shortName}}).save()
+    .catch( function(err) {
+      console.log('ERROR: ', err);
+    })
+    // // DEBUG CODE
+    // .then( function(res) {
+    //   console.log('Requested Subject(s): ', res);
+    // });
+}
+
 
 function addNextLinksToSubjectSet(subjects) {
   console.log('Adding Next Links to Subject Set');
@@ -211,7 +269,7 @@ function addNextLinksToSubjectSet(subjects) {
       return subject;
     });
 
-  console.log('NEW SUBJECTS = ', subjects);
+  // console.log('NEW SUBJECTS = ', subjects);
   return subjects;
 }
 
