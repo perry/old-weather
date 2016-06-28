@@ -425,12 +425,20 @@
                 if (!current_subject || !current_subject.metadata.nextSubjectId) {
                   console.log('FETCHING RANDOM SUBJECT ID'); // --STI
                   console.log('workflow id = ', project.links.workflows[0], '; subject_set_id = ', subject_set_id);
-                  params = {
-                    sort: 'queued',
-                    workflow_id: project.links.workflows[0],
-                    page_size: 1,
-                    subject_set_id: subject_set_id
-                  }
+
+
+                  let cellect_params = {subject_set_id: subject_set_id, page_size: 1, sort: 'random', workflow_id: project.links.workflows[0]};
+                  let queued_params =  {subject_set_id: subject_set_id, page_size: 1, sort: 'queued',  workflow_id: project.links.workflows[0]};
+
+                  params = cellect_params;
+
+
+                  // params = {
+                  //   sort: 'queued',
+                  //   workflow_id: project.links.workflows[0],
+                  //   page_size: 1,
+                  //   subject_set_id: subject_set_id
+                  // }
                 } else {
                   console.log('FETCHING NEXT SUBJECT ID: ', current_subject.metadata.nextSubjectId); // --STI
                   params = { id: current_subject.metadata.nextSubjectId }
