@@ -422,8 +422,9 @@
 
             var _getSubjectsPage = function (project) {
                 var params = {}
-                if (!current_subject) {
+                if (!current_subject || !current_subject.metadata.nextSubjectId) {
                   console.log('FETCHING RANDOM SUBJECT ID'); // --STI
+                  console.log('workflow id = ', project.links.workflows[0], '; subject_set_id = ', subject_set_id);
                   params = {
                     sort: 'queued',
                     workflow_id: project.links.workflows[0],

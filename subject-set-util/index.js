@@ -9,56 +9,108 @@
 'use strict';
 const api    = require('panoptes-client');
 const auth   = require('panoptes-client/lib/auth');
+
+// const subjectSetType = api.type('subject_sets');
+// const subjectType = api.type('subjects');
+
+
 const async  = require('async');
 const prompt = require('prompt');
 const argv   = require('yargs')
-  .usage('Usage: $0 --project [project_id] --subject-set [subject-set-id]')
-  .option('link-pages', {
-    alias: 'l',
-    describe: 'Creates linked list among in subject set to support sequential pages',
-    type: 'boolean'
-  })
-  .option('project', {
-    alias: 'p',
-    demand: true,
-    describe: 'Project ID',
-    type: 'integer'
-  })
-  .option('subject-set', {
-    alias: 's',
-    demand: true,
-    describe: 'Subject set ID',
-    type: 'integer'
-  })
+  .usage('Usage: $0 <command> [options]')
+  .demand(1)
   .option('env', {
     describe: 'Sets run environment',
     default: 'staging',
     choices: ['staging', 'development', 'production']
-  })
-  .option('active', {
-    describe: 'Updates subject set "active" property; "false" will take the subject set offline',
-    // type: 'boolean'
-  })
-  .option('short-name', {
-    describe: 'Updates subject set "shortName" property',
-    type: 'string'
-  })
-  .check( function(argv) {
-    if (typeof argv.shortName == 'boolean') {
-      throw 'Option "shortName" must have a string value';
-    }
-    return true;
   })
   .option('prompt', {
     describe: 'Prompt for username/password. Checks ENV for user/pass by default',
     default: false,
     type: 'boolean'
   })
-  .implies('active', 'short-name')
-  .implies('short-name', 'active')
+  .command('list', 'List available subject sets', function (yargs) {
+      return yargs
+        .usage('Usage: $0 list')
+        .option('project', {
+          alias: 'p',
+          demand: true,
+          describe: 'Project ID',
+          type: 'integer'
+        })
+        .help()
+    }, function(argv) {
+      console.log('HANDLING LISTING SUBJECT SETS... argv = ', argv);
+
+      // getAllSubjectSets(argv.project).then( function(subjectSets) {
+      //   console.log('SUBJECT SETS: ', subjectSets);
+      // });
+
+
+    })
+  .command('link-pages', 'Creates a linked list amond subjects in a set to support sequential pages', function (yargs) {
+      return yargs
+        .usage('Usage: $0 link-pages --project [project_id] --subject-set [subject_set_id]')
+        .option('project', {
+          alias: 'p',
+          demand: true,
+          describe: 'Project ID',
+          type: 'integer'
+        })
+        .option('subject-set', {
+          alias: 's',
+          demand: true,
+          describe: 'Subject set ID',
+          type: 'integer'
+        })
+    }, function(){
+      console.log('HANDLING LINK-PAGES');
+    })
+  .command('update-status', 'Updates subject set status', function (yargs) {
+      return yargs
+      .usage('Usage: $0 update-status --project [project_id] --subject-set [subject_set_id] --active [active_status] --shortName [ship_name]')
+      .option('project', {
+        alias: 'p',
+        demand: true,
+        describe: 'Project ID',
+        type: 'integer'
+      })
+      .option('subject-set', {
+        alias: 's',
+        demand: true,
+        describe: 'Subject set ID',
+        type: 'integer'
+      })
+      .option('active', {
+        demand: true,
+        describe: 'Updates subject set "active" property; "false" will take the subject set offline',
+        // type: 'boolean'
+      })
+      .option('short-name', {
+        demand: true,
+        describe: 'Updates subject set "shortName" property',
+        type: 'string'
+      })
+      .implies('active', 'short-name')
+      .implies('short-name', 'active')
+      .check( function(argv) {
+        if (typeof argv.shortName == 'boolean') {
+          throw 'Option "shortName" must have a string value';
+        }
+        return true;
+      })
+    }, function(){
+      console.log('HANDLING UPDATE-STATUS');
+    })
+  // .help()
+  .strict()
   .epilogue('Copyright 2016 Zooniverse')
   .wrap(null)
   .argv;
+//
+// console.log('ARGV: ', argv);
+// console.log('FOO: ', argv['_']);
+// return;
 
 console.log('Setting Node environment to "%s"', argv.env);
 
@@ -101,74 +153,67 @@ prompt.get({
 
   auth.signIn(credentials).then(() => {
 
-    // create a linked-list in subject set
-    if (argv.linkPages) {
-      getAllSubjectsInSet(argv.subjectSet).then( function(subjects) {
-        var updatedSubjects = addNextLinksToSubjectSet(subjects);
-        async.forEachOfSeries(updatedSubjects, updateSubjectMetadata,
-          function(err) {
-            if (err) { console.log('ERROR: ', err); }
-            console.log('DONE');
+    switch(argv._[0]) {
+
+      case 'list':
+        getAllSubjectSets(argv.project).then( function(subjectSets) {
+          console.log('\nID\tActive\tNo. Subjects\tShort Name\tDisplay Name');
+          subjectSets.map( function(subjectSet) {
+            console.log('%s\t%s\t%s\t%s\t%s', subjectSet.id, subjectSet.metadata.active, subjectSet.set_member_subjects_count, subjectSet.metadata.shortName, subjectSet.display_name);
+          });
         });
-      });
+        break;
+
+      case 'link-pages':
+        getAllSubjectsInSet(argv.subjectSet).then( function(subjects) {
+          console.log('BEFORE:', subjects);
+          let updatedSubjects = addNextLinksToSubjectSet(subjects);
+          console.log('AFTER: ', updatedSubjects);
+          if( updatedSubjects.length == 0 ) {
+            console.log('No subjects to update.');
+            process.exit();
+          }
+          prompt.message = 'Confirmation Required';
+          prompt.start();
+          prompt.get([{
+            properties: {
+              proceed: {
+                description: 'This will modify ' + subjects.length + ' existing subjects. Are you sure? (y/n)'
+              }
+            }
+          }], function(err, res) {
+            if (res.proceed.match(/y/i)) {
+              async.forEachOfSeries(updatedSubjects, updateSubjectMetadata,
+                function(err) {
+                  // if (err) { console.log('ERROR: ', err); }
+                  console.log('Finished updating subjects.\nTip: Remember to add the subject set to the workflow.');
+              });
+            } else {
+              console.log('Aborted.');
+              process.exit();
+            }
+          })
+        });
+        break;
+
+      case 'update-status':
+        console.log('Updating status...');
+        updateSubjectSetActiveStatus();
+        break;
+
+      default:
+        console.log('BLAH');
+        break;
     }
-
-    // change "active" status of subject set
-    else if (typeof argv.active !== "undefined" && argv.active !== null) {
-      console.log('Updating subject set status...');
-      updateSubjectSetActiveStatus();
-    }
-
-    else {
-      getSubjectSet();
-    }
-
-
-/*  STILL NEED TO WORK THIS CODE IN:
-
-    // >>> update subjects >>>
-    async.forEachOfSeries(subjects, updateSubjectMetadata,
-      function(err) {
-        if (err) { console.log('ERROR: ', err); }
-        console.log('DONE');
-    });
-    // <<< update subjects <<<`
-
-
-    // >>> update subject sets >>>
-    api.type('subject_sets').get({id: '3776'}).update({metadata:{active: 'true', shortName: 'The Other Bear'}}).save()
-      .catch( function(err) {
-        console.log('ERROR: ', err);
-      })
-      .then( function(res) {
-        console.log('Requested Subject(s): ', res);
-      });
-    // <<< update subject sets <<<
-
-
-    // >>> upload subjects >>>
-    async.forEachOfSeries(newSubjects, uploadSubject,
-      function(err) {
-        if (err) { console.log('ERROR: ', err); }
-        console.log('DONE');
-    });
-    // <<< upload subjects <<<`
-*/
-
 
   });
 
-
 });
-
-// const OW_STAGING_PROJECT_ID = 195;
-const subjectSetType = api.type('subject_sets');
-const subjectType = api.type('subjects');
 
 function getSubjectSet() {
   api.type('subject_sets').get({id: argv.subjectSet})
     .then( function(subject_set) {
-      console.log('Retrieved Subject Set ', subject_set);
+      // console.log('Retrieved Subject Set ', subject_set);
       callback(null);
     })
     .catch( function(error) {
@@ -248,26 +293,18 @@ function addNextLinksToSubjectSet(subjects) {
       }
       return hasPageNumber;
     })
+    .sort( (subject1, subject2) => { return parseInt(subject1.metadata.pageNumber) - parseInt(subject2.metadata.pageNumber) });
 
-    // sort by page number
-    .sort((subject1, subject2) => {
-      let page1 = parseInt(subject1.metadata.pageNumber),
-          page2 = parseInt(subject2.metadata.pageNumber);
-      if( page1 > page2 ) { return 1; }
-      if( page1 < page2 ) { return -1; }
-      else { return 0; }
-    })
-
-    // add next/prev subject ids
-    .map((subject, i) => {
-      subject.metadata.prevSubjectId = null; // TO DO: maybe make this into an array?
-      subject.metadata.nextSubjectId = null;
-      const prevSubject = subjects[i-1];
-      const nextSubject = subjects[i+1];
-      if (prevSubject) { subject.metadata.prevSubjectId = prevSubject.id; }
-      if (nextSubject) { subject.metadata.nextSubjectId = nextSubject.id; }
-      return subject;
-    });
+  // once sorted by page number, add next/prev subject ids to each subject
+  subjects = subjects.map((subject, i) => {
+    subject.metadata.prevSubjectId = null; // TO DO: maybe make this into an array?
+    subject.metadata.nextSubjectId = null;
+    const prevSubject = subjects[i-1];
+    const nextSubject = subjects[i+1];
+    if (prevSubject) { subject.metadata.prevSubjectId = prevSubject.id; }
+    if (nextSubject) { subject.metadata.nextSubjectId = nextSubject.id; }
+    return subject;
+  });
 
   // console.log('NEW SUBJECTS = ', subjects);
   return subjects;
@@ -303,14 +340,42 @@ function addNextLinks(subjects) {
   return subjects;
 }
 
+
+function getAllSubjectSets(projectId) {
+  const query = { project_id: projectId, page: 1 };
+  return api.type('subject_sets').get(query)
+    .then(subjectSets => {
+      const numPages = subjectSets[0]._meta.subject_sets.page_count;
+      const pageFetches = [Promise.resolve(subjectSets)];
+      for (let i = 2; i <= numPages - 1; i++) {
+        let fetcher = api.type('subject_sets').get(Object.assign({}, query, { page: i }));
+        pageFetches.push(fetcher);
+      }
+      return Promise.resolve(pageFetches);
+    })
+    .then(pageFetches => {
+      return Promise.all(pageFetches);
+    })
+    .then(subjectSetPages => {
+      const subjectSets = [];
+      for (let subjectSetPage of subjectSetPages) {
+        subjectSets.push.apply(subjectSets, subjectSetPage);
+      }
+      return Promise.resolve(subjectSets);
+    })
+    .catch( function(err){
+      console.log('ERROR: ', err);
+    });
+}
+
 function getAllSubjectsInSet(subjectSetId) {
   const query = { subject_set_id: subjectSetId, page: 1 };
-  return subjectType.get(query)
+  return api.type('subjects').get(query)
     .then(subjects => {
       const numPages = subjects[0]._meta.subjects.page_count;
       const pageFetches = [Promise.resolve(subjects)];
       for (let i = 2; i <= numPages - 1; i++) {
-        let fetcher = subjectType.get(Object.assign({}, query, { page: i }));
+        let fetcher = api.type('subjects').get(Object.assign({}, query, { page: i }));
         pageFetches.push(fetcher);
       }
       return Promise.resolve(pageFetches);
@@ -336,7 +401,7 @@ function getAllSubjectsInProject(projectId) {
     .signIn(credentials)
     // Get all subject sets in projecy
     .then(() => {
-      return subjectSetType.get({ project_id: projectId })
+      return api.type('subject_sets').get({ project_id: projectId })
     })
     // Get all subjects from subject sets
     .then((subjectSets) => {
