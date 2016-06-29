@@ -7,6 +7,7 @@
   "license": "ISC",
   "dependencies": {
     "async": "^1.5.2",
+    "cli-table": "^0.3.1",
     "panoptes-client": "^2.5.1",
     "prompt": "^1.0.0",
     "yargs": "^4.7.1"

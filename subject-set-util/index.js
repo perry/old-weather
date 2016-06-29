@@ -9,13 +9,10 @@
 'use strict';
 const api    = require('panoptes-client');
 const auth   = require('panoptes-client/lib/auth');
-
-// const subjectSetType = api.type('subject_sets');
-// const subjectType = api.type('subjects');
-
-
 const async  = require('async');
 const prompt = require('prompt');
+const cliTable = require('cli-table');
+
 const argv   = require('yargs')
   .usage('Usage: $0 <command> [options]')
   .demand(1)
@@ -39,14 +36,6 @@ const argv   = require('yargs')
           type: 'integer'
         })
         .help()
-    }, function(argv) {
-      console.log('HANDLING LISTING SUBJECT SETS... argv = ', argv);
-
-      // getAllSubjectSets(argv.project).then( function(subjectSets) {
-      //   console.log('SUBJECT SETS: ', subjectSets);
-      // });
-
-
     })
   .command('link-pages', 'Creates a linked list amond subjects in a set to support sequential pages', function (yargs) {
       return yargs
@@ -63,8 +52,6 @@ const argv   = require('yargs')
           describe: 'Subject set ID',
           type: 'integer'
         })
-    }, function(){
-      console.log('HANDLING LINK-PAGES');
     })
   .command('update-status', 'Updates subject set status', function (yargs) {
       return yargs
@@ -84,7 +71,6 @@ const argv   = require('yargs')
       .option('active', {
         demand: true,
         describe: 'Updates subject set "active" property; "false" will take the subject set offline',
-        // type: 'boolean'
       })
       .option('short-name', {
         demand: true,
@@ -99,20 +85,14 @@ const argv   = require('yargs')
         }
         return true;
       })
-    }, function(){
-      console.log('HANDLING UPDATE-STATUS');
     })
-  // .help()
+  .global('env')
   .strict()
   .epilogue('Copyright 2016 Zooniverse')
   .wrap(null)
   .argv;
-//
-// console.log('ARGV: ', argv);
-// console.log('FOO: ', argv['_']);
-// return;
 
-console.log('Setting Node environment to "%s"', argv.env);
+console.log('NODE_ENV is \"%s\"', argv.env);
 
 // delete credentials from ENV when requesting prompt
 if(argv.prompt) {
@@ -147,68 +127,88 @@ prompt.get({
   // set acquired credentials
   let credentials = result;
 
-  // For debugging...
-  // console.log('Using credentials: ', credentials);
-  // console.log('Argv = ', argv);
-
   auth.signIn(credentials).then(() => {
 
     switch(argv._[0]) {
 
+      /* List subject sets available to active user */
       case 'list':
-        getAllSubjectSets(argv.project).then( function(subjectSets) {
-          console.log('\nID\tActive\tNo. Subjects\tShort Name\tDisplay Name');
-          subjectSets.map( function(subjectSet) {
-            console.log('%s\t%s\t%s\t%s\t%s', subjectSet.id, subjectSet.metadata.active, subjectSet.set_member_subjects_count, subjectSet.metadata.shortName, subjectSet.display_name);
-          });
-        });
+        list();
         break;
-
+      /* Create linked list among subjects in subject set */
       case 'link-pages':
-        getAllSubjectsInSet(argv.subjectSet).then( function(subjects) {
-          console.log('BEFORE:', subjects);
-          let updatedSubjects = addNextLinksToSubjectSet(subjects);
-          console.log('AFTER: ', updatedSubjects);
-          if( updatedSubjects.length == 0 ) {
-            console.log('No subjects to update.');
-            process.exit();
-          }
-          prompt.message = 'Confirmation Required';
-          prompt.start();
-          prompt.get([{
-            properties: {
-              proceed: {
-                description: 'This will modify ' + subjects.length + ' existing subjects. Are you sure? (y/n)'
-              }
-            }
-          }], function(err, res) {
-            if (res.proceed.match(/y/i)) {
-              async.forEachOfSeries(updatedSubjects, updateSubjectMetadata,
-                function(err) {
-                  // if (err) { console.log('ERROR: ', err); }
-                  console.log('Finished updating subjects.\nTip: Remember to add the subject set to the workflow.');
-              });
-            } else {
-              console.log('Aborted.');
-              process.exit();
-            }
-          })
-        });
+        linkPages();
         break;
-
+      /* Update subject set status */
       case 'update-status':
-        console.log('Updating status...');
-        updateSubjectSetActiveStatus();
+        updateStatus();
         break;
 
       default:
-        console.log('BLAH');
+        console.log('Unknown command!');
         break;
     }
 
   });
 
 });
+
+function list() {
+  let table = new cliTable({
+    head: ['ID', 'Active', 'Count', 'Short Name', 'Display Name'],
+    colWidths: [10, 10, 10, 20, 20]
+  });
+
+  getAllSubjectSets(argv.project).then( function(subjectSets) {
+    subjectSets.map( function(subjectSet) {
+      table.push([
+        subjectSet.id                        ? subjectSet.id : 'n/a',
+        subjectSet.metadata.active           ? subjectSet.metadata.active : 'n/a',
+        subjectSet.set_member_subjects_count ? subjectSet.set_member_subjects_count : 'n/a',
+        subjectSet.metadata.shortName        ? subjectSet.metadata.shortName : 'n/a',
+        subjectSet.display_name              ? subjectSet.display_name : 'n/a'
+      ]);
+    });
+    console.log(table.toString());
+  });
+}
+
+function updateStatus() {
+  let shortName = argv.shortName ? argv.shortName :  '';
+  api.type('subject_sets').get({id: argv.subjectSet}).update({metadata:{active: argv.active, shortName: shortName}}).save()
+    .catch( function(err) {
+      console.log('ERROR: ', err);
+    })
+}
+
+function linkPages() {
+  getAllSubjectsInSet(argv.subjectSet).then( function(subjects) {
+    let updatedSubjects = addNextLinksToSubjectSet(subjects);
+    if( updatedSubjects.length == 0 ) {
+      console.log('No subjects to update.');
+      process.exit();
+    }
+    prompt.message = 'Confirmation Required';
+    prompt.start();
+    prompt.get([{
+      properties: {
+        proceed: {
+          description: 'This will modify ' + subjects.length + ' existing subjects. Are you sure? (y/n)'
+        }
+      }
+    }], function(err, res) {
+      if (res.proceed.match(/y/i)) {
+        async.forEachOfSeries(updatedSubjects, updateSubjectMetadata,
+          function(err) {
+            console.log('Finished updating subjects.\nTip: Remember to add the subject set to the workflow.');
+        });
+      } else {
+        console.log('Aborted.');
+        process.exit();
+      }
+    })
+  });
+}
 
 function getSubjectSet() {
   api.type('subject_sets').get({id: argv.subjectSet})
@@ -267,26 +267,9 @@ function uploadSubject(subject, index, callback) {
 
 }
 
-function updateSubjectSetActiveStatus() {
-  let shortName = argv.shortName ? argv.shortName :  '';
-  api.type('subject_sets').get({id: argv.subjectSet}).update({metadata:{active: argv.active, shortName: shortName}}).save()
-    .catch( function(err) {
-      console.log('ERROR: ', err);
-    })
-    // // DEBUG CODE
-    // .then( function(res) {
-    //   console.log('Requested Subject(s): ', res);
-    // });
-}
-
-
 function addNextLinksToSubjectSet(subjects) {
-  console.log('Adding Next Links to Subject Set');
-
   subjects = subjects
-
-    // skip subjects missing page number
-    .filter(subject => {
+    .filter(subject => { // skip subjects missing page number
       var hasPageNumber = (typeof subject.metadata.pageNumber !== 'undefined' && subject.metadata.pageNumber !== null);
       if (!hasPageNumber) {
         console.log('Warning: Skipped subject (' + subject.id + '); missing metadata.pageNumber');
@@ -295,8 +278,7 @@ function addNextLinksToSubjectSet(subjects) {
     })
     .sort( (subject1, subject2) => { return parseInt(subject1.metadata.pageNumber) - parseInt(subject2.metadata.pageNumber) });
 
-  // once sorted by page number, add next/prev subject ids to each subject
-  subjects = subjects.map((subject, i) => {
+  subjects = subjects.map((subject, i) => {  // once sorted by page number, add next/prev subject ids to each subject
     subject.metadata.prevSubjectId = null; // TO DO: maybe make this into an array?
     subject.metadata.nextSubjectId = null;
     const prevSubject = subjects[i-1];
@@ -306,40 +288,8 @@ function addNextLinksToSubjectSet(subjects) {
     return subject;
   });
 
-  // console.log('NEW SUBJECTS = ', subjects);
   return subjects;
 }
-
-function addNextLinks(subjects) {
-
-  // Filter subjects without page number, then sort by ship & page number
-  subjects = subjects
-
-    .filter(subject => typeof subject.metadata.pageNumber !== 'undefined')
-
-    .sort((subject1, subject2) => {
-      const ssdiff = subject1.subject_set_id - subject2.subject_set_id;
-      if (ssdiff === 0) {
-        return subject1.metadata.pageNumber - subject2.metadata.pageNumber;
-      } else {
-        return ssdiff;
-      }
-    });
-
-  // Add next subject id to metadata of each subject
-  subjects = subjects
-
-    .map((subject, i) => {
-      const nextSubject = subjects[i + 1];
-      if (nextSubject && nextSubject.subject_set_id === subject.subject_set_id) {
-        subject.metadata.nextSubjectId = nextSubject.id
-      }
-      return subject;
-    });
-
-  return subjects;
-}
-
 
 function getAllSubjectSets(projectId) {
   const query = { project_id: projectId, page: 1 };
@@ -363,9 +313,6 @@ function getAllSubjectSets(projectId) {
       }
       return Promise.resolve(subjectSets);
     })
-    .catch( function(err){
-      console.log('ERROR: ', err);
-    });
 }
 
 function getAllSubjectsInSet(subjectSetId) {
@@ -390,9 +337,6 @@ function getAllSubjectsInSet(subjectSetId) {
       }
       return Promise.resolve(subjects);
     })
-    .catch( function(err){
-      console.log('ERROR: ', err);
-    });
 }
 
 function getAllSubjectsInProject(projectId) {
@@ -419,29 +363,29 @@ function getAllSubjectsInProject(projectId) {
     .catch(err => console.error('err', err));
 }
 
-// Generate random page numbers for staging subjects (they don't have any currently)
-function addRandomPageNumbersToSubjects() {
-  return getAllSubjectsInProject(OW_STAGING_PROJECT_ID)
-    .then(subjects => {
-      const usedPageNums = [];
-      const savePromises = [];
-      subjects.forEach((subject, i) => {
-        let pageNum = Math.round(Math.random() * 50);
-        while(usedPageNums.indexOf(pageNum) > -1) {
-          let pageNum = Math.round(Math.random() * 50);
-        }
-        subject.metadata.pageNumber = pageNum;
-        savePromises.push(subject.save());
-      });
-
-      Promise.all(savePromises)
-        .then(savedSubjects => {
-          console.log('Success!', savedSubjects);
-        })
-        .catch(err => {
-          console.log('Error!', err);
-        });
-    });
-}
-
-// addRandomPageNumbersToSubjects();
+// // Generate random page numbers for staging subjects (they don't have any currently)
+// function addRandomPageNumbersToSubjects() {
+//   return getAllSubjectsInProject(OW_STAGING_PROJECT_ID)
+//     .then(subjects => {
+//       const usedPageNums = [];
+//       const savePromises = [];
+//       subjects.forEach((subject, i) => {
+//         let pageNum = Math.round(Math.random() * 50);
+//         while(usedPageNums.indexOf(pageNum) > -1) {
+//           let pageNum = Math.round(Math.random() * 50);
+//         }
+//         subject.metadata.pageNumber = pageNum;
+//         savePromises.push(subject.save());
+//       });
+//
+//       Promise.all(savePromises)
+//         .then(savedSubjects => {
+//           console.log('Success!', savedSubjects);
+//         })
+//         .catch(err => {
+//           console.log('Error!', err);
+//         });
+//     });
+// }
+//
+// // addRandomPageNumbersToSubjects();

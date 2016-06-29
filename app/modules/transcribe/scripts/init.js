@@ -427,8 +427,9 @@
                   console.log('workflow id = ', project.links.workflows[0], '; subject_set_id = ', subject_set_id);
 
 
-                  let cellect_params = {subject_set_id: subject_set_id, page_size: 1, sort: 'random', workflow_id: project.links.workflows[0]};
+                  let cellect_params = {subject_set_id: subject_set_id, page_size: 1, sort: 'cellect', workflow_id: project.links.workflows[0]};
                   let queued_params =  {subject_set_id: subject_set_id, page_size: 1, sort: 'queued',  workflow_id: project.links.workflows[0]};
+                  let random_params =  {subject_set_id: subject_set_id, page_size: 1, sort: 'random',  workflow_id: project.links.workflows[0]};
 
                   params = cellect_params;
 
