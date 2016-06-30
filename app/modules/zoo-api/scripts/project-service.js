@@ -1,6 +1,9 @@
 (function (angular, _) {
     'use strict';
 
+    // use to determine if in production or staging
+    var isProd = window.location.hostname === 'www.oldweather.org' || window.location.hostname === 'oldweather.org';
+
     var module = angular.module('zooAPI');
 
     var upsert = function (arr, key, newVal) {
@@ -15,18 +18,20 @@
 
     module.constant('zooAPIConfig', {
         display_name: 'oldweather',
-        app_id: '2b10a14e8f11eefb130a275f01898c8406600834bff1063bb1b7938795acc8a3'
+        // set up params based on production/staging env
+        app_id: isProd ?
+          '2b10a14e8f11eefb130a275f01898c8406600834bff1063bb1b7938795acc8a3' : // production
+          '0cee9a29027e78cc7f9df99a3d6b0d00aaf3bbfad014a4bb73bf29f30b46575f',  // staging
+        url: isProd ?
+          'https://panoptes.zooniverse.org/api' :
+          'https://panoptes-staging.zooniverse.org/api'
     });
 
     module.factory('zooAPI', function ($window, zooAPIConfig) {
-        // Set API root depending on environment
-        var isProd = window.location.hostname === 'www.oldweather.org' || window.location.hostname === 'oldweather.org';
-        $window.zooAPI.root = isProd ? 'https://panoptes.zooniverse.org/api' : 'https://panoptes-staging.zooniverse.org/api';
-        // Send Old Weather app id when in production
-        if (isProd) {
-            $window.zooAPI.appID = zooAPIConfig.app_id;
-        }
-        return $window.zooAPI;
+      console.log('zooAPIConfig = ', zooAPIConfig);
+      $window.zooAPI.root = zooAPIConfig.url;
+      $window.zooAPI.appID = zooAPIConfig.app_id;
+      return $window.zooAPI;
     });
 
     module.filter('removeCircularDeps', function () {
