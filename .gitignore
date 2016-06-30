@@ -4,3 +4,4 @@ templates.js
 .tmp/
 coverage/
 node_modules/
+app/panoptes-client.js
