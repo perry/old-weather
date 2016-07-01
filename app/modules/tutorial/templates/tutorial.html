@@ -1,6 +1,13 @@
-<div>
-  <h3>Welcome to the Old Weather Tuorial!</h3>
-  <p>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut id dui id nulla tristique finibus in eu quam. Ut mauris ligula, sagittis eget enim non, efficitur congue urna. Aenean non mauris suscipit, facilisis arcu in, aliquet turpis. Sed iaculis arcu non augue ultrices sagittis. Aenean a dui eget nisi vehicula sollicitudin. Nulla viverra, nibh ac posuere suscipit, magna quam elementum erat, a aliquet tellus purus id nisl. Mauris sed arcu vehicula, convallis sem ut, malesuada orci. Mauris et ipsum justo. Sed vestibulum diam arcu, sit amet posuere dolor viverra vitae.
-  </p>
+<div id="tutorial">
+  <div class="modal-body">
+    <carousel active="active" no-wrap="noWrapSlides">
+      <slide ng-repeat="slide in slides track by slide.id" index="slide.id">
+        <img style="margin: auto" src={{slide.image}}>
+        <div>
+          <h4>{{slide.title}}</h4>
+          <p class="slide-text">{{slide.text}}</p>
+        </div>
+      </slide>
+    </carousel>
+  </div>
 </div>
