@@ -116,8 +116,8 @@
         </div>
 
         <div ng-controller="TranscribeNavController">
-          <button ng-click="prevPage()">PREV</button>
-          <button ng-click="nextPage()">NEXT</button>
+          <button ng-click="prevPage()" ng-disabled="prevDisabled">PREV</button>
+          <button ng-click="nextPage()" ng-disabled="nextDisabled">NEXT</button>
         </div>
 
     </div>

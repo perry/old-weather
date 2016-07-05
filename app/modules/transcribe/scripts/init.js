@@ -410,27 +410,48 @@
             return localStorageService.set('subject_set_queue_' + subject_set_id, cache);
         };
 
-        var _loadNewSubjects = function (subject_set_id) {
+        var _loadNewSubjects = function (subject_set_id, subject_id) {
             var deferred = $q.defer();
-            console.log('subjectFactory::_loadNewSubjects() ', deferred); // --STI
+            console.log('subjectFactory::_loadNewSubjects() ', subject_id); // --STI
 
             var current_subject = localStorageService.get('current_subject');
 
-            var _getSubjectsPage = function (project) {
+            var _getSubjectsPage = function (project, subject_id) {
+
+                console.log('_getSubjectsPage()', subject_id);
+
                 var params = {}
-                if (!current_subject || !current_subject.metadata.nextSubjectId) {
-                  console.log(' *** FETCHING RANDOM SUBJECT ID ***'); // --STI
-                  console.log('project_id = ' + project.id + '; workflow id = ', project.configuration.default_workflow, '; subject_set_id = ', subject_set_id);
+
+                if (subject_id) {
+                  console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-');
+                  console.log('    RECEIVED ORDER TO FETCH SPECIFIC SUBJECT: ', subject_id); // --STI
+                  console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-');
+                  params = { id: subject_id }
+                } else {
+                  console.log(' *** FETCHING RANDOM SUBJECT ***'); // --STI
                   params = {
                     subject_set_id: subject_set_id,
                     page_size: 1,
                     sort: 'queued',
-                    workflow_id: project.configuration.default_workflow //project.links.workflows[0]
+                    workflow_id: project.configuration.default_workflow
                   };
-                } else {
-                  console.log(' *** FETCHING NEXT SUBJECT ID: ' + current_subject.metadata.nextSubjectId + ' ***'); // --STI
-                  params = { id: current_subject.metadata.nextSubjectId }
                 }
+
+                // if (!current_subject || !current_subject.metadata.nextSubjectId) {
+                //   console.log(' *** FETCHING RANDOM SUBJECT ID ***'); // --STI
+                //   console.log('project_id = ' + project.id + '; workflow id = ', project.configuration.default_workflow, '; subject_set_id = ', subject_set_id);
+                //   params = {
+                //     subject_set_id: subject_set_id,
+                //     page_size: 1,
+                //     sort: 'queued',
+                //     workflow_id: project.configuration.default_workflow //project.links.workflows[0]
+                //   };
+                // } else {
+                //   console.log(' *** FETCHING NEXT SUBJECT ID: ' + current_subject.metadata.nextSubjectId + ' ***'); // --STI
+                //   params = { id: current_subject.metadata.nextSubjectId }
+                // }
+
+
                 return zooAPI.type('subjects').get(params)
                   .then(function (res) {
                     localStorageService.set('current_subject', res[0] ); // --STI
@@ -442,10 +463,10 @@
 
             var project;
 
-            zooAPIProject.get()
+            zooAPIProject.get() // first, we need project to determine which workflow/subject set to fetch from
                 .then(function (response) {
                     project = response;
-                    return _getSubjectsPage(response);
+                    return _getSubjectsPage(response, subject_id);
                 })
                 .then(function (response) {
                     return response;
@@ -465,16 +486,16 @@
             return deferred.promise;
         };
 
-        var _getNextInQueue = function (subject_set_id) {
+        var _getNextInQueue = function (subject_set_id, subject_id) {
             var deferred = $q.defer();
-            console.log('subjectFactory::_getNextInQueue() ', deferred); // --STI
+            console.log('subjectFactory::_getNextInQueue() ', subject_id); // --STI
 
             var cache = _getQueueCache(subject_set_id);
             console.log('subjectFactory::_getNextInQueue() cache = ', cache);
 
             if (!angular.isArray(cache) || cache.length === 0) {
                 console.log('Loading new subjects...'); // --STI
-                _loadNewSubjects(subject_set_id)
+                _loadNewSubjects(subject_set_id, subject_id)
                     .then(function () {
                         cache = _getQueueCache(subject_set_id);
 
@@ -491,11 +512,11 @@
             return deferred.promise;
         };
 
-        var get = function (subject_set_id) {
+        var get = function (subject_set_id, subject_id) {
             var deferred = $q.defer();
-            console.log('subjectFactory::get() ', deferred); // --STI
+            console.log('subjectFactory::get() ', subject_id); // --STI
 
-            _getNextInQueue(subject_set_id)
+            _getNextInQueue(subject_set_id, subject_id)
                 .then(function (subject) {
                     deferred.resolve(subject);
                 });
@@ -508,21 +529,47 @@
         };
     });
 
-    module.controller('TranscribeNavController', function ($scope, $stateParams, subjectFactory, localStorageService) {
+    module.controller('TranscribeNavController', function ($scope, $stateParams, $modal, subjectFactory, localStorageService) {
 
       // $scope.disableTranscribeNav = typeof $scope.subject.metadata.nextSubectId !== 'undefined' && $scope.subject.metadata.nextSubjectId !== null
       // console.log('disableTranscribeNav = ', disableTranscribeNav);
 
+      let currentSubject = localStorageService.get('current_subject');
+
+      // console.log('CURRENT SUBJECT = ', currentSubject);
+      $scope.nextDisabled = false;
+      $scope.prevDisabled = false;
+
+      // // console.log('currentSubject.metadata.nextSubjectId = ', !currentSubject.metadata.nextSubjectId);
+      //
+      // if(!currentSubject.metadata.nextSubjectId) {
+      //   $scope.nextDisabled = true;
+      // }
+      //
+      // if(!currentSubject.metadata.prevSubjectId) {
+      //   $scope.prevDisabled = true;
+      // }
+
       $scope.nextPage = function() {
         console.log('NEXT PAGE >>>');
+        var new_subject_id = $scope.subject.metadata.nextSubjectId;
+
+        console.log('NEW SUBJECT ID = ', new_subject_id); // --STI
         var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
         _.remove(subject_set_queue, {id: $scope.subject.id});
         localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
-        $scope.loadSubject();
+        $scope.loadSubject(new_subject_id);
       }
 
       $scope.prevPage = function() {
-        console.log('<<< PREV PAGE (Cannot do this yet!)');
+        console.log('<<< PREV PAGE');
+        var new_subject_id = $scope.subject.metadata.prevSubjectId;
+
+        console.log('NEW SUBJECT ID = ', new_subject_id); // --STI
+        var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
+        _.remove(subject_set_queue, {id: $scope.subject.id});
+        localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
+        $scope.loadSubject(new_subject_id);
       }
 
     });
@@ -530,7 +577,8 @@
     module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
         $rootScope.bodyClass = 'annotate';
 
-        $scope.loadSubject = function () {
+        $scope.loadSubject = function (subject_id) {
+            console.log('loadSubject() ', subject_id); // --STI
             $rootScope.$broadcast('transcribe:loadingSubject');
 
             $scope.subject_set_id = $stateParams.subject_set_id;
@@ -545,7 +593,7 @@
                     $scope.questions = response;
                 });
 
-            subjectFactory.get($scope.subject_set_id)
+            subjectFactory.get($scope.subject_set_id, subject_id)
                 .then(function (response) {
                     if (response !== null) {
                         $timeout(function () {
