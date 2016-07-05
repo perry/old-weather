@@ -414,11 +414,6 @@
             var deferred = $q.defer();
             console.log('subjectFactory::_loadNewSubjects() ', deferred); // --STI
 
-            var lastPage = localStorageService.get('subject_set_page_' + subject_set_id);
-            if (!lastPage) {
-                lastPage = 0;
-            }
-
             var current_subject = localStorageService.get('current_subject');
 
             var _getSubjectsPage = function (project) {
@@ -460,7 +455,6 @@
                 .then(function (response) {
                     if (response.length > 0) {
                         _addToQueue(subject_set_id, response);
-                        localStorageService.set('subject_set_page_' + subject_set_id, (lastPage + 1));
                         deferred.resolve();
                     } else {
                         deferred.reject();
@@ -514,15 +508,17 @@
         };
     });
 
-    module.controller('TranscribeNavController', function ($scope, subjectFactory) {
+    module.controller('TranscribeNavController', function ($scope, $stateParams, subjectFactory, localStorageService) {
 
       // $scope.disableTranscribeNav = typeof $scope.subject.metadata.nextSubectId !== 'undefined' && $scope.subject.metadata.nextSubjectId !== null
       // console.log('disableTranscribeNav = ', disableTranscribeNav);
 
       $scope.nextPage = function() {
         console.log('NEXT PAGE >>>');
-        console.log('subject: ', $scope.subject);
-        $scope.skipSubject();
+        var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
+        _.remove(subject_set_queue, {id: $scope.subject.id});
+        localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
+        $scope.loadSubject();
       }
 
       $scope.prevPage = function() {
@@ -531,7 +527,7 @@
 
     });
 
-    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory, localStorageService) {
+    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
         $rootScope.bodyClass = 'annotate';
 
         $scope.loadSubject = function () {
@@ -574,14 +570,6 @@
         $scope.subjectLoaded = function () {
             $scope.isLoading = false;
         };
-
-        $scope.skipSubject = function() {
-          console.log('Skipping subject...'); // --STI
-          var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
-          _.remove(subject_set_queue, {id: $scope.subject.id});
-          localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
-          $scope.loadSubject();
-        }
 
         $scope.saveSubject = function () {
             annotationsFactory.save($scope.subject.id)
