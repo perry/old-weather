@@ -531,24 +531,16 @@
 
     module.controller('TranscribeNavController', function ($scope, $stateParams, $modal, subjectFactory, localStorageService) {
 
-      // $scope.disableTranscribeNav = typeof $scope.subject.metadata.nextSubectId !== 'undefined' && $scope.subject.metadata.nextSubjectId !== null
-      // console.log('disableTranscribeNav = ', disableTranscribeNav);
+      // $scope.nextDisabled = false;
+      // $scope.prevDisabled = false;
 
-      let currentSubject = localStorageService.get('current_subject');
+      // update prev/next buttons
+      $scope.$on('transcribe:loadedSubject', function(newValue, oldValue) {
+        let currentSubject = localStorageService.get('current_subject');
+        $scope.nextDisabled = currentSubject.metadata.nextSubjectId ? false : true
+        $scope.prevDisabled = currentSubject.metadata.prevSubjectId ? false : true
 
-      // console.log('CURRENT SUBJECT = ', currentSubject);
-      $scope.nextDisabled = false;
-      $scope.prevDisabled = false;
-
-      // // console.log('currentSubject.metadata.nextSubjectId = ', !currentSubject.metadata.nextSubjectId);
-      //
-      // if(!currentSubject.metadata.nextSubjectId) {
-      //   $scope.nextDisabled = true;
-      // }
-      //
-      // if(!currentSubject.metadata.prevSubjectId) {
-      //   $scope.prevDisabled = true;
-      // }
+      });
 
       $scope.nextPage = function() {
         console.log('NEXT PAGE >>>');
