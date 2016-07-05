@@ -412,6 +412,7 @@
 
         var _loadNewSubjects = function (subject_set_id) {
             var deferred = $q.defer();
+            console.log('subjectFactory::_loadNewSubjects() ', deferred); // --STI
 
             var lastPage = localStorageService.get('subject_set_page_' + subject_set_id);
             if (!lastPage) {
@@ -472,10 +473,13 @@
 
         var _getNextInQueue = function (subject_set_id) {
             var deferred = $q.defer();
+            console.log('subjectFactory::_getNextInQueue() ', deferred); // --STI
 
             var cache = _getQueueCache(subject_set_id);
+            console.log('subjectFactory::_getNextInQueue() cache = ', cache);
 
             if (!angular.isArray(cache) || cache.length === 0) {
+                console.log('Loading new subjects...'); // --STI
                 _loadNewSubjects(subject_set_id)
                     .then(function () {
                         cache = _getQueueCache(subject_set_id);
@@ -495,6 +499,7 @@
 
         var get = function (subject_set_id) {
             var deferred = $q.defer();
+            console.log('subjectFactory::get() ', deferred); // --STI
 
             _getNextInQueue(subject_set_id)
                 .then(function (subject) {
@@ -509,7 +514,24 @@
         };
     });
 
-    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
+    module.controller('TranscribeNavController', function ($scope, subjectFactory) {
+
+      // $scope.disableTranscribeNav = typeof $scope.subject.metadata.nextSubectId !== 'undefined' && $scope.subject.metadata.nextSubjectId !== null
+      // console.log('disableTranscribeNav = ', disableTranscribeNav);
+
+      $scope.nextPage = function() {
+        console.log('NEXT PAGE >>>');
+        console.log('subject: ', $scope.subject);
+        $scope.skipSubject();
+      }
+
+      $scope.prevPage = function() {
+        console.log('<<< PREV PAGE (Cannot do this yet!)');
+      }
+
+    });
+
+    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory, localStorageService) {
         $rootScope.bodyClass = 'annotate';
 
         $scope.loadSubject = function () {
@@ -552,6 +574,14 @@
         $scope.subjectLoaded = function () {
             $scope.isLoading = false;
         };
+
+        $scope.skipSubject = function() {
+          console.log('Skipping subject...'); // --STI
+          var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
+          _.remove(subject_set_queue, {id: $scope.subject.id});
+          localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
+          $scope.loadSubject();
+        }
 
         $scope.saveSubject = function () {
             annotationsFactory.save($scope.subject.id)
