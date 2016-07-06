@@ -16,7 +16,8 @@
         'ui.router',
         'angularSpinner',
         'svg',
-        'annotation'
+        'annotation',
+        'tutorial'
     ]);
 
     module.config(function ($stateProvider) {

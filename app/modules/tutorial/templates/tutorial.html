@@ -1,0 +1,13 @@
+<div id="tutorial">
+  <div class="modal-body">
+    <carousel active="active" no-wrap="noWrapSlides">
+      <slide ng-repeat="slide in slides track by slide.id" index="slide.id">
+        <img style="margin: auto" src={{slide.image}}>
+        <div>
+          <h4>{{slide.title}}</h4>
+          <p class="slide-text">{{slide.text}}</p>
+        </div>
+      </slide>
+    </carousel>
+  </div>
+</div>
