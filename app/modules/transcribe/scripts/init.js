@@ -317,7 +317,7 @@
             var deferred = $q.defer();
             zooAPISubjectSets.get({id: subject_set_id})
                 .then(function (response) {
-                    var workflowID = response[0].links.workflows[0];
+                    var workflowID = response[0].links.workflows[0]; // Note: Defaulting to first workflow may cause unexpected issues
                     zooAPIWorkflows.get(workflowID)
                         .then(addReuseGridTask)
                         .then(deferred.resolve, deferred.reject, deferred.notify);
@@ -421,7 +421,7 @@
             var _getSubjectsPage = function (project) {
                 return zooAPI.type('subjects').get({
                     sort: 'queued',
-                    workflow_id: project.links.workflows[0],
+                    workflow_id: project.configuration.default_workflow, //project.links.workflows[0],
                     // page: lastPage + 1,
                     page_size: 20,
                     subject_set_id: subject_set_id
