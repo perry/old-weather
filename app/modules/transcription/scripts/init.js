@@ -19,13 +19,15 @@
             });
     });
 
-    module.controller('transcriptionCtrl', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory) {
+    module.service('pendingAnnotationsService', ['zooAPI', function(zooAPI) {
+        this.get = function(page) {
+            return zooAPI.type('classifications/incomplete').get({ page: page || 1 })
+        };
+    }]);
 
+    module.controller('transcriptionCtrl', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
+        console.log('transcription');
         $rootScope.bodyClass = 'transcribe';
-
-        var getIncompletes = function (page) {
-            return zooAPI.type('classifications/incomplete').get({ page: page || 1 });
-        }
 
         var subject_set_id = $stateParams.subject_set_id;
         zooAPISubjectSets.get({id: subject_set_id})
@@ -40,7 +42,7 @@
         });
         var annotations_for_subject_set = _.where(annotations_list, {subject_set_id: subject_set_id});
 
-        getIncompletes()
+        pendingAnnotationsService.get()
             .then(function (annotations_for_subject_set) {
 
                 $scope.showAllAnnotations = false;
