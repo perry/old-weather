@@ -317,7 +317,7 @@
             var deferred = $q.defer();
             zooAPISubjectSets.get({id: subject_set_id})
                 .then(function (response) {
-                    var workflowID = response[0].links.workflows[0];
+                    var workflowID = response[0].links.workflows[0]; // Note: Defaulting to first workflow may cause unexpected issues
                     zooAPIWorkflows.get(workflowID)
                         .then(addReuseGridTask)
                         .then(deferred.resolve, deferred.reject, deferred.notify);
