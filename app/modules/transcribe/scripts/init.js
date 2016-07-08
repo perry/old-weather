@@ -506,7 +506,7 @@
 
       // update prev/next buttons
       $scope.$on('transcribe:loadedSubject', function(newValue, oldValue) {
-        let currentSubject = localStorageService.get('current_subject');
+        var currentSubject = localStorageService.get('current_subject');
         console.log('CURRENT SUBJECT = ', currentSubject);
         $scope.nextDisabled = currentSubject.metadata.nextSubjectId ? false : true
         $scope.prevDisabled = currentSubject.metadata.prevSubjectId ? false : true
