@@ -20,29 +20,49 @@
     });
 
     module.service('pendingAnnotationsService', ['zooAPI', function(zooAPI) {
-        this.get = function(page) {
-            return zooAPI.type('classifications/incomplete').get({ page: page || 1 })
+        this.get = function(subjectSet, page) {
+            // Fetch current user's incomplete classifications
+            return zooAPI.type('classifications/incomplete').get({
+                page: page || 1,
+                project_id: subjectSet.links.project
+            }).then(function(annotations) {
+                // Filter them to the current subject set
+                return Promise.all(annotations.map(function (annotation) {
+                    annotation.metadata.subjects = [];
+                    var subjectId = annotation.links.subjects[0];
+                    return zooAPI.type('set_member_subjects').get({ subject_id: subjectId })
+                        .then(function(sets) {
+                            var setsMatching = sets.filter(function(set) {
+                                return set.links.subject_set === subjectSet.id;
+                            });
+                            if (setsMatching.length) {
+                                // Subject in set; keep
+                                return Promise.resolve(annotation);
+                            } else {
+                                // Subject not in set; discard
+                                return Promise.resolve(false);
+                            }
+                        });
+                }));
+            }).then(function(annotationsFiltered) {
+                // Strip out false values from promise result
+                return Promise.resolve(annotationsFiltered.filter(annotation => annotation));
+            })
+            .catch(function(err) {
+                throw err;
+            });
         };
     }]);
 
     module.controller('transcriptionCtrl', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
-        console.log('transcription');
         $rootScope.bodyClass = 'transcribe';
 
         var subject_set_id = $stateParams.subject_set_id;
         zooAPISubjectSets.get({id: subject_set_id})
             .then(function (response) {
                 $scope.ship = response[0];
+                return pendingAnnotationsService.get($scope.ship);
             })
-
-        var annotations_list = localStorageService.get('annotations_list');
-        // Only return items that have a classification.
-        _.remove(annotations_list, function (item) {
-            return !item.classification;
-        });
-        var annotations_for_subject_set = _.where(annotations_list, {subject_set_id: subject_set_id});
-
-        pendingAnnotationsService.get()
             .then(function (annotations_for_subject_set) {
 
                 $scope.showAllAnnotations = false;
@@ -52,12 +72,12 @@
                     $scope.isLoading = true;
 
                     if (annotations_for_subject_set.length > 0) {
-                        var subject_id = annotations_for_subject_set[0].links.subjects[0];
-                        $scope.subject_id = subject_id;
+                        var annotation = annotations_for_subject_set[0];
+                        $scope.subject_id = annotation.links.subjects[0];
                         annotations_for_subject_set.shift();
 
-                        var annotation = localStorageService.get('annotation_subject_id_' + subject_id);
                         $scope.annotations = annotation.annotations;
+                        $scope.classification = annotation;
 
                         // Our best friend $timeout is back. Used here to delay setting
                         // of first / last until the $$hashKey has been set.
@@ -75,7 +95,7 @@
 
                         _.remove($scope.annotations, {type: 'row'});
 
-                        zooAPI.type('subjects').get({id: subject_id})
+                        zooAPI.type('subjects').get({id: $scope.subject_id})
                             .then(function (response) {
                                 var subject = response[0];
                                 var keys = Object.keys(subject.locations[0]);
@@ -148,37 +168,19 @@
                 };
 
                 $scope.finish = function () {
-                    var obj = {
-                        annotations: $scope.annotations,
+                    $scope.classification.update({
                         metadata: {
                             started_at: new Date().toISOString(),
+                            finished_at: new Date().toISOString(),
+                            completed: true,
                             user_agent: navigator.userAgent,
                             user_language: navigator.language
-                        },
-                        links: {
-                            project: $scope.ship.links.project,
-                            subjects: [$scope.subject_id]
                         }
-                    };
+                    });
 
-                    zooAPI.type('workflows').get({id: $scope.ship.links.workflows[0]})
+                    $scope.classification.save()
                         .then(function (response) {
-                            var workflow = response[0];
-                            obj.links.workflow = workflow.id;
-                            obj.metadata.workflow_version = workflow.version;
-
-                            obj.metadata.finished_at = new Date().toISOString();
-                            obj.completed = true;
-
-                            var resource = zooAPI.type('classifications').create(obj);
-                            resource.save()
-                                .then(function (response) {
-                                    var annotations_list = localStorageService.get('annotations_list');
-                                    _.remove(annotations_list, {subject_id: $scope.subject_id, subject_set_id: $stateParams.subject_set_id});
-                                    localStorageService.set('annotations_list', annotations_list);
-                                    localStorageService.remove('annotation_subject_id_' + $scope.subject_id);
-                                    $scope.$apply(load_next);
-                                });
+                            $scope.$apply(load_next);
                         });
                 };
         });
