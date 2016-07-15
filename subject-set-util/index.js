@@ -37,7 +37,7 @@ const argv   = require('yargs')
         })
         .help()
     })
-  .command('link-pages', 'Creates a linked list amond subjects in a set to support sequential pages', function (yargs) {
+  .command('link-pages', 'Creates a linked list among subjects in a set to support sequential pages', function (yargs) {
       return yargs
         .usage('Usage: $0 link-pages --project [project_id] --subject-set [subject_set_id]')
         .option('project', {
@@ -51,6 +51,11 @@ const argv   = require('yargs')
           demand: true,
           describe: 'Subject set ID',
           type: 'integer'
+        })
+        .option('dryrun', {
+          demand: true,
+          describe: 'Create a linked list without deploying subject changes',
+          type: 'boolean'
         })
     })
   .command('update-status', 'Updates subject set status', function (yargs) {
@@ -188,6 +193,12 @@ function linkPages() {
       console.log('No subjects to update.');
       process.exit();
     }
+
+    if (argv.dryrun) {
+      console.log(JSON.stringify(updatedSubjects));
+      process.exit();
+    }
+
     prompt.message = 'Confirmation Required';
     prompt.start();
     prompt.get([{
@@ -268,6 +279,7 @@ function uploadSubject(subject, index, callback) {
 }
 
 function addNextLinksToSubjectSet(subjects) {
+  const cacheSize = 5;
   subjects = subjects
     .filter(subject => { // skip subjects missing page number
       var hasPageNumber = (typeof subject.metadata.pageNumber !== 'undefined' && subject.metadata.pageNumber !== null);
@@ -279,14 +291,31 @@ function addNextLinksToSubjectSet(subjects) {
     .sort( (subject1, subject2) => { return parseInt(subject1.metadata.pageNumber) - parseInt(subject2.metadata.pageNumber) });
 
   subjects = subjects.map((subject, i) => {  // once sorted by page number, add next/prev subject ids to each subject
-    subject.metadata.prevSubjectId = null; // TO DO: maybe make this into an array?
-    subject.metadata.nextSubjectId = null;
-    const prevSubject = subjects[i-1];
-    const nextSubject = subjects[i+1];
-    if (prevSubject) { subject.metadata.prevSubjectId = prevSubject.id; }
-    if (nextSubject) { subject.metadata.nextSubjectId = nextSubject.id; }
+
+    subject.metadata.prevSubjectIds = [];
+    subject.metadata.nextSubjectIds = [];
+
+    var currentIndex = subjects.indexOf(subject);
+
+    // look ahead
+    var i = 1, nextSubject = subjects[currentIndex+i];
+    while( i <= cacheSize && typeof nextSubject !== "undefined" && nextSubject !== null ) {
+      subject.metadata.nextSubjectIds.push( nextSubject.id );
+      i++;
+      nextSubject = subjects[currentIndex+i];
+    }
+
+    // look back
+    var j = 1, prevSubject = subjects[currentIndex-j];
+    while( j <= cacheSize && typeof prevSubject !== "undefined" && prevSubject !== null ) {
+      subject.metadata.prevSubjectIds.push( prevSubject.id );
+      j++;
+      prevSubject = subjects[currentIndex-j];
+    }
+
     return subject;
   });
+
 
   return subjects;
 }
