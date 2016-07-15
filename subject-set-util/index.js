@@ -52,8 +52,12 @@ const argv   = require('yargs')
           describe: 'Subject set ID',
           type: 'integer'
         })
+        .option('cache-size', {
+          describe: 'Set cache size for prev/next subjects',
+          default: 5,
+          type: 'integer'
+        })
         .option('dryrun', {
-          demand: true,
           describe: 'Create a linked list without deploying subject changes',
           type: 'boolean'
         })
@@ -279,7 +283,10 @@ function uploadSubject(subject, index, callback) {
 }
 
 function addNextLinksToSubjectSet(subjects) {
-  const cacheSize = 5;
+  var cacheSize = argv.cacheSize;
+
+  console.log('Using cache size: ', cacheSize);
+
   subjects = subjects
     .filter(subject => { // skip subjects missing page number
       var hasPageNumber = (typeof subject.metadata.pageNumber !== 'undefined' && subject.metadata.pageNumber !== null);
