@@ -390,9 +390,9 @@
 
     module.factory('subjectFactory', function ($q, $filter, zooAPI, localStorageService, zooAPIProject, $timeout) {
         var _getQueueCache = function (subject_set_id) {
-            var cache = localStorageService.get('subject_set_queue_' + subject_set_id);
+            var cache = localStorageService.get('subject_set_next_queue_' + subject_set_id);
             if (!cache) {
-                cache = localStorageService.set('subject_set_queue_' + subject_set_id, []);
+                cache = localStorageService.set('subject_set_next_queue_' + subject_set_id, []);
             }
 
             return cache;
@@ -407,11 +407,11 @@
 
             cache = $filter('removeCircularDeps')(cache);
 
-            return localStorageService.set('subject_set_queue_' + subject_set_id, cache);
+            return localStorageService.set('subject_set_next_queue_' + subject_set_id, cache);
         };
 
         var _loadNewSubjects = function (subject_set_id, subject_ids) {
-            console.log('SUBJECT IDS: ', subject_ids);
+            console.log('SUBJECT IDS: ', subject_ids); // --STI
             var deferred = $q.defer();
             var current_subject = localStorageService.get('current_subject');
 
@@ -515,24 +515,19 @@
 
       $scope.nextPage = function() {
         console.log('NEXT PAGE >>>');
-
         var subject_ids = $scope.subject.metadata.nextSubjectIds;
-        // var new_subject_id = $scope.subject.metadata.nextSubjectId;
-
-        var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
-        _.remove(subject_set_queue, {id: $scope.subject.id});
-        localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
-
+        var subject_set_next_queue = localStorageService.get('subject_set_next_queue_' + $stateParams.subject_set_id);
+        _.remove(subject_set_next_queue, {id: $scope.subject.id});
+        localStorageService.set('subject_set_next_queue_' + $stateParams.subject_set_id, subject_set_next_queue);
         $scope.loadSubjects(subject_ids);
-        // $scope.loadSubject(new_subject_id);
       }
 
       $scope.prevPage = function() {
         console.log('<<< PREV PAGE');
-        var new_subject_id = $scope.subject.metadata.prevSubjectId;
-        var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
-        _.remove(subject_set_queue, {id: $scope.subject.id});
-        localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
+        var subject_ids = $scope.subject.metadata.prevSubjectIds;
+        var subject_set_next_queue = localStorageService.get('subject_set_next_queue_' + $stateParams.subject_set_id);
+        _.remove(subject_set_next_queue, {id: $scope.subject.id});
+        localStorageService.set('subject_set_next_queue_' + $stateParams.subject_set_id, subject_set_next_queue);
         $scope.loadSubject(new_subject_id);
       }
 

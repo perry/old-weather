@@ -83,9 +83,9 @@
 
                 confirmationModalFactory.deployModal('You haven\'t added any annotations, are you sure you want to finish?', function(isConfirmed){
                   if(isConfirmed){
-                    var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
-                    _.remove(subject_set_queue, {id: id});
-                    localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
+                    var subject_set_next_queue = localStorageService.get('subject_set_next_queue_' + $stateParams.subject_set_id);
+                    _.remove(subject_set_next_queue, {id: id});
+                    localStorageService.set('subject_set_next_queue_' + $stateParams.subject_set_id, subject_set_next_queue);
                     deferred.resolve();
                   }
                 });
@@ -106,9 +106,9 @@
                         upsert(annoList, {subject_id: id}, obj);
                         localStorageService.set('annotations_list', annoList);
 
-                        var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
-                        _.remove(subject_set_queue, {id: id});
-                        localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
+                        var subject_set_next_queue = localStorageService.get('subject_set_next_queue_' + $stateParams.subject_set_id);
+                        _.remove(subject_set_next_queue, {id: id});
+                        localStorageService.set('subject_set_next_queue_' + $stateParams.subject_set_id, subject_set_next_queue);
 
                         deferred.resolve(response);
                     });
