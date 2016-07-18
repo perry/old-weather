@@ -410,17 +410,18 @@
             return localStorageService.set('subject_set_queue_' + subject_set_id, cache);
         };
 
-        var _loadNewSubjects = function (subject_set_id, subject_id) {
+        var _loadNewSubjects = function (subject_set_id, subject_ids) {
+            console.log('SUBJECT IDS: ', subject_ids);
             var deferred = $q.defer();
             var current_subject = localStorageService.get('current_subject');
 
-            var _getSubjectsPage = function (project, subject_id) {
+            var _getSubjectsPage = function (project, subject_ids) {
 
                 var params = {}
 
-                if (subject_id) {
-                  console.log(' *** FETCHING SUBJECT WITH ID %s ***', subject_id); // --STI
-                  params = { id: subject_id }
+                if (subject_ids) {
+                  console.log(' *** FETCHING SUBJECT WITH IDS %s ***', subject_ids.toString()); // --STI
+                  params = { id: subject_ids }
                 } else {
                   console.log(' *** FETCHING RANDOM SUBJECT ***'); // --STI
                   params = {
@@ -444,7 +445,7 @@
             zooAPIProject.get() // first, we need project to determine which workflow/subject set to fetch from
                 .then(function (response) {
                     project = response;
-                    return _getSubjectsPage(response, subject_id);
+                    return _getSubjectsPage(response, subject_ids);
                 })
                 .then(function (response) {
                     return response;
@@ -464,12 +465,12 @@
             return deferred.promise;
         };
 
-        var _getNextInQueue = function (subject_set_id, subject_id) {
+        var _getNextInQueue = function (subject_set_id, subject_ids) {
             var deferred = $q.defer();
             var cache = _getQueueCache(subject_set_id);
 
             if (!angular.isArray(cache) || cache.length === 0) {
-                _loadNewSubjects(subject_set_id, subject_id)
+                _loadNewSubjects(subject_set_id, subject_ids)
                     .then(function () {
                         cache = _getQueueCache(subject_set_id);
 
@@ -486,12 +487,12 @@
             return deferred.promise;
         };
 
-        var get = function (subject_set_id, subject_id) {
+        var get = function (subject_set_id, subject_ids) {
             var deferred = $q.defer();
 
-            _getNextInQueue(subject_set_id, subject_id)
-                .then(function (subject) {
-                    deferred.resolve(subject);
+            _getNextInQueue(subject_set_id, subject_ids)
+                .then(function (subjects) {
+                    deferred.resolve(subjects);
                 });
 
             return deferred.promise;
@@ -508,17 +509,22 @@
       $scope.$on('transcribe:loadedSubject', function(newValue, oldValue) {
         var currentSubject = localStorageService.get('current_subject');
         console.log('CURRENT SUBJECT = ', currentSubject);
-        $scope.nextDisabled = currentSubject.metadata.nextSubjectId ? false : true
-        $scope.prevDisabled = currentSubject.metadata.prevSubjectId ? false : true
+        $scope.nextDisabled = currentSubject.metadata.nextSubjectIds ? false : true
+        $scope.prevDisabled = currentSubject.metadata.prevSubjectIds ? false : true
       });
 
       $scope.nextPage = function() {
         console.log('NEXT PAGE >>>');
-        var new_subject_id = $scope.subject.metadata.nextSubjectId;
+
+        var subject_ids = $scope.subject.metadata.nextSubjectIds;
+        // var new_subject_id = $scope.subject.metadata.nextSubjectId;
+
         var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
         _.remove(subject_set_queue, {id: $scope.subject.id});
         localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
-        $scope.loadSubject(new_subject_id);
+
+        $scope.loadSubjects(subject_ids);
+        // $scope.loadSubject(new_subject_id);
       }
 
       $scope.prevPage = function() {
@@ -535,7 +541,7 @@
     module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
         $rootScope.bodyClass = 'annotate';
 
-        $scope.loadSubject = function (subject_id) {
+        $scope.loadSubjects = function (subject_ids) {
             $rootScope.$broadcast('transcribe:loadingSubject');
             $scope.subject_set_id = $stateParams.subject_set_id;
             $scope.subject = undefined;
@@ -549,10 +555,11 @@
                     $scope.questions = response;
                 });
 
-            subjectFactory.get($scope.subject_set_id, subject_id)
+            subjectFactory.get($scope.subject_set_id, subject_ids)
                 .then(function (response) {
                     if (response !== null) {
                         $timeout(function () {
+                            console.log('RESPONSE: ', response); // --STI
                             $scope.subject = response;
                             var keys = Object.keys($scope.subject.locations[0]);
                             var subjectImage = $scope.subject.locations[0][keys[0]];
@@ -569,7 +576,44 @@
 
                 });
         };
-        $scope.loadSubject();
+        $scope.loadSubjects();
+
+
+        // $scope.loadSubject = function (subject_id) {
+        //     $rootScope.$broadcast('transcribe:loadingSubject');
+        //     $scope.subject_set_id = $stateParams.subject_set_id;
+        //     $scope.subject = undefined;
+        //     $scope.isLoading = true;
+        //     $scope.questions = null;
+        //     $scope.questionsComplete = false;
+        //     $scope.grid = gridFactory.get;
+        //
+        //     workflowFactory.get($scope.subject_set_id)
+        //         .then(function (response) {
+        //             $scope.questions = response;
+        //         });
+        //
+        //     subjectFactory.get($scope.subject_set_id, subject_id)
+        //         .then(function (response) {
+        //             if (response !== null) {
+        //                 $timeout(function () {
+        //                     $scope.subject = response;
+        //                     var keys = Object.keys($scope.subject.locations[0]);
+        //                     var subjectImage = $scope.subject.locations[0][keys[0]];
+        //                     // TODO: change this. We're cache busting the image.onload event.
+        //                     subjectImage += '?' + new Date().getTime();
+        //                     $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
+        //                     $scope.loadHandler = $scope.subjectLoaded();
+        //                     $rootScope.$broadcast('transcribe:loadedSubject');
+        //                 });
+        //             } else {
+        //                 $scope.subject = null;
+        //                 $rootScope.$broadcast('transcribe:loadedSubject');
+        //             }
+        //
+        //         });
+        // };
+        // $scope.loadSubject();
 
         $scope.subjectLoaded = function () {
             $scope.isLoading = false;

@@ -240,7 +240,7 @@ function getSubjectSet() {
 
 // updates an existing subject by replacing `locations` and `metadata` hashes
 function updateSubjectMetadata(subject, index, callback) {
-  console.log('Updating page ', index);
+  console.log('%d Updating page %d', index, subject.metadata.pageNumber);
   api.type('subjects').get({id: subject.id}).update({
       // Note: we only need to send `locations` and `metadata` to update subject
       locations: subject.locations,
@@ -283,6 +283,7 @@ function uploadSubject(subject, index, callback) {
 }
 
 function addNextLinksToSubjectSet(subjects) {
+  console.log('# subjects = ', subjects.length); // --STI
   var cacheSize = argv.cacheSize;
 
   console.log('Using cache size: ', cacheSize);
@@ -299,6 +300,7 @@ function addNextLinksToSubjectSet(subjects) {
 
   subjects = subjects.map((subject, i) => {  // once sorted by page number, add next/prev subject ids to each subject
 
+    console.log('SUBJECT PAGE NUMBER: ', subject.metadata.pageNumber);
     subject.metadata.prevSubjectIds = [];
     subject.metadata.nextSubjectIds = [];
 
@@ -355,10 +357,19 @@ function getAllSubjectsInSet(subjectSetId) {
   const query = { subject_set_id: subjectSetId, page: 1 };
   return api.type('subjects').get(query)
     .then(subjects => {
+      console.log('BATCH: 1'); // --STI
+      for(let subject of subjects) {
+        console.log('SUBJECT PAGE NUMBER: ', subject.metadata.pageNumber); // --STI
+      }
       const numPages = subjects[0]._meta.subjects.page_count;
       const pageFetches = [Promise.resolve(subjects)];
       for (let i = 2; i <= numPages - 1; i++) {
-        let fetcher = api.type('subjects').get(Object.assign({}, query, { page: i }));
+        let fetcher = api.type('subjects').get(Object.assign({}, query, { page: i })).then( subjects => {
+          console.log('BATCH: %d', i); // --STI
+          for (let subject of subjects) {
+            console.log('SUBJECT PAGE NUMBER: ', subject.metadata.pageNumber); // --STI
+          }
+        });
         pageFetches.push(fetcher);
       }
       return Promise.resolve(pageFetches);
