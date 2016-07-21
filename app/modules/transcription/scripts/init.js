@@ -57,6 +57,18 @@
     module.controller('transcriptionCtrl', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
         $rootScope.bodyClass = 'transcribe';
 
+        function zoomToCurrentAnnotation() {
+            if ($scope.annotations && $scope.annotations.length > 0) {
+                var annotation = $scope.annotations[0];
+                var obj = svgPanZoomFactory.zoomToRect(annotation);
+
+                $scope.uiPositionTop = (obj.sizes.height / 2) + ((annotation.height * obj.sizes.realZoom) / 2);
+                $scope.annotationContent = $scope.annotations[0].content;
+            }
+        }
+
+        window.zoomToCurrentAnnotation = zoomToCurrentAnnotation;
+
         var subject_set_id = $stateParams.subject_set_id;
         zooAPISubjectSets.get({id: subject_set_id})
             .then(function (response) {
@@ -114,18 +126,12 @@
 
                 load_next();
 
-                $scope.$watch('annotations', function () {
-                    if ($scope.annotations && $scope.annotations.length > 0) {
-                        var annotation = $scope.annotations[0];
-                        var obj = svgPanZoomFactory.zoomToRect(annotation);
-
-                        $scope.uiPositionTop = (obj.sizes.height / 2) + ((annotation.height * obj.sizes.realZoom) / 2);
-                        $scope.annotationContent = $scope.annotations[0].content;
-                    }
-                }, true);
+                $scope.$watch('annotations', zoomToCurrentAnnotation, true);
 
                 $scope.subjectLoaded = function () {
                     $scope.isLoading = false;
+                    // Image is loaded, we can safely calculate zoom for first annotation
+                    $timeout(zoomToCurrentAnnotation, 0);
                 };
 
                 $scope.prevAnnotation = function () {
