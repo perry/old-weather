@@ -389,17 +389,24 @@
     });
 
     module.factory('subjectFactory', function ($q, $filter, zooAPI, localStorageService, zooAPIProject, $timeout) {
-        var _getQueueCache = function (subject_set_id) {
+        var _getNextQueueCache = function (subject_set_id) {
             var cache = localStorageService.get('subject_set_next_queue_' + subject_set_id);
             if (!cache) {
                 cache = localStorageService.set('subject_set_next_queue_' + subject_set_id, []);
             }
-
             return cache;
         };
 
-        var _addToQueue = function (subject_set_id, subjects) {
-            var cache = _getQueueCache(subject_set_id);
+        var _getPrevQueueCache = function (subject_set_id) {
+            var cache = localStorageService.get('subject_set_prev_queue_' + subject_set_id);
+            if (!cache) {
+                cache = localStorageService.set('subject_set_prev_queue_' + subject_set_id, []);
+            }
+            return cache;
+        };
+
+        var _addToNextQueue = function (subject_set_id, subjects) {
+            var cache = _getNextQueueCache(subject_set_id);
 
             angular.forEach(subjects, function (subject) {
                 upsert(cache, {id: subject.id}, subject);
@@ -408,6 +415,18 @@
             cache = $filter('removeCircularDeps')(cache);
 
             return localStorageService.set('subject_set_next_queue_' + subject_set_id, cache);
+        };
+
+        var _addToPrevQueue = function (subject_set_id, subjects) {
+            var cache = _getPrevQueueCache(subject_set_id);
+
+            angular.forEach(subjects, function (subject) {
+                upsert(cache, {id: subject.id}, subject);
+            });
+
+            cache = $filter('removeCircularDeps')(cache);
+
+            return localStorageService.set('subject_set_prev_queue_' + subject_set_id, cache);
         };
 
         var _loadNewSubjects = function (subject_set_id, subject_ids) {
@@ -454,7 +473,7 @@
                 })
                 .then(function (response) {
                     if (response.length > 0) {
-                        _addToQueue(subject_set_id, response);
+                        _addToNextQueue(subject_set_id, response);
                         deferred.resolve();
                     } else {
                         deferred.reject();
@@ -467,12 +486,12 @@
 
         var _getNextInQueue = function (subject_set_id, subject_ids) {
             var deferred = $q.defer();
-            var cache = _getQueueCache(subject_set_id);
+            var cache = _getNextQueueCache(subject_set_id);
 
             if (!angular.isArray(cache) || cache.length === 0) {
                 _loadNewSubjects(subject_set_id, subject_ids)
                     .then(function () {
-                        cache = _getQueueCache(subject_set_id);
+                        cache = _getNextQueueCache(subject_set_id);
 
                         if (cache.length === 0) {
                             deferred.resolve(null);
@@ -525,10 +544,30 @@
       $scope.prevPage = function() {
         console.log('<<< PREV PAGE');
         var subject_ids = $scope.subject.metadata.prevSubjectIds;
-        var subject_set_next_queue = localStorageService.get('subject_set_next_queue_' + $stateParams.subject_set_id);
-        _.remove(subject_set_next_queue, {id: $scope.subject.id});
-        localStorageService.set('subject_set_next_queue_' + $stateParams.subject_set_id, subject_set_next_queue);
-        $scope.loadSubject(new_subject_id);
+        var subject_set_prev_queue = localStorageService.get('subject_set_prev_queue_' + $stateParams.subject_set_id);
+
+        if(!subject_set_prev_queue) {
+          localStorageService.set('subject_set_prev_queue_' + $stateParams.subject_set_id, []);
+          subject_set_prev_queue = localStorageService.get('subject_set_prev_queue_' + $stateParams.subject_set_id);
+        }
+
+        console.log('SUBJECT SET PREV QUEUE: ', subject_set_prev_queue);
+
+        _.remove(subject_set_prev_queue, {id: $scope.subject.id});
+
+
+        localStorageService.set('subject_set_prev_queue_' + $stateParams.subject_set_id, subject_set_prev_queue);
+
+
+
+        let prev_subjects = [];
+        for(let subject of subject_set_prev_queue ) {
+          console.log('SUBJECT: ', subject);
+          // prev_subjects.push(subject.id);
+        }
+        console.log('PREV QUEUE: ', prev_subjects);
+
+        // $scope.loadSubjects(subject_ids);
       }
 
     });
