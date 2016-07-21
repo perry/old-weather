@@ -453,7 +453,6 @@
 
                 return zooAPI.type('subjects').get(params)
                   .then(function (res) {
-                    localStorageService.set('current_subject', res[0] ); // --STI
                     console.log('      >>>>>>>>> CURRENT PAGE: ' + res[0].metadata.pageNumber + ', ID: ' + res[0].id + ' <<<<<<<<<<'); // --STI
                     return res;
                   });
@@ -486,21 +485,22 @@
 
         var _getNextInQueue = function (subject_set_id, subject_ids) {
             var deferred = $q.defer();
-            var cache = _getNextQueueCache(subject_set_id);
+            var nextCache = _getNextQueueCache(subject_set_id);
+            var prevCache = _getPrevQueueCache(subject_set_id);
 
-            if (!angular.isArray(cache) || cache.length === 0) {
+            if (!angular.isArray(nextCache) || nextCache.length === 0) {
                 _loadNewSubjects(subject_set_id, subject_ids)
                     .then(function () {
-                        cache = _getNextQueueCache(subject_set_id);
+                        nextCache = _getNextQueueCache(subject_set_id);
 
-                        if (cache.length === 0) {
+                        if (nextCache.length === 0) {
                             deferred.resolve(null);
                         } else {
-                            deferred.resolve(cache[0]);
+                            deferred.resolve(nextCache[0]);
                         }
                     });
             } else {
-                deferred.resolve(cache[0]);
+                deferred.resolve(nextCache[0]);
             }
 
             return deferred.promise;
@@ -510,8 +510,9 @@
             var deferred = $q.defer();
 
             _getNextInQueue(subject_set_id, subject_ids)
-                .then(function (subjects) {
-                    deferred.resolve(subjects);
+                .then(function (nextSubject) {
+                    localStorageService.set('current_subject', nextSubject ); // --STI
+                    deferred.resolve(nextSubject);
                 });
 
             return deferred.promise;
@@ -527,7 +528,7 @@
       // update prev/next buttons
       $scope.$on('transcribe:loadedSubject', function(newValue, oldValue) {
         var currentSubject = localStorageService.get('current_subject');
-        console.log('CURRENT SUBJECT = ', currentSubject);
+        console.log('CURRENT SUBJECT = ', currentSubject); // --STI
         $scope.nextDisabled = currentSubject.metadata.nextSubjectIds ? false : true
         $scope.prevDisabled = currentSubject.metadata.prevSubjectIds ? false : true
       });
@@ -543,30 +544,10 @@
 
       $scope.prevPage = function() {
         console.log('<<< PREV PAGE');
-        var subject_ids = $scope.subject.metadata.prevSubjectIds;
-        var subject_set_prev_queue = localStorageService.get('subject_set_prev_queue_' + $stateParams.subject_set_id);
-
-        if(!subject_set_prev_queue) {
-          localStorageService.set('subject_set_prev_queue_' + $stateParams.subject_set_id, []);
-          subject_set_prev_queue = localStorageService.get('subject_set_prev_queue_' + $stateParams.subject_set_id);
-        }
-
-        console.log('SUBJECT SET PREV QUEUE: ', subject_set_prev_queue);
-
-        _.remove(subject_set_prev_queue, {id: $scope.subject.id});
-
-
-        localStorageService.set('subject_set_prev_queue_' + $stateParams.subject_set_id, subject_set_prev_queue);
-
-
-
-        let prev_subjects = [];
-        for(let subject of subject_set_prev_queue ) {
-          console.log('SUBJECT: ', subject);
-          // prev_subjects.push(subject.id);
-        }
-        console.log('PREV QUEUE: ', prev_subjects);
-
+        // var subject_ids = $scope.subject.metadata.nextSubjectIds;
+        // var subject_set_next_queue = localStorageService.get('subject_set_next_queue_' + $stateParams.subject_set_id);
+        // _.remove(subject_set_next_queue, {id: $scope.subject.id});
+        // localStorageService.set('subject_set_next_queue_' + $stateParams.subject_set_id, subject_set_next_queue);
         // $scope.loadSubjects(subject_ids);
       }
 
@@ -593,7 +574,6 @@
                 .then(function (response) {
                     if (response !== null) {
                         $timeout(function () {
-                            console.log('RESPONSE: ', response); // --STI
                             $scope.subject = response;
                             var keys = Object.keys($scope.subject.locations[0]);
                             var subjectImage = $scope.subject.locations[0][keys[0]];

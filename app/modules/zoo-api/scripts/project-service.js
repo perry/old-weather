@@ -27,7 +27,6 @@
     });
 
     module.factory('zooAPI', function ($window, zooAPIConfig) {
-      console.log('zooAPIConfig = ', zooAPIConfig);
       $window.zooAPI.root = zooAPIConfig.url;
       $window.zooAPI.appID = zooAPIConfig.app_id;
       return $window.zooAPI;
