@@ -429,13 +429,14 @@
             return localStorageService.set('subject_set_prev_queue_' + subject_set_id, cache);
         };
 
-        var _loadNewSubjects = function (subject_set_id, subject_ids) {
-            console.log('SUBJECT IDS: ', subject_ids); // --STI
+        var _loadNewSubjects = function (subject_set_id) {
             var deferred = $q.defer();
             var current_subject = getCurrentSubject();
 
-            var _getSubjectsPage = function (project, subject_ids) {
+            var _getSubjectsPage = function (project) {
 
+                var current_subject = getCurrentSubject();
+                var subject_ids = current_subject ? current_subject.metadata.nextSubjectIds : null;
                 var params = {}
 
                 if (subject_ids) {
@@ -463,7 +464,7 @@
             zooAPIProject.get() // first, we need project to determine which workflow/subject set to fetch from
                 .then(function (response) {
                     project = response;
-                    return _getSubjectsPage(response, subject_ids);
+                    return _getSubjectsPage(response);
                 })
                 .then(function (response) {
                     return response;
@@ -483,13 +484,13 @@
             return deferred.promise;
         };
 
-        var _getNextInQueue = function (subject_set_id, subject_ids) {
+        var _getNextInQueue = function (subject_set_id) {
             var deferred = $q.defer();
             var nextCache = _getNextQueueCache(subject_set_id);
             var prevCache = _getPrevQueueCache(subject_set_id);
 
             if (!angular.isArray(nextCache) || nextCache.length === 0) {
-                _loadNewSubjects(subject_set_id, subject_ids)
+                _loadNewSubjects(subject_set_id)
                     .then(function () {
                         nextCache = _getNextQueueCache(subject_set_id);
 
@@ -506,10 +507,10 @@
             return deferred.promise;
         };
 
-        var get = function (subject_set_id, subject_ids) {
+        var get = function (subject_set_id) {
             var deferred = $q.defer();
 
-            _getNextInQueue(subject_set_id, subject_ids)
+            _getNextInQueue(subject_set_id)
                 .then(function (nextSubject) {
 
                     localStorageService.set('current_subject', nextSubject );
@@ -570,11 +571,11 @@
 
       $scope.nextPage = function() {
         console.log('NEXT PAGE >>>');
-        var subject_ids = $scope.subject.metadata.nextSubjectIds;
+        // var subject_ids = $scope.subject.metadata.nextSubjectIds;
         // var subject_set_next_queue = localStorageService.get('subject_set_next_queue_' + $stateParams.subject_set_id);
         // _.remove(subject_set_next_queue, {id: $scope.subject.id});
         // localStorageService.set('subject_set_next_queue_' + $stateParams.subject_set_id, subject_set_next_queue);
-        $scope.loadSubjects(subject_ids);
+        $scope.loadSubjects();
       }
 
       $scope.prevPage = function() {
@@ -591,7 +592,7 @@
     module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
         $rootScope.bodyClass = 'annotate';
 
-        $scope.loadSubjects = function (subject_ids) {
+        $scope.loadSubjects = function () {
             $rootScope.$broadcast('transcribe:loadingSubject');
             $scope.subject_set_id = $stateParams.subject_set_id;
             $scope.subject = undefined;
@@ -605,7 +606,7 @@
                     $scope.questions = response;
                 });
 
-            subjectFactory.get($scope.subject_set_id, subject_ids)
+            subjectFactory.get($scope.subject_set_id)
                 .then(function (response) {
                     if (response !== null) {
                         $timeout(function () {
