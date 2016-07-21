@@ -432,7 +432,7 @@
         var _loadNewSubjects = function (subject_set_id, subject_ids) {
             console.log('SUBJECT IDS: ', subject_ids); // --STI
             var deferred = $q.defer();
-            var current_subject = localStorageService.get('current_subject');
+            var current_subject = getCurrentSubject();
 
             var _getSubjectsPage = function (project, subject_ids) {
 
@@ -494,7 +494,7 @@
                         nextCache = _getNextQueueCache(subject_set_id);
 
                         if (nextCache.length === 0) {
-                            deferred.resolve(null);
+                            deferred.resolve(null); // Note: I think this means we're done with all subjects in the set?
                         } else {
                             deferred.resolve(nextCache[0]);
                         }
@@ -511,6 +511,7 @@
 
             _getNextInQueue(subject_set_id, subject_ids)
                 .then(function (nextSubject) {
+
                     localStorageService.set('current_subject', nextSubject );
                     let nextCache = _getNextQueueCache(subject_set_id);
                     let prevCache = _getPrevQueueCache(subject_set_id);
@@ -519,27 +520,23 @@
                     if( prevCache.length >= 5) prevCache.shift(); // remove oldest subject
                     prevCache.push( _.remove(nextCache, {id: nextSubject.id})[0] );
 
-                    // _.remove(nextCache, {id: nextSubject.id})
-                    // prevCache.push( );
-                    // if(prevCache.length > 5) prevCache.pop(); // pop off last subject
-
-
                     localStorageService.set('subject_set_next_queue_' + subject_set_id, nextCache);
                     localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
 
-
+                    // FOR DEBUGGING >>>
                     let prevSubjectIds = [];
                     for(let subject of prevCache) {
                        prevSubjectIds.push( subject.metadata.pageNumber );
                     }
 
-                    let nextSubjectIds =[];
+                    let nextSubjectIds = [];
                     for(let subject of nextCache) {
                        nextSubjectIds.push( subject.metadata.pageNumber );
                     }
 
                     console.log('PREV SUBJECT IDS: ', prevSubjectIds);
                     console.log('NEXT SUBJECT IDS: ', nextSubjectIds);
+                    // <<< FOR DEBUGGING
 
                     deferred.resolve(nextSubject);
                 });
@@ -547,8 +544,17 @@
             return deferred.promise;
         };
 
+        var getCurrentSubject = function () {
+          let currentSubject = localStorageService.get('current_subject');
+          if( typeof currentSubject !== "undefined" && currentSubject !== null){
+            return currentSubject;
+          }
+          return null;
+        }
+
         return {
-            get: get
+            get: get,
+            getCurrentSubject: getCurrentSubject
         };
     });
 
@@ -556,7 +562,7 @@
 
       // update prev/next buttons
       $scope.$on('transcribe:loadedSubject', function(newValue, oldValue) {
-        var currentSubject = localStorageService.get('current_subject');
+        var currentSubject = subjectFactory.getCurrentSubject();
         console.log('CURRENT SUBJECT = ', currentSubject); // --STI
         $scope.nextDisabled = currentSubject.metadata.nextSubjectIds ? false : true
         $scope.prevDisabled = currentSubject.metadata.prevSubjectIds ? false : true
