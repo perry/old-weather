@@ -70,6 +70,7 @@
         window.zoomToCurrentAnnotation = zoomToCurrentAnnotation;
 
         var subject_set_id = $stateParams.subject_set_id;
+        $scope.isLoading = true;
         zooAPISubjectSets.get({id: subject_set_id})
             .then(function (response) {
                 $scope.ship = response[0];
