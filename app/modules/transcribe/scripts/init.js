@@ -511,7 +511,36 @@
 
             _getNextInQueue(subject_set_id, subject_ids)
                 .then(function (nextSubject) {
-                    localStorageService.set('current_subject', nextSubject ); // --STI
+                    localStorageService.set('current_subject', nextSubject );
+                    let nextCache = _getNextQueueCache(subject_set_id);
+                    let prevCache = _getPrevQueueCache(subject_set_id);
+
+                    // transfer current subject from next to prev cache
+                    if( prevCache.length >= 5) prevCache.shift(); // remove oldest subject
+                    prevCache.push( _.remove(nextCache, {id: nextSubject.id})[0] );
+
+                    // _.remove(nextCache, {id: nextSubject.id})
+                    // prevCache.push( );
+                    // if(prevCache.length > 5) prevCache.pop(); // pop off last subject
+
+
+                    localStorageService.set('subject_set_next_queue_' + subject_set_id, nextCache);
+                    localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
+
+
+                    let prevSubjectIds = [];
+                    for(let subject of prevCache) {
+                       prevSubjectIds.push( subject.metadata.pageNumber );
+                    }
+
+                    let nextSubjectIds =[];
+                    for(let subject of nextCache) {
+                       nextSubjectIds.push( subject.metadata.pageNumber );
+                    }
+
+                    console.log('PREV SUBJECT IDS: ', prevSubjectIds);
+                    console.log('NEXT SUBJECT IDS: ', nextSubjectIds);
+
                     deferred.resolve(nextSubject);
                 });
 
@@ -536,9 +565,9 @@
       $scope.nextPage = function() {
         console.log('NEXT PAGE >>>');
         var subject_ids = $scope.subject.metadata.nextSubjectIds;
-        var subject_set_next_queue = localStorageService.get('subject_set_next_queue_' + $stateParams.subject_set_id);
-        _.remove(subject_set_next_queue, {id: $scope.subject.id});
-        localStorageService.set('subject_set_next_queue_' + $stateParams.subject_set_id, subject_set_next_queue);
+        // var subject_set_next_queue = localStorageService.get('subject_set_next_queue_' + $stateParams.subject_set_id);
+        // _.remove(subject_set_next_queue, {id: $scope.subject.id});
+        // localStorageService.set('subject_set_next_queue_' + $stateParams.subject_set_id, subject_set_next_queue);
         $scope.loadSubjects(subject_ids);
       }
 
