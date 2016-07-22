@@ -547,7 +547,7 @@
                       let oldSubject = _.filter(prevCache, {id: nextSubject.id})[0];
                       if( nextCache.length >= 5) nextCache.shift(); // remove oldest subject
                       prevCache.splice(prevCache.indexOf(oldSubject), 1); // remove previous subject
-                      nextCache.push(oldSubject);
+                      nextCache.unshift(oldSubject);
 
                       // prevCache.push( _.remove(nextCache, {id: nextSubject.id})[0] );
 
