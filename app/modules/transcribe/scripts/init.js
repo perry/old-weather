@@ -237,7 +237,7 @@
                 scope.$watch('activeTask', function () {
 
                     // Skip grid tasks if we're not logged in
-                    if (scope.activeTask && scope.tasks[scope.activeTask].skip && !authFactory.getUser()) {
+                    if (scope.activeTask && scope.tasks[scope.activeTask].grid && !authFactory.getUser()) {
                         scope.confirm(scope.tasks[scope.activeTask].skip);
                     }
 
