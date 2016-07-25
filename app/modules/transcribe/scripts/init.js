@@ -545,13 +545,16 @@
                       let nextCache = _getNextQueueCache(subject_set_id);
                       let prevCache = _getPrevQueueCache(subject_set_id);
 
+                      ///////////////////////////////////////////////////////////////////////////////
                       // transfer current subject from next to prev cache
                       if( nextCache.length >= 5) nextCache.shift(); // remove oldest subject
                       _.remove(prevCache, {id: nextSubject.id}); // remove previous subject
                       nextCache.unshift(oldSubject);
+                      ///////////////////////////////////////////////////////////////////////////////
 
                       localStorageService.set('subject_set_next_queue_' + subject_set_id, nextCache);
                       localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
+                      deferred.resolve(nextSubject);
 
                       // FOR DEBUGGING >>>
                       {
@@ -571,7 +574,6 @@
                       }
                       // <<< FOR DEBUGGING
 
-                      deferred.resolve(nextSubject);
                   });
             }
             else if (cacheDirection == 'next') {
@@ -580,18 +582,21 @@
                       let oldSubject = localStorageService.get('current_subject') ? localStorageService.get('current_subject') : null;
 
                       localStorageService.set('current_subject', nextSubject );
-
                       let nextCache = _getNextQueueCache(subject_set_id);
                       let prevCache = _getPrevQueueCache(subject_set_id);
 
+                      ///////////////////////////////////////////////////////////////////////////////
                       if(cacheDirection == 'next') {
                         _.remove(nextCache, {id: nextSubject.id}); // remove previous subject
                         if( prevCache.length >= 5) prevCache.shift(); // remove oldest subject
                         prevCache.push(oldSubject);
                       }
+                      ///////////////////////////////////////////////////////////////////////////////
+
 
                       localStorageService.set('subject_set_next_queue_' + subject_set_id, nextCache);
                       localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
+                      deferred.resolve(nextSubject);
 
                       // FOR DEBUGGING >>>
                       {
@@ -611,17 +616,25 @@
                       }
                       // <<< FOR DEBUGGING
 
-                      deferred.resolve(nextSubject);
                   });
-            } else {
+            } else { // cacheDirection == 'initial'
               _getNextInQueue(subject_set_id)
                   .then(function (nextSubject) {
+
+                    // unused
+                    let oldSubject = localStorageService.get('current_subject') ? localStorageService.get('current_subject') : null;
+
+                    localStorageService.set('current_subject', nextSubject );
                     let nextCache = _getNextQueueCache(subject_set_id);
                     let prevCache = _getPrevQueueCache(subject_set_id);
+
+                    ///////////////////////////////////////////////////////////////////////////////
                     nextCache.pop(); // remove previous subject
-                    localStorageService.set('current_subject', nextSubject );
+                    ///////////////////////////////////////////////////////////////////////////////
+
                     localStorageService.set('subject_set_next_queue_' + subject_set_id, nextCache);
                     localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
+                    deferred.resolve(nextSubject);
 
                     // FOR DEBUGGING >>>
                     {
@@ -641,7 +654,6 @@
                     }
                     // <<< FOR DEBUGGING
 
-                    deferred.resolve(nextSubject);
                   });
             }
 
@@ -668,8 +680,9 @@
       $scope.$on('transcribe:loadedSubject', function(newValue, oldValue) {
         var currentSubject = subjectFactory.getCurrentSubject();
         var prevCache = localStorageService.get('subject_set_prev_queue_' + $stateParams.subject_set_id);
+        console.log(' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! PREV CACHE: ', prevCache.length);
         $scope.nextDisabled = currentSubject.metadata.nextSubjectIds ? false : true
-        $scope.prevDisabled = currentSubject.metadata.nextSubjectIds || prevCache.length > 0 ? false : true
+        $scope.prevDisabled = currentSubject.metadata.nextSubjectIds && !prevCache.length == 0 ? false : true
       });
 
       $scope.nextPage = function() {
