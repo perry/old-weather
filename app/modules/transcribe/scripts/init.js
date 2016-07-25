@@ -238,7 +238,7 @@
                 scope.$watch('activeTask', function () {
 
                     // Skip grid tasks if we're not logged in
-                    if (scope.activeTask && scope.tasks[scope.activeTask].skip && !authFactory.getUser()) {
+                    if (scope.activeTask && scope.tasks[scope.activeTask].grid && !authFactory.getUser()) {
                         scope.confirm(scope.tasks[scope.activeTask].skip);
                     }
 
@@ -318,7 +318,7 @@
             var deferred = $q.defer();
             zooAPISubjectSets.get({id: subject_set_id})
                 .then(function (response) {
-                    var workflowID = response[0].links.workflows[0];
+                    var workflowID = response[0].links.workflows[0]; // Note: Defaulting to first workflow may cause unexpected issues
                     zooAPIWorkflows.get(workflowID)
                         .then(addReuseGridTask)
                         .then(deferred.resolve, deferred.reject, deferred.notify);
