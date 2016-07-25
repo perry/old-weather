@@ -537,58 +537,55 @@
 
             if (cacheDirection == 'prev') {
               _getPrevInQueue(subject_set_id)
-                  .then(function (nextSubject) {
+                  .then(function (nextSubject) { // Note: nextSubject is actually the previous one
+
+                      let oldSubject = localStorageService.get('current_subject');
 
                       localStorageService.set('current_subject', nextSubject );
                       let nextCache = _getNextQueueCache(subject_set_id);
                       let prevCache = _getPrevQueueCache(subject_set_id);
 
                       // transfer current subject from next to prev cache
-                      let oldSubject = _.filter(prevCache, {id: nextSubject.id})[0];
                       if( nextCache.length >= 5) nextCache.shift(); // remove oldest subject
-                      prevCache.splice(prevCache.indexOf(oldSubject), 1); // remove previous subject
+                      _.remove(prevCache, {id: nextSubject.id}); // remove previous subject
                       nextCache.unshift(oldSubject);
-
-                      // prevCache.push( _.remove(nextCache, {id: nextSubject.id})[0] );
 
                       localStorageService.set('subject_set_next_queue_' + subject_set_id, nextCache);
                       localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
 
                       // FOR DEBUGGING >>>
-                      let prevSubjectIds = [];
-                      for(let subject of prevCache) {
-                         prevSubjectIds.push( subject.metadata.pageNumber );
-                      }
+                      {
+                        let prevSubjectIds = [];
+                        for(let subject of prevCache) {
+                           prevSubjectIds.push( subject.metadata.pageNumber );
+                        }
 
-                      let nextSubjectIds = [];
-                      for(let subject of nextCache) {
-                         nextSubjectIds.push( subject.metadata.pageNumber );
-                      }
+                        let nextSubjectIds = [];
+                        for(let subject of nextCache) {
+                           nextSubjectIds.push( subject.metadata.pageNumber );
+                        }
 
-                      console.log('PREV SUBJECT IDS: ', prevSubjectIds);
-                      console.log('NEXT SUBJECT IDS: ', nextSubjectIds);
+                        console.log('PREV SUBJECT IDS: ', prevSubjectIds);
+                        console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject').metadata.pageNumber );
+                        console.log('NEXT SUBJECT IDS: ', nextSubjectIds);
+                      }
                       // <<< FOR DEBUGGING
 
                       deferred.resolve(nextSubject);
                   });
             }
-            else {
+            else if (cacheDirection == 'next') {
               _getNextInQueue(subject_set_id)
                   .then(function (nextSubject) {
-
                       let oldSubject = localStorageService.get('current_subject') ? localStorageService.get('current_subject') : null;
 
-                      if(oldSubject) {
-                        console.log('OLD SUBJECT FOO: ', oldSubject.metadata.pageNumber);
-                      }
-
                       localStorageService.set('current_subject', nextSubject );
+
                       let nextCache = _getNextQueueCache(subject_set_id);
                       let prevCache = _getPrevQueueCache(subject_set_id);
 
-                      nextCache.splice(nextCache.indexOf(_.filter(nextCache, {id: nextSubject.id})[0]), 1); // remove previous subject
-
                       if(cacheDirection == 'next') {
+                        _.remove(nextCache, {id: nextSubject.id}); // remove previous subject
                         if( prevCache.length >= 5) prevCache.shift(); // remove oldest subject
                         prevCache.push(oldSubject);
                       }
@@ -597,6 +594,37 @@
                       localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
 
                       // FOR DEBUGGING >>>
+                      {
+                        let prevSubjectIds = [];
+                        for(let subject of prevCache) {
+                           prevSubjectIds.push( subject.metadata.pageNumber );
+                        }
+
+                        let nextSubjectIds = [];
+                        for(let subject of nextCache) {
+                           nextSubjectIds.push( subject.metadata.pageNumber );
+                        }
+
+                        console.log('PREV SUBJECT PAGES    : ', prevSubjectIds);
+                        console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject').metadata.pageNumber );
+                        console.log('NEXT SUBJECT PAGES    : ', nextSubjectIds);
+                      }
+                      // <<< FOR DEBUGGING
+
+                      deferred.resolve(nextSubject);
+                  });
+            } else {
+              _getNextInQueue(subject_set_id)
+                  .then(function (nextSubject) {
+                    let nextCache = _getNextQueueCache(subject_set_id);
+                    let prevCache = _getPrevQueueCache(subject_set_id);
+                    nextCache.pop(); // remove previous subject
+                    localStorageService.set('current_subject', nextSubject );
+                    localStorageService.set('subject_set_next_queue_' + subject_set_id, nextCache);
+                    localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
+
+                    // FOR DEBUGGING >>>
+                    {
                       let prevSubjectIds = [];
                       for(let subject of prevCache) {
                          prevSubjectIds.push( subject.metadata.pageNumber );
@@ -607,15 +635,15 @@
                          nextSubjectIds.push( subject.metadata.pageNumber );
                       }
 
-                      console.log('PREV SUBJECT IDS: ', prevSubjectIds);
-                      console.log('NEXT SUBJECT IDS: ', nextSubjectIds);
-                      // <<< FOR DEBUGGING
+                      console.log('PREV SUBJECT PAGES    : ', prevSubjectIds);
+                      console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject').metadata.pageNumber );
+                      console.log('NEXT SUBJECT PAGES    : ', nextSubjectIds);
+                    }
+                    // <<< FOR DEBUGGING
 
-                      deferred.resolve(nextSubject);
+                    deferred.resolve(nextSubject);
                   });
             }
-
-
 
             return deferred.promise;
         };
@@ -632,33 +660,25 @@
             get: get,
             getCurrentSubject: getCurrentSubject
         };
-    });
+    }); // END SUBJECT FACTORY
 
     module.controller('TranscribeNavController', function ($scope, $stateParams, $modal, subjectFactory, localStorageService) {
 
       // update prev/next buttons
       $scope.$on('transcribe:loadedSubject', function(newValue, oldValue) {
         var currentSubject = subjectFactory.getCurrentSubject();
-        console.log('CURRENT SUBJECT = ', currentSubject.metadata.pageNumber); // --STI
+        var prevCache = localStorageService.get('subject_set_prev_queue_' + $stateParams.subject_set_id);
         $scope.nextDisabled = currentSubject.metadata.nextSubjectIds ? false : true
-        $scope.prevDisabled = currentSubject.metadata.prevSubjectIds ? false : true
+        $scope.prevDisabled = currentSubject.metadata.nextSubjectIds || prevCache.length > 0 ? false : true
       });
 
       $scope.nextPage = function() {
         console.log('NEXT PAGE >>>');
-        // var subject_ids = $scope.subject.metadata.nextSubjectIds;
-        // var subject_set_next_queue = localStorageService.get('subject_set_next_queue_' + $stateParams.subject_set_id);
-        // _.remove(subject_set_next_queue, {id: $scope.subject.id});
-        // localStorageService.set('subject_set_next_queue_' + $stateParams.subject_set_id, subject_set_next_queue);
         $scope.loadSubjects('next');
       }
 
       $scope.prevPage = function() {
         console.log('<<< PREV PAGE');
-        // var subject_ids = $scope.subject.metadata.nextSubjectIds;
-        // var subject_set_next_queue = localStorageService.get('subject_set_next_queue_' + $stateParams.subject_set_id);
-        // _.remove(subject_set_next_queue, {id: $scope.subject.id});
-        // localStorageService.set('subject_set_next_queue_' + $stateParams.subject_set_id, subject_set_next_queue);
         $scope.loadSubjects('prev');
       }
 
