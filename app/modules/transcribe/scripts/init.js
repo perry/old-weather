@@ -589,6 +589,7 @@
                       nextCache.splice(nextCache.indexOf(_.filter(nextCache, {id: nextSubject.id})[0]), 1); // remove previous subject
 
                       if(cacheDirection == 'next') {
+                        if( prevCache.length >= 5) prevCache.shift(); // remove oldest subject
                         prevCache.push(oldSubject);
                       }
 
