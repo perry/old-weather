@@ -18,7 +18,6 @@
 
     module.constant('zooAPIConfig', {
         display_name: 'oldweather',
-        // set up params based on production/staging env
         app_id: isProd ?
           '2b10a14e8f11eefb130a275f01898c8406600834bff1063bb1b7938795acc8a3' : // production
           '0cee9a29027e78cc7f9df99a3d6b0d00aaf3bbfad014a4bb73bf29f30b46575f',  // staging

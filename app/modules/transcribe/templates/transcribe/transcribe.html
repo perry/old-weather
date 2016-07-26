@@ -114,6 +114,15 @@
                 transcribe-tools
             ></ul>
         </div>
+
+        <hr>
+
+        <div ng-controller="TranscribeNavController">
+          <h4>Page Navigation</h4>
+          <button ng-click="prevPage()" ng-disabled="prevDisabled">PREV</button>
+          <button ng-click="nextPage()" ng-disabled="nextDisabled">NEXT</button>
+        </div>
+
     </div>
 
 </div>
