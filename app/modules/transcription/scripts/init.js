@@ -175,14 +175,16 @@
                 };
 
                 $scope.finish = function () {
+                    $scope.save();
                     $scope.classification.update({
-                        metadata: {
-                            started_at: new Date().toISOString(),
-                            finished_at: new Date().toISOString(),
-                            completed: true,
-                            user_agent: navigator.userAgent,
-                            user_language: navigator.language
-                        }
+                      completed: true, // otherwise classification remains incomplete!
+                      annotations: $scope.annotations,
+                      metadata: {
+                          started_at: new Date().toISOString(),
+                          finished_at: new Date().toISOString(),
+                          user_agent: navigator.userAgent,
+                          user_language: navigator.language
+                      }
                     });
 
                     $scope.classification.save()
