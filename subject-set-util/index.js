@@ -335,7 +335,7 @@ function getAllSubjectSets(projectId) {
     .then(subjectSets => {
       const numPages = subjectSets[0]._meta.subject_sets.page_count;
       const pageFetches = [Promise.resolve(subjectSets)];
-      for (let i = 2; i <= numPages - 1; i++) {
+      for (let i = 2; i <= numPages; i++) {
         let fetcher = api.type('subject_sets').get(Object.assign({}, query, { page: i }));
         pageFetches.push(fetcher);
       }
@@ -363,14 +363,13 @@ function getAllSubjectsInSet(subjectSetId) {
       }
       const numPages = subjects[0]._meta.subjects.page_count;
       const pageFetches = [Promise.resolve(subjects)];
-      for (let i = 2; i <= numPages - 1; i++) {
-        let fetcher = api.type('subjects').get(Object.assign({}, query, { page: i })).then( subjects => {
-          console.log('BATCH: %d', i); // --STI
-          for (let subject of subjects) {
-            console.log('SUBJECT PAGE NUMBER: ', subject.metadata.pageNumber); // --STI
-          }
-        });
+      for (let i = 2; i <= numPages; i++) {
+        let fetcher = api.type('subjects').get(Object.assign({}, query, { page: i }));
         pageFetches.push(fetcher);
+        console.log('BATCH: %d', i); // --STI
+        for (let subject of subjects) {
+          console.log('SUBJECT PAGE NUMBER: ', subject.metadata.pageNumber); // --STI
+        }
       }
       return Promise.resolve(pageFetches);
     })
