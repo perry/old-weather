@@ -453,11 +453,19 @@
                 }
 
                 return zooAPI.type('subjects').get(params)
-                  .then(function (res) {
-                    console.log('      >>>>>>>>> CURRENT PAGE: ' + res[0].metadata.pageNumber + ', ID: ' + res[0].id + ' <<<<<<<<<<'); // --STI
-                    return res;
+                  .then(function (subjects) {
+                    console.log('      >>>>>>>>> CURRENT PAGE: ' + subjects[0].metadata.pageNumber + ', ID: ' + subjects[0].id + ' <<<<<<<<<<'); // --STI
+                    preloadSubjectImages(subjects);
+                    return subjects;
                   });
             };
+
+            var preloadSubjectImages = function (subjects) {
+              var images = [];
+              for (var subject of subjects) {
+                images.push( new Image().src = subject.locations[0]['image/png'] );
+              }
+            }
 
             var project;
 
