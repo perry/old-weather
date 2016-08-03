@@ -729,8 +729,10 @@
                             $scope.subject = response;
                             var keys = Object.keys($scope.subject.locations[0]);
                             var subjectImage = $scope.subject.locations[0][keys[0]];
-                            // TODO: change this. We're cache busting the image.onload event.
-                            subjectImage += '?' + new Date().getTime();
+                            console.log('IMAGE CACHED? ', isCached(subjectImage));
+
+                            // // TODO: change this. We're cache busting the image.onload event.
+                            // subjectImage += '?' + new Date().getTime();
                             $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
                             $scope.loadHandler = $scope.subjectLoaded();
                             $rootScope.$broadcast('transcribe:loadedSubject');
@@ -742,6 +744,17 @@
 
                 });
         };
+
+        // checks if resource has been downloaded
+        var isCached = function (uri) {
+          var image = new Image();
+          image.onload = function() {
+            console.log('IMAGE LOADED! ', uri);
+          }
+          image.src = uri;
+          return image.complete; //|| (image.width + image.height)
+        }
+
         $scope.loadSubjects('initial');
 
         $scope.subjectLoaded = function () {
