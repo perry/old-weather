@@ -417,18 +417,6 @@
             return localStorageService.set('subject_set_next_queue_' + subject_set_id, cache);
         };
 
-        var _addToPrevQueue = function (subject_set_id, subjects) {
-            var cache = _getPrevQueueCache(subject_set_id);
-
-            angular.forEach(subjects, function (subject) {
-                upsert(cache, {id: subject.id}, subject);
-            });
-
-            cache = $filter('removeCircularDeps')(cache);
-
-            return localStorageService.set('subject_set_prev_queue_' + subject_set_id, cache);
-        };
-
         var _loadNewSubjects = function (subject_set_id) {
             var deferred = $q.defer();
 
@@ -543,6 +531,7 @@
 
           console.log('CACHE DIRECTION: ', cacheDirection);
             var deferred = $q.defer();
+
 
             if (cacheDirection == 'prev') {
               _getPrevInQueue(subject_set_id)
