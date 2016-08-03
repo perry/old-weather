@@ -20,7 +20,7 @@
     });
 
     module.controller('transcriptionCtrl', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory) {
-        
+
         $rootScope.bodyClass = 'transcribe';
 
         var subject_set_id = $stateParams.subject_set_id;
@@ -50,17 +50,17 @@
                 var annotation = localStorageService.get('annotation_subject_id_' + subject_id);
                 $scope.annotations = annotation.annotations;
 
-                // Our best friend $timeout is back. Used here to delay setting 
+                // Our best friend $timeout is back. Used here to delay setting
                 // of first / last until the $$hashKey has been set.
                 $timeout(function() {
                     $scope.first = $scope.annotations[0].$$hashKey;
                     $scope.last = $scope.annotations[$scope.annotations.length - 1].$$hashKey;
                 }, 0);
-                
-                // This is presumably to allow saving of header rows, but this 
-                // feature never got implemented. I'm not quite sure why there 
-                // are separate entries for rows and cells (possibly to create 
-                // subsequent rows off the columns), but we want to be able to 
+
+                // This is presumably to allow saving of header rows, but this
+                // feature never got implemented. I'm not quite sure why there
+                // are separate entries for rows and cells (possibly to create
+                // subsequent rows off the columns), but we want to be able to
                 // transcribe the header cells for now.
                 // _.remove($scope.annotations, {type: 'header'});
 
@@ -74,7 +74,7 @@
                         subjectImage += '?' + new Date().getTime();
                         $timeout(function () {
                             $scope.subjectImage = $sce.trustAsResourceUrl(subjectImage);
-                            $scope.loadHandler = $scope.subjectLoaded();
+                            $scope.subjectLoaded();
                         }, 0);
                     });
             } else {

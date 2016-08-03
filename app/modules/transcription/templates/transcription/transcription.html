@@ -29,7 +29,7 @@
                 <g class="image">
                     <image
                     xlink:href="{{ subjectImage }}"
-                    ng-attr-onload="{{ loadHandler }} svg.reset();"
+                    ng-attr-onload="svg.reset()"
                     width="1300"
                     height="1893"
                     ></image>
@@ -73,9 +73,9 @@
 
             <!-- <button ng-click="toggleAllAnnotations()" class="btn btn-default">Show all</button> -->
 
-            <button 
+            <button
                 ng-disabled="annotations[0].$$hashKey === last"
-                ng-click="nextAnnotation()" 
+                ng-click="nextAnnotation()"
                 class="btn btn-teal"
             >Next</button>
 

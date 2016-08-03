@@ -455,6 +455,8 @@
                 return zooAPI.type('subjects').get(params)
                   .then(function (subjects) {
                     console.log('      >>>>>>>>> CURRENT PAGE: ' + subjects[0].metadata.pageNumber + ', ID: ' + subjects[0].id + ' <<<<<<<<<<'); // --STI
+                    localStorageService.set('current_subject', subjects[0]);
+                    console.log('SET CURRENT SUBJECT TO ', subjects[0]);
                     preloadSubjectImages(subjects);
                     return subjects;
                   });
@@ -735,7 +737,7 @@
                             // // TODO: change this. We're cache busting the image.onload event.
                             // subjectImage += '?' + new Date().getTime();
                             $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
-                            $scope.loadHandler = $scope.subjectLoaded();
+                            $scope.subjectLoaded();
                             $rootScope.$broadcast('transcribe:loadedSubject');
                         });
                     } else {
