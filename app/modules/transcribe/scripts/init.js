@@ -527,131 +527,103 @@
             return deferred.promise;
         };
 
+        // THIS WILL REPLACE THE TWO METHODS ABOVE
+        // var _getNextInQueue = function (subject_set_id) {
+        //     var deferred = $q.defer();
+        //     var nextCache = _getNextQueueCache(subject_set_id);
+        //     var prevCache = _getPrevQueueCache(subject_set_id);
+        //
+        //     if (!angular.isArray(nextCache) || nextCache.length === 0) {
+        //         _loadNewSubjects(subject_set_id)
+        //             .then(function () {
+        //                 nextCache = _getNextQueueCache(subject_set_id);
+        //                 if (nextCache.length === 0) {
+        //                     deferred.resolve(null); // Note: I think this means we're done with all subjects in the set?
+        //                 } else {
+        //                     deferred.resolve(nextCache[0]);
+        //                 }
+        //             });
+        //     } else {
+        //         deferred.resolve(nextCache[0]);
+        //     }
+        //
+        //     return deferred.promise;
+        // };
+
+        var _updateCache = function(nextSubject, subject_set_id, cacheDirection) {
+          // var deferred = $q.defer();
+          var oldSubject = localStorageService.get('current_subject_'+subject_set_id);
+          localStorageService.set('current_subject_'+subject_set_id, nextSubject );
+          var nextCache = _getNextQueueCache(subject_set_id);
+          var prevCache = _getPrevQueueCache(subject_set_id);
+          if (cacheDirection == 'prev') {
+            // transfer current subject from next to prev cache
+            if( nextCache.length >= 5) nextCache.shift(); // remove oldest subject
+            _.remove(prevCache, {id: nextSubject.id}); // remove previous subject
+            nextCache.unshift(oldSubject);
+          } else if (cacheDirection == 'next') {
+            _.remove(nextCache, {id: nextSubject.id}); // remove previous subject
+            if( prevCache.length >= 5) prevCache.shift(); // remove oldest subject
+            prevCache.push(oldSubject);
+          } else { // INITIAL CACHE
+            nextCache.pop(); // remove previous subject
+          }
+
+          localStorageService.set('subject_set_next_queue_' + subject_set_id, nextCache);
+          localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
+          // deferred.resolve(nextSubject);
+
+          // FOR DEBUGGING >>>
+          {
+            var prevSubjectIds = [];
+            for(var subject of prevCache) {
+               prevSubjectIds.push( subject.metadata.pageNumber );
+            }
+
+            var nextSubjectIds = [];
+            for(var subject of nextCache) {
+               nextSubjectIds.push( subject.metadata.pageNumber );
+            }
+
+            console.log('PREV SUBJECT PAGES    : ', prevSubjectIds);
+            console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject_'+subject_set_id).metadata.pageNumber );
+            console.log('NEXT SUBJECT PAGES    : ', nextSubjectIds);
+          }
+          // <<< FOR DEBUGGING
+
+          // return deferred.promise;
+        }
+
         var get = function (subject_set_id, cacheDirection) {
 
           console.log('CACHE DIRECTION: ', cacheDirection);
             var deferred = $q.defer();
 
+            // REPLACE IF STATEMENT BELOW WITH THIS GENERALIZED CODE
+            // _getNextInQueue(subject_set_id, cacheDirection)
+            //   .then( function(nextSubject) {
+            //     _updateCache(nextSubject, subject_set_id, cacheDirection);
+            //     deferred.resolve(nextSubject);
+            //   });
 
             if (cacheDirection == 'prev') {
               _getPrevInQueue(subject_set_id)
                   .then(function (nextSubject) { // Note: nextSubject is actually the previous one
-
-                      let oldSubject = localStorageService.get('current_subject_'+subject_set_id);
-
-                      localStorageService.set('current_subject_'+subject_set_id, nextSubject );
-                      let nextCache = _getNextQueueCache(subject_set_id);
-                      let prevCache = _getPrevQueueCache(subject_set_id);
-
-                      ///////////////////////////////////////////////////////////////////////////////
-                      // transfer current subject from next to prev cache
-                      if( nextCache.length >= 5) nextCache.shift(); // remove oldest subject
-                      _.remove(prevCache, {id: nextSubject.id}); // remove previous subject
-                      nextCache.unshift(oldSubject);
-                      ///////////////////////////////////////////////////////////////////////////////
-
-                      localStorageService.set('subject_set_next_queue_' + subject_set_id, nextCache);
-                      localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
-                      deferred.resolve(nextSubject);
-
-                      // FOR DEBUGGING >>>
-                      {
-                        let prevSubjectIds = [];
-                        for(let subject of prevCache) {
-                           prevSubjectIds.push( subject.metadata.pageNumber );
-                        }
-
-                        let nextSubjectIds = [];
-                        for(let subject of nextCache) {
-                           nextSubjectIds.push( subject.metadata.pageNumber );
-                        }
-
-                        console.log('PREV SUBJECT IDS: ', prevSubjectIds);
-                        console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject_'+subject_set_id).metadata.pageNumber );
-                        console.log('NEXT SUBJECT IDS: ', nextSubjectIds);
-                      }
-                      // <<< FOR DEBUGGING
-
+                    _updateCache(nextSubject, subject_set_id, cacheDirection);
+                    deferred.resolve(nextSubject);
                   });
             }
             else if (cacheDirection == 'next') {
               _getNextInQueue(subject_set_id)
                   .then(function (nextSubject) {
-                      let oldSubject = localStorageService.get('current_subject_'+subject_set_id) ? localStorageService.get('current_subject_'+subject_set_id) : null;
-
-                      localStorageService.set('current_subject_'+subject_set_id, nextSubject );
-                      let nextCache = _getNextQueueCache(subject_set_id);
-                      let prevCache = _getPrevQueueCache(subject_set_id);
-
-                      ///////////////////////////////////////////////////////////////////////////////
-                      if(cacheDirection == 'next') {
-                        _.remove(nextCache, {id: nextSubject.id}); // remove previous subject
-                        if( prevCache.length >= 5) prevCache.shift(); // remove oldest subject
-                        prevCache.push(oldSubject);
-                      }
-                      ///////////////////////////////////////////////////////////////////////////////
-
-
-                      localStorageService.set('subject_set_next_queue_' + subject_set_id, nextCache);
-                      localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
-                      deferred.resolve(nextSubject);
-
-                      // FOR DEBUGGING >>>
-                      {
-                        let prevSubjectIds = [];
-                        for(let subject of prevCache) {
-                           prevSubjectIds.push( subject.metadata.pageNumber );
-                        }
-
-                        let nextSubjectIds = [];
-                        for(let subject of nextCache) {
-                           nextSubjectIds.push( subject.metadata.pageNumber );
-                        }
-
-                        console.log('PREV SUBJECT PAGES    : ', prevSubjectIds);
-                        console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject_'+subject_set_id).metadata.pageNumber );
-                        console.log('NEXT SUBJECT PAGES    : ', nextSubjectIds);
-                      }
-                      // <<< FOR DEBUGGING
-
+                    _updateCache(nextSubject, subject_set_id, cacheDirection);
+                    deferred.resolve(nextSubject);
                   });
             } else { // cacheDirection == 'initial'
               _getNextInQueue(subject_set_id)
                   .then(function (nextSubject) {
-
-                    // // unused
-                    // let oldSubject = localStorageService.get('current_subject') ? localStorageService.get('current_subject') : null;
-
-                    localStorageService.set('current_subject_'+subject_set_id, nextSubject );
-                    let nextCache = _getNextQueueCache(subject_set_id);
-                    let prevCache = _getPrevQueueCache(subject_set_id);
-
-                    ///////////////////////////////////////////////////////////////////////////////
-                    nextCache.pop(); // remove previous subject
-                    ///////////////////////////////////////////////////////////////////////////////
-
-                    localStorageService.set('subject_set_next_queue_' + subject_set_id, nextCache);
-                    localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
+                    _updateCache(nextSubject, subject_set_id, cacheDirection);
                     deferred.resolve(nextSubject);
-
-                    // FOR DEBUGGING >>>
-                    {
-                      let prevSubjectIds = [];
-                      for(let subject of prevCache) {
-                         prevSubjectIds.push( subject.metadata.pageNumber );
-                      }
-
-                      let nextSubjectIds = [];
-                      for(let subject of nextCache) {
-                         nextSubjectIds.push( subject.metadata.pageNumber );
-                      }
-
-                      console.log('PREV SUBJECT PAGES    : ', prevSubjectIds);
-                      console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject_'+subject_set_id).metadata.pageNumber );
-                      console.log('NEXT SUBJECT PAGES    : ', nextSubjectIds);
-                    }
-                    // <<< FOR DEBUGGING
-
                   });
             }
 
