@@ -461,9 +461,11 @@
             };
 
             var preloadSubjectImages = function (subjects) {
-              var images = [];
-              for (var subject of subjects) {
-                images.push( new Image().src = subject.locations[0]['image/png'] );
+              let images = [];
+              for (let subject of subjects) {
+                let keys = Object.keys(subject.locations[0]);
+                // console.log('PRELOADING: ', subject.locations[0][keys[0]]);
+                images.push( new Image().src = subject.locations[0][keys[0]] );
               }
             }
 
@@ -688,7 +690,6 @@
       $scope.$on('transcribe:loadedSubject', function(newValue, oldValue) {
         var currentSubject = subjectFactory.getCurrentSubject();
         var prevCache = localStorageService.get('subject_set_prev_queue_' + $stateParams.subject_set_id);
-        console.log(' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! PREV CACHE: ', prevCache.length);
         $scope.nextDisabled = currentSubject.metadata.nextSubjectIds ? false : true
         $scope.prevDisabled = currentSubject.metadata.nextSubjectIds && !prevCache.length == 0 ? false : true
       });
