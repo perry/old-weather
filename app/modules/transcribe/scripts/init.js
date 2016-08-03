@@ -431,11 +431,10 @@
 
         var _loadNewSubjects = function (subject_set_id) {
             var deferred = $q.defer();
-            var current_subject = getCurrentSubject();
 
             var _getSubjectsPage = function (project) {
 
-                var current_subject = getCurrentSubject();
+                var current_subject = getCurrentSubject(subject_set_id);
                 var subject_ids = current_subject ? current_subject.metadata.nextSubjectIds : null;
                 var params = {}
 
@@ -455,8 +454,7 @@
                 return zooAPI.type('subjects').get(params)
                   .then(function (subjects) {
                     console.log('      >>>>>>>>> CURRENT PAGE: ' + subjects[0].metadata.pageNumber + ', ID: ' + subjects[0].id + ' <<<<<<<<<<'); // --STI
-                    localStorageService.set('current_subject', subjects[0]);
-                    console.log('SET CURRENT SUBJECT TO ', subjects[0]);
+                    localStorageService.set('current_subject_'+subject_set_id, subjects[0]);
                     preloadSubjectImages(subjects);
                     return subjects;
                   });
@@ -505,7 +503,6 @@
                 _loadNewSubjects(subject_set_id)
                     .then(function () {
                         nextCache = _getNextQueueCache(subject_set_id);
-
                         if (nextCache.length === 0) {
                             deferred.resolve(null); // Note: I think this means we're done with all subjects in the set?
                         } else {
@@ -551,9 +548,9 @@
               _getPrevInQueue(subject_set_id)
                   .then(function (nextSubject) { // Note: nextSubject is actually the previous one
 
-                      let oldSubject = localStorageService.get('current_subject');
+                      let oldSubject = localStorageService.get('current_subject_'+subject_set_id);
 
-                      localStorageService.set('current_subject', nextSubject );
+                      localStorageService.set('current_subject_'+subject_set_id, nextSubject );
                       let nextCache = _getNextQueueCache(subject_set_id);
                       let prevCache = _getPrevQueueCache(subject_set_id);
 
@@ -581,7 +578,7 @@
                         }
 
                         console.log('PREV SUBJECT IDS: ', prevSubjectIds);
-                        console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject').metadata.pageNumber );
+                        console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject_'+subject_set_id).metadata.pageNumber );
                         console.log('NEXT SUBJECT IDS: ', nextSubjectIds);
                       }
                       // <<< FOR DEBUGGING
@@ -591,9 +588,9 @@
             else if (cacheDirection == 'next') {
               _getNextInQueue(subject_set_id)
                   .then(function (nextSubject) {
-                      let oldSubject = localStorageService.get('current_subject') ? localStorageService.get('current_subject') : null;
+                      let oldSubject = localStorageService.get('current_subject_'+subject_set_id) ? localStorageService.get('current_subject_'+subject_set_id) : null;
 
-                      localStorageService.set('current_subject', nextSubject );
+                      localStorageService.set('current_subject_'+subject_set_id, nextSubject );
                       let nextCache = _getNextQueueCache(subject_set_id);
                       let prevCache = _getPrevQueueCache(subject_set_id);
 
@@ -623,7 +620,7 @@
                         }
 
                         console.log('PREV SUBJECT PAGES    : ', prevSubjectIds);
-                        console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject').metadata.pageNumber );
+                        console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject_'+subject_set_id).metadata.pageNumber );
                         console.log('NEXT SUBJECT PAGES    : ', nextSubjectIds);
                       }
                       // <<< FOR DEBUGGING
@@ -633,10 +630,10 @@
               _getNextInQueue(subject_set_id)
                   .then(function (nextSubject) {
 
-                    // unused
-                    let oldSubject = localStorageService.get('current_subject') ? localStorageService.get('current_subject') : null;
+                    // // unused
+                    // let oldSubject = localStorageService.get('current_subject') ? localStorageService.get('current_subject') : null;
 
-                    localStorageService.set('current_subject', nextSubject );
+                    localStorageService.set('current_subject_'+subject_set_id, nextSubject );
                     let nextCache = _getNextQueueCache(subject_set_id);
                     let prevCache = _getPrevQueueCache(subject_set_id);
 
@@ -661,7 +658,7 @@
                       }
 
                       console.log('PREV SUBJECT PAGES    : ', prevSubjectIds);
-                      console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject').metadata.pageNumber );
+                      console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject_'+subject_set_id).metadata.pageNumber );
                       console.log('NEXT SUBJECT PAGES    : ', nextSubjectIds);
                     }
                     // <<< FOR DEBUGGING
@@ -672,8 +669,8 @@
             return deferred.promise;
         };
 
-        var getCurrentSubject = function () {
-          let currentSubject = localStorageService.get('current_subject');
+        var getCurrentSubject = function (subject_set_id) {
+          let currentSubject = localStorageService.get('current_subject_'+subject_set_id);
           if( typeof currentSubject !== "undefined" && currentSubject !== null){
             return currentSubject;
           }
@@ -690,19 +687,19 @@
 
       // update prev/next buttons
       $scope.$on('transcribe:loadedSubject', function(newValue, oldValue) {
-        var currentSubject = subjectFactory.getCurrentSubject();
+        var currentSubject = subjectFactory.getCurrentSubject($stateParams.subject_set_id);
         var prevCache = localStorageService.get('subject_set_prev_queue_' + $stateParams.subject_set_id);
         $scope.nextDisabled = currentSubject.metadata.nextSubjectIds ? false : true
         $scope.prevDisabled = currentSubject.metadata.nextSubjectIds && !prevCache.length == 0 ? false : true
       });
 
       $scope.nextPage = function() {
-        console.log('NEXT PAGE >>>');
+        console.log('NEXT PAGE >>>'); // --STI
         $scope.loadSubjects('next');
       }
 
       $scope.prevPage = function() {
-        console.log('<<< PREV PAGE');
+        console.log('<<< PREV PAGE'); // --STI
         $scope.loadSubjects('prev');
       }
 
@@ -725,6 +722,8 @@
                     $scope.questions = response;
                 });
 
+            console.log('ABOUT TO FETCH SUBJECTS FROM SET ', $scope.subject_set_id); // --STI
+
             subjectFactory.get($scope.subject_set_id, cacheDirection)
                 .then(function (response) {
                     if (response !== null) {
@@ -732,7 +731,7 @@
                             $scope.subject = response;
                             var keys = Object.keys($scope.subject.locations[0]);
                             var subjectImage = $scope.subject.locations[0][keys[0]];
-                            console.log('IMAGE CACHED? ', isCached(subjectImage));
+                            console.log('IMAGE CACHED? ', isCached(subjectImage)); // --STI
 
                             // // TODO: change this. We're cache busting the image.onload event.
                             // subjectImage += '?' + new Date().getTime();
@@ -748,17 +747,17 @@
                 });
         };
 
+        $scope.loadSubjects('initial');
+
         // checks if resource has been downloaded
         var isCached = function (uri) {
           var image = new Image();
           image.onload = function() {
-            console.log('IMAGE LOADED! ', uri);
+            console.log('IMAGE LOADED! ', uri); // --STI
           }
           image.src = uri;
           return image.complete; //|| (image.width + image.height)
         }
-
-        $scope.loadSubjects('initial');
 
         $scope.subjectLoaded = function () {
             $scope.isLoading = false;
