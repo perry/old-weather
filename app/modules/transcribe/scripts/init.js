@@ -130,7 +130,7 @@
 
                 scope.newSubject = function () {
                     scope.toggleTool();
-                    scope.$parent.loadSubjects();
+                    scope.$parent.loadSubjects('next');
                 };
             }
         };
@@ -670,7 +670,7 @@
         $scope.saveSubject = function () {
             annotationsFactory.save($scope.subject.id)
                 .then(function () {
-                    $scope.loadSubjects();
+                    $scope.loadSubjects('next');
                 });
         };
 
