@@ -389,18 +389,21 @@
     });
 
     module.factory('subjectFactory', function ($q, $filter, zooAPI, localStorageService, zooAPIProject, $timeout) {
-        var _getNextQueueCache = function (subject_set_id) {
-            var cache = localStorageService.get('subject_set_next_queue_' + subject_set_id);
+
+        var _getPrevQueueCache = function (subject_set_id) {
+            let cache = localStorageService.get('subject_set_prev_queue_' + subject_set_id);
             if (!cache) {
-                cache = localStorageService.set('subject_set_next_queue_' + subject_set_id, []);
+              localStorageService.set('subject_set_prev_queue_' + subject_set_id, []);
+              cache = localStorageService.get('subject_set_prev_queue_' + subject_set_id);
             }
             return cache;
         };
 
-        var _getPrevQueueCache = function (subject_set_id) {
-            var cache = localStorageService.get('subject_set_prev_queue_' + subject_set_id);
+        var _getNextQueueCache = function (subject_set_id) {
+            let cache = localStorageService.get('subject_set_next_queue_' + subject_set_id);
             if (!cache) {
-                cache = localStorageService.set('subject_set_prev_queue_' + subject_set_id, []);
+              localStorageService.set('subject_set_next_queue_' + subject_set_id, []);
+              cache = localStorageService.get('subject_set_next_queue_' + subject_set_id);
             }
             return cache;
         };
@@ -442,7 +445,7 @@
                 return zooAPI.type('subjects').get(params)
                   .then(function (subjects) {
                     console.log('      >>>>>>>>> CURRENT PAGE: ' + subjects[0].metadata.pageNumber + ', ID: ' + subjects[0].id + ' <<<<<<<<<<'); // --STI
-                    localStorageService.set('current_subject_'+subject_set_id, subjects[0]);
+                    localStorageService.set('current_subject_' + subject_set_id, subjects[0]);
                     preloadSubjectImages(subjects);
                     return subjects;
                   });
@@ -482,96 +485,66 @@
             return deferred.promise;
         };
 
-        var _getNextInQueue = function (subject_set_id) {
-            var deferred = $q.defer();
-            var nextCache = _getNextQueueCache(subject_set_id);
-            var prevCache = _getPrevQueueCache(subject_set_id);
+        var _getNextInQueue = function (subject_set_id, cacheDirection) {
 
-            if (!angular.isArray(nextCache) || nextCache.length === 0) {
+            var _getCache = function(subject_set_id, cacheDirection) {
+              var cache = [];
+              if (cacheDirection == 'prev') {
+                cache = _getPrevQueueCache(subject_set_id);
+              } else if (cacheDirection == 'next') {
+                cache = _getNextQueueCache(subject_set_id);
+              } else { // initial
+                cache = _getNextQueueCache(subject_set_id);
+              }
+              return cache;
+            }
+
+            var deferred = $q.defer();
+            var cache = _getCache(subject_set_id, cacheDirection);
+
+            if (!angular.isArray(cache) || cache.length === 0) {
                 _loadNewSubjects(subject_set_id)
                     .then(function () {
-                        nextCache = _getNextQueueCache(subject_set_id);
-                        if (nextCache.length === 0) {
-                            deferred.resolve(null); // Note: I think this means we're done with all subjects in the set?
+                        cache = _getCache(subject_set_id, cacheDirection);
+                        if (cache.length === 0) {
+                          deferred.resolve(null); // Note: I think this means we're done with all subjects in the set?
                         } else {
-                            deferred.resolve(nextCache[0]);
+                          deferred.resolve(cache[0]); // get first element
                         }
                     });
             } else {
-                deferred.resolve(nextCache[0]);
+              deferred.resolve(cache[0]);
             }
 
             return deferred.promise;
         };
-
-        var _getPrevInQueue = function (subject_set_id) {
-            var deferred = $q.defer();
-            var nextCache = _getNextQueueCache(subject_set_id);
-            var prevCache = _getPrevQueueCache(subject_set_id);
-
-            if (!angular.isArray(prevCache) || prevCache.length === 0) {
-                _loadNewSubjects(subject_set_id)
-                    .then(function () {
-                        prevCache = _getPrevQueueCache(subject_set_id);
-
-                        if (prevCache.length === 0) {
-                            deferred.resolve(null); // Note: I think this means we're done with all subjects in the set?
-                        } else {
-                            deferred.resolve(prevCache[prevCache.length-1]);
-                        }
-                    });
-            } else {
-                deferred.resolve(prevCache[prevCache.length-1]);
-            }
-
-            return deferred.promise;
-        };
-
-        // THIS WILL REPLACE THE TWO METHODS ABOVE
-        // var _getNextInQueue = function (subject_set_id) {
-        //     var deferred = $q.defer();
-        //     var nextCache = _getNextQueueCache(subject_set_id);
-        //     var prevCache = _getPrevQueueCache(subject_set_id);
-        //
-        //     if (!angular.isArray(nextCache) || nextCache.length === 0) {
-        //         _loadNewSubjects(subject_set_id)
-        //             .then(function () {
-        //                 nextCache = _getNextQueueCache(subject_set_id);
-        //                 if (nextCache.length === 0) {
-        //                     deferred.resolve(null); // Note: I think this means we're done with all subjects in the set?
-        //                 } else {
-        //                     deferred.resolve(nextCache[0]);
-        //                 }
-        //             });
-        //     } else {
-        //         deferred.resolve(nextCache[0]);
-        //     }
-        //
-        //     return deferred.promise;
-        // };
 
         var _updateCache = function(nextSubject, subject_set_id, cacheDirection) {
-          // var deferred = $q.defer();
-          var oldSubject = localStorageService.get('current_subject_'+subject_set_id);
-          localStorageService.set('current_subject_'+subject_set_id, nextSubject );
+          var oldSubject = getCurrentSubject(subject_set_id);
+          console.log('OLD SUBJECT PAGE IS ', oldSubject.metadata.pageNumber); // --STI
+
+          localStorageService.set('current_subject_' + subject_set_id, nextSubject );
           var nextCache = _getNextQueueCache(subject_set_id);
           var prevCache = _getPrevQueueCache(subject_set_id);
-          if (cacheDirection == 'prev') {
-            // transfer current subject from next to prev cache
-            if( nextCache.length >= 5) nextCache.shift(); // remove oldest subject
-            _.remove(prevCache, {id: nextSubject.id}); // remove previous subject
-            nextCache.unshift(oldSubject);
-          } else if (cacheDirection == 'next') {
-            _.remove(nextCache, {id: nextSubject.id}); // remove previous subject
-            if( prevCache.length >= 5) prevCache.shift(); // remove oldest subject
-            prevCache.push(oldSubject);
-          } else { // INITIAL CACHE
-            nextCache.pop(); // remove previous subject
+
+          if (cacheDirection == 'next') {
+            _.remove(nextCache, {id: nextSubject.id});    // remove previous subject
+            if( prevCache.length >= 5) prevCache.pop();   // remove last subject in array
+            prevCache.unshift(oldSubject);                // prepend old subject to array
+          }
+
+          else if (cacheDirection == 'prev') {
+            if( nextCache.length >= 5) nextCache.shift(); // remove first subject in array
+            _.remove(prevCache, {id: nextSubject.id});    // remove previous subject
+            nextCache.unshift(oldSubject);                // prepend old subject to array
+          }
+
+          else { // INITIAL CACHE
+            nextCache.shift();                            // remove first subject in array
           }
 
           localStorageService.set('subject_set_next_queue_' + subject_set_id, nextCache);
           localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
-          // deferred.resolve(nextSubject);
 
           // FOR DEBUGGING >>>
           {
@@ -586,52 +559,28 @@
             }
 
             console.log('PREV SUBJECT PAGES    : ', prevSubjectIds);
-            console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject_'+subject_set_id).metadata.pageNumber );
+            console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject_' + subject_set_id).metadata.pageNumber );
             console.log('NEXT SUBJECT PAGES    : ', nextSubjectIds);
           }
           // <<< FOR DEBUGGING
 
-          // return deferred.promise;
         }
 
         var get = function (subject_set_id, cacheDirection) {
 
-          console.log('CACHE DIRECTION: ', cacheDirection);
             var deferred = $q.defer();
 
-            // REPLACE IF STATEMENT BELOW WITH THIS GENERALIZED CODE
-            // _getNextInQueue(subject_set_id, cacheDirection)
-            //   .then( function(nextSubject) {
-            //     _updateCache(nextSubject, subject_set_id, cacheDirection);
-            //     deferred.resolve(nextSubject);
-            //   });
-
-            if (cacheDirection == 'prev') {
-              _getPrevInQueue(subject_set_id)
-                  .then(function (nextSubject) { // Note: nextSubject is actually the previous one
-                    _updateCache(nextSubject, subject_set_id, cacheDirection);
-                    deferred.resolve(nextSubject);
-                  });
-            }
-            else if (cacheDirection == 'next') {
-              _getNextInQueue(subject_set_id)
-                  .then(function (nextSubject) {
-                    _updateCache(nextSubject, subject_set_id, cacheDirection);
-                    deferred.resolve(nextSubject);
-                  });
-            } else { // cacheDirection == 'initial'
-              _getNextInQueue(subject_set_id)
-                  .then(function (nextSubject) {
-                    _updateCache(nextSubject, subject_set_id, cacheDirection);
-                    deferred.resolve(nextSubject);
-                  });
-            }
+            _getNextInQueue(subject_set_id, cacheDirection)
+              .then( function(nextSubject) {
+                _updateCache(nextSubject, subject_set_id, cacheDirection);
+                deferred.resolve(nextSubject);
+              });
 
             return deferred.promise;
         };
 
         var getCurrentSubject = function (subject_set_id) {
-          let currentSubject = localStorageService.get('current_subject_'+subject_set_id);
+          let currentSubject = localStorageService.get('current_subject_' + subject_set_id);
           if( typeof currentSubject !== "undefined" && currentSubject !== null){
             return currentSubject;
           }
@@ -683,8 +632,6 @@
                     $scope.questions = response;
                 });
 
-            console.log('ABOUT TO FETCH SUBJECTS FROM SET ', $scope.subject_set_id); // --STI
-
             subjectFactory.get($scope.subject_set_id, cacheDirection)
                 .then(function (response) {
                     if (response !== null) {
@@ -692,7 +639,6 @@
                             $scope.subject = response;
                             var keys = Object.keys($scope.subject.locations[0]);
                             var subjectImage = $scope.subject.locations[0][keys[0]];
-                            console.log('IMAGE CACHED? ', isCached(subjectImage)); // --STI
 
                             // // TODO: change this. We're cache busting the image.onload event.
                             // subjectImage += '?' + new Date().getTime();
@@ -710,15 +656,15 @@
 
         $scope.loadSubjects('initial');
 
-        // checks if resource has been downloaded
-        var isCached = function (uri) {
-          var image = new Image();
-          image.onload = function() {
-            console.log('IMAGE LOADED! ', uri); // --STI
-          }
-          image.src = uri;
-          return image.complete; //|| (image.width + image.height)
-        }
+        // // DEBUGGING CODE: checks if resource has been downloaded
+        // var isCached = function (uri) {
+        //   var image = new Image();
+        //   image.onload = function() {
+        //     console.log('IMAGE LOADED! ', uri);
+        //   }
+        //   image.src = uri;
+        //   return image.complete; //|| (image.width + image.height)
+        // }
 
         $scope.subjectLoaded = function () {
             $scope.isLoading = false;
