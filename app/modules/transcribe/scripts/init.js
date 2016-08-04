@@ -533,7 +533,7 @@
           }
 
           else if (cacheDirection == 'prev') {
-            if( nextCache.length >= 5) nextCache.shift(); // remove first subject in array
+            if( nextCache.length >= 5) nextCache.pop();   // remove last subject in array
             _.remove(prevCache, {id: nextSubject.id});    // remove previous subject
             nextCache.unshift(oldSubject);                // prepend old subject to array
           }
