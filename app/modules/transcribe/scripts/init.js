@@ -445,7 +445,7 @@
                 return zooAPI.type('subjects').get(params)
                   .then(function (subjects) {
                     console.log('      >>>>>>>>> CURRENT PAGE: ' + subjects[0].metadata.pageNumber + ', ID: ' + subjects[0].id + ' <<<<<<<<<<'); // --STI
-                    localStorageService.set('current_subject_' + subject_set_id, subjects[0]);
+                    // localStorageService.set('current_subject_' + subject_set_id, subjects[0]);
                     preloadSubjectImages(subjects);
                     return subjects;
                   });
@@ -521,7 +521,6 @@
 
         var _updateCache = function(nextSubject, subject_set_id, cacheDirection) {
           var oldSubject = getCurrentSubject(subject_set_id);
-          console.log('OLD SUBJECT PAGE IS ', oldSubject.metadata.pageNumber); // --STI
 
           localStorageService.set('current_subject_' + subject_set_id, nextSubject );
           var nextCache = _getNextQueueCache(subject_set_id);
@@ -540,6 +539,7 @@
           }
 
           else { // INITIAL CACHE
+            // TO DO: Fix this; it keeps advancing the pages on refresh.
             nextCache.shift();                            // remove first subject in array
           }
 
@@ -567,15 +567,12 @@
         }
 
         var get = function (subject_set_id, cacheDirection) {
-
             var deferred = $q.defer();
-
             _getNextInQueue(subject_set_id, cacheDirection)
               .then( function(nextSubject) {
                 _updateCache(nextSubject, subject_set_id, cacheDirection);
                 deferred.resolve(nextSubject);
               });
-
             return deferred.promise;
         };
 
