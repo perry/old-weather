@@ -23,7 +23,9 @@
     "masonry": "3.3.1",
     "packery": "1.4.1",
     "bootstrap": "3.3.5",
-    "angular-fitvids": "git@github.com:jimmyhillis/angular-fitvids.git#cfc155df7d13e1d6bf8029b08bb294df5025f84b"
+    "angular-fitvids": "git@github.com:jimmyhillis/angular-fitvids.git#cfc155df7d13e1d6bf8029b08bb294df5025f84b",
+    "setimmediate2": "^2.0.1",
+    "promise-polyfill": "^5.2.1"
   },
   "resolutions": {
     "angular": "1.4.1",
