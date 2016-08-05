@@ -19,36 +19,16 @@
             });
     });
 
-    module.service('pendingAnnotationsService', ['zooAPI', function(zooAPI) {
+    module.service('pendingAnnotationsService', ['zooAPI', 'subjectFactory', function(zooAPI, subjectFactory) {
         this.get = function(subjectSet, page) {
-            // Fetch current user's incomplete classifications
-            return zooAPI.type('classifications/incomplete').get({
+            var current_subject = subjectFactory.getCurrentSubject(subjectSet.id);
+            return zooAPI.type('classifications/incomplete').get({ // fetch user's incomplete classification
                 page: page || 1,
-                project_id: subjectSet.links.project
-            }).then(function(annotations) {
-                // Filter them to the current subject set
-                return Promise.all(annotations.map(function (annotation) {
-                    annotation.metadata.subjects = [];
-                    var subjectId = annotation.links.subjects[0];
-                    return zooAPI.type('set_member_subjects').get({ subject_id: subjectId })
-                        .then(function(sets) {
-                            var setsMatching = sets.filter(function(set) {
-                                return set.links.subject_set === subjectSet.id;
-                            });
-                            if (setsMatching.length) {
-                                // Subject in set; keep
-                                return Promise.resolve(annotation);
-                            } else {
-                                // Subject not in set; discard
-                                return Promise.resolve(false);
-                            }
-                        });
-                }));
-            }).then(function(annotationsFiltered) {
-                // Strip out false values from promise result
-                return Promise.resolve(annotationsFiltered.filter(annotation => annotation));
-            })
-            .catch(function(err) {
+                project_id: subjectSet.links.project,
+                subject_id: current_subject.id
+            }).then(function(classifications) {
+                return Promise.resolve(classifications);
+            }).catch(function(err) {
                 throw err;
             });
         };
