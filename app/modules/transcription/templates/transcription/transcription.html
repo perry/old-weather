@@ -113,10 +113,11 @@
 
     <div class="workflow-col">
         <span class="workflow-title">Transcription</span>
-
         <p>Type out what you see in each marking that appears. Press [Enter] to move to the next mark.</p>
-
         <button class="btn btn-orange" ng-click="finish();" ng-show="annotations">I've finished with this page</button>
+        <div ng-controller="TutorialController">
+          Need help? <button class="tutorial-btn" ng-click="launchTutorial()">Launch tutorial</button>
+        </div>
     </div>
 
 </div>

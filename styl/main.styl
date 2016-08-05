@@ -116,10 +116,22 @@ body
 
     .btn-finish
         margin-bottom: 20px
-
-
     .nav-pills
         text-align: left
+    .tutorial-btn
+        outline none
+        font-weight 300
+        border 1px solid transparent
+        margin-top 5px
+        padding 0px 5px
+        background none
+        color $shallow-teal
+        border-color $shallow-teal
+        border-radius 4px
+        background: none
+        &:hover
+            color #fff
+            background $shallow-teal
 
     .transcribe-nav
       button[disabled]
@@ -296,6 +308,21 @@ img
             height: 40px
             margin-left: 10px
             width: 40px
+
+#tutorial
+  .title
+    text-align center
+  // .carousel-control
+  //   margin-left -80px
+  //   margin-right -80px
+  //   background-image none
+  .carousel-indicators
+    bottom -50px
+  .modal-body
+    padding 0px
+  .slide-text
+    text-align left
+    padding 0px 20px
 
 .home-content
     padding-bottom: 87px
