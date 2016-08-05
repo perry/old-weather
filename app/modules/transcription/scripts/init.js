@@ -19,9 +19,11 @@
             });
     });
 
-    module.service('pendingAnnotationsService', ['zooAPI', 'subjectFactory', function(zooAPI, subjectFactory) {
+    module.service('pendingAnnotationsService', ['zooAPI', 'localStorageService', function(zooAPI, localStorageService) {
         this.get = function(subjectSet, page) {
-            var current_subject = subjectFactory.getCurrentSubject(subjectSet.id);
+          var user = localStorageService.get('user');
+          if (typeof user !== "undefined" && user !== null) { // user exists?
+            var current_subject = localStorageService.get('current_subject_' + subjectSet.id);
             return zooAPI.type('classifications/incomplete').get({ // fetch user's incomplete classification
                 page: page || 1,
                 project_id: subjectSet.links.project,
@@ -31,6 +33,10 @@
             }).catch(function(err) {
                 throw err;
             });
+          } else {
+            return []; // nothing to do for non-logged-in users
+          }
+
         };
     }]);
 

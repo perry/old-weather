@@ -90,9 +90,17 @@
                   }
                 });
             } else {
+                // Only leave incomplete classifications if user is logged in
+                // Unfortunately, this means there will be no transciption otherwise
+                // TO DO: fix this! 
+                var user = localStorageService.get('user');
+                if (typeof user !== "undefined" && user !== null) {
+                  classification.completed = false;
+                } else {
+                  classification.completed = true;
+                }
 
                 classification.metadata.finished_at = new Date().toISOString();
-                classification.completed = false;
 
                 var resource = zooAPI.type('classifications').create(classification);
                 resource.save()
