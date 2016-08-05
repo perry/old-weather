@@ -92,7 +92,7 @@
             } else {
 
                 classification.metadata.finished_at = new Date().toISOString();
-                classification.completed = true;
+                classification.completed = false;
 
                 var resource = zooAPI.type('classifications').create(classification);
                 resource.save()
