@@ -41,6 +41,7 @@
 
                 var createCells = function (row) {
                     var headers = _.where(scope.annotations, {type: 'header'});
+                    var rowId = _.uniqueId('row_');
                     _.each(headers, function (header, index) {
                         // If the row is below the header
                         if (row.y >= (header.y + header.height)) {
@@ -56,12 +57,15 @@
 
                             if (angular.isUndefined(existing)) {
                                 obj._id = _.uniqueId() + new Date().getTime();
+                                obj._rowId = rowId;
                                 addAnnotation(obj);
                                 tempCells[index] = obj._id;
                             } else {
                                 obj._id = existing._id;
+                                obj._rowId = existing._rowId;
                                 updateAnnotation(obj, existing);
                             }
+
                         }
                     });
                 };
@@ -87,9 +91,18 @@
                 };
 
                 scope.removeAnnotation = function (annotation) {
-                    _.remove(scope.annotations, {_id: annotation._id});
-                    annotationsFactory.remove(annotation._id, scope.$parent.subject);
-                    
+                    if(annotation._rowId) { // remove all annotations in row
+                      console.log('THIS ANNOTATION IS PART OF A ROW: ', annotation._rowId);
+                      var annotationsToRemove = _.filter(scope.annotations, {_rowId: annotation._rowId});
+                      console.log('REMOVING: ', annotationsToRemove);
+                      for(var currAnnotation of annotationsToRemove) {
+                        _.remove(scope.annotations, {_rowId: currAnnotation._rowId});
+                        annotationsFactory.remove(currAnnotation._id, scope.$parent.subject);
+                      }
+                    } else {
+                      _.remove(scope.annotations, {_id: annotation._id});
+                      annotationsFactory.remove(annotation._id, scope.$parent.subject);
+                    }
                     scope.$apply();
                 };
 
