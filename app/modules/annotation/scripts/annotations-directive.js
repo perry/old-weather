@@ -29,6 +29,7 @@
                 };
 
                 var storeAnnotations = function (e, data) {
+                    console.log('storeAnnotations(), data = ', data); // --STI
                     var existing = _.find(scope.annotations, {_id: data._id});
                     if (angular.isUndefined(existing)) {
                         addAnnotation(data);
@@ -40,30 +41,32 @@
                 var tempCells = {};
 
                 var createCells = function (row) {
+                    console.log('createCells() '); // --STI
                     var headers = _.where(scope.annotations, {type: 'header'});
                     var rowId = _.uniqueId('row_');
                     _.each(headers, function (header, index) {
                         // If the row is below the header
                         if (row.y >= (header.y + header.height)) {
-                            var obj = {
+                            var annotation = {
                                 height: row.height,
                                 width: header.width,
                                 x: header.x,
                                 y: row.y,
-                                rotation: header.rotation
+                                rotation: header.rotation,
+                                type: 'row_tmp'
                             };
 
                             var existing = _.find(scope.annotations, { _id: tempCells[index] });
 
                             if (angular.isUndefined(existing)) {
-                                obj._id = _.uniqueId() + new Date().getTime();
-                                obj._rowId = rowId;
-                                addAnnotation(obj);
-                                tempCells[index] = obj._id;
+                                annotation._id = _.uniqueId('antn_'); //+ new Date().getTime();
+                                annotation._rowId = rowId;
+                                addAnnotation(annotation);
+                                tempCells[index] = annotation._id;
                             } else {
-                                obj._id = existing._id;
-                                obj._rowId = existing._rowId;
-                                updateAnnotation(obj, existing);
+                                annotation._id = existing._id;
+                                annotation._rowId = existing._rowId;
+                                updateAnnotation(annotation, existing);
                             }
 
                         }
@@ -150,6 +153,7 @@
             element.bind('mousedown', function (e) {
               e.stopPropagation();
               var annotation = $parse(attrs.annotation)(scope);
+              console.log('ANNOTATION.TYPE = ', annotation.type); // --STI
               confirmationModalFactory.deployModal('Delete annotation?', function(isConfirmed){
                 if(isConfirmed){
                   scope.$parent.removeAnnotation(annotation);
