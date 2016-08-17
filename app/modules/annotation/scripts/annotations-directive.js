@@ -29,7 +29,8 @@
                 };
 
                 var storeAnnotations = function (e, data) {
-                    console.log('storeAnnotations(), data = ', data); // --STI
+                    // skip for row annotation: createCells() called separately
+                    if (data.type === 'row') return;
                     var existing = _.find(scope.annotations, {_id: data._id});
                     if (angular.isUndefined(existing)) {
                         addAnnotation(data);
@@ -41,9 +42,8 @@
                 var tempCells = {};
 
                 var createCells = function (row) {
-                    console.log('createCells() '); // --STI
                     var headers = _.where(scope.annotations, {type: 'header'});
-                    var rowId = _.uniqueId('row_');
+                    var rowId = _.uniqueId('row_'); // + new Date().getTime(); // use human-readable id for debugging --STI
                     _.each(headers, function (header, index) {
                         // If the row is below the header
                         if (row.y >= (header.y + header.height)) {
@@ -53,13 +53,13 @@
                                 x: header.x,
                                 y: row.y,
                                 rotation: header.rotation,
-                                type: 'row_tmp'
+                                type: 'row'
                             };
 
                             var existing = _.find(scope.annotations, { _id: tempCells[index] });
 
                             if (angular.isUndefined(existing)) {
-                                annotation._id = _.uniqueId('antn_'); //+ new Date().getTime();
+                                annotation._id = _.uniqueId('antn_'); //+ new Date().getTime(); // use human-readable id for debugging --STI
                                 annotation._rowId = rowId;
                                 addAnnotation(annotation);
                                 tempCells[index] = annotation._id;
@@ -95,9 +95,7 @@
 
                 scope.removeAnnotation = function (annotation) {
                     if(annotation._rowId) { // remove all annotations in row
-                      console.log('THIS ANNOTATION IS PART OF A ROW: ', annotation._rowId);
                       var annotationsToRemove = _.filter(scope.annotations, {_rowId: annotation._rowId});
-                      console.log('REMOVING: ', annotationsToRemove);
                       for(var currAnnotation of annotationsToRemove) {
                         _.remove(scope.annotations, {_rowId: currAnnotation._rowId});
                         annotationsFactory.remove(currAnnotation._id, scope.$parent.subject);
@@ -142,7 +140,7 @@
                 });
 
                 getAnnotations();
-            }
+            } // end link
         };
     }]);
 

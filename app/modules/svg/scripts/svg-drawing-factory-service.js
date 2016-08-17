@@ -60,7 +60,7 @@
                         width: 0,
                         height: 0,
                         timestamp: new Date().getTime(),
-                        _id: _.uniqueId() + new Date().getTime(),
+                        _id: _.uniqueId('antn_'), //+ new Date().getTime(), // use human-readable id for debugging --STI
                         rotation: svgPanZoomFactory.getRotation()
                     }, self.data);
                     $rootScope.$broadcast('svgDrawing:add', self.tempRect, self.data);
