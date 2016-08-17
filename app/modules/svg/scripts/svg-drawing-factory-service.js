@@ -46,15 +46,18 @@
         };
 
         var startDraw = function (event) {
+            console.log('startDraw()');
             // Only start drawing if panZoom is disabled, and it's a primary mouse click
             if (!svgPanZoomFactory.status() && event.which === 1) {
                 event.preventDefault();
 
                 if (self.drawing) {
+                    console.log(' ...drawing');
                     draw(event);
                     finishDraw(event);
                 } else {
-                    self.tempOrigin = svgService.getPoint(self.el, self.$viewport, event);
+                    console.log(' ...else');
+                    self.tempOrigin = svgService.createPoint(self.el, self.$viewport, event);
                     self.drawing = true;
                     self.tempRect = angular.extend({}, self.tempOrigin, {
                         width: 0,
@@ -70,7 +73,8 @@
         };
 
         var draw = function (event) {
-            var newPoint = svgService.getPoint(self.el, self.$viewport, event);
+            console.log('draw()');
+            var newPoint = svgService.createPoint(self.el, self.$viewport, event);
             self.tempRect.x = (self.tempOrigin.x < newPoint.x) ? self.tempOrigin.x : newPoint.x;
             self.tempRect.y = (self.tempOrigin.y < newPoint.y) ? self.tempOrigin.y : newPoint.y;
             self.tempRect.width = Math.abs(newPoint.x - self.tempOrigin.x);
@@ -79,7 +83,8 @@
         };
 
         var finishDraw = function (event) {
-            var newPoint = svgService.getPoint(self.el, self.$viewport, event);
+            console.log('finishDraw()');
+            var newPoint = svgService.createPoint(self.el, self.$viewport, event);
             if (self.tempOrigin && !(newPoint.x === self.tempOrigin.x && newPoint.y === self.tempOrigin.y)) {
                 $rootScope.$broadcast('svgDrawing:finish', angular.extend({}, self.tempRect), self.data);
                 self.drawing = false;
@@ -87,6 +92,7 @@
                 self.tempOrigin = null;
             } else {
                 // TODO: Add a marker here.
+                console.log('ADD MARKER');
                 return;
             }
             self.$viewport.off('mousemove');
