@@ -29,19 +29,28 @@
                 };
 
                 var storeAnnotations = function (e, data) {
+                    console.log('storeAnnotations(), data = ', data);
                     // skip for row annotation: createCells() called separately
-                    if (data.type === 'row') return;
-                    var existing = _.find(scope.annotations, {_id: data._id});
-                    if (angular.isUndefined(existing)) {
-                        addAnnotation(data);
-                    } else {
-                        updateAnnotation(data, existing);
+                    if (data.type === 'row') {
+                      console.log('CREATING CELLS!');
+                      createCells(data);
                     }
+                    else {
+                      console.log('SINGLE SELL');
+                      var existing = _.find(scope.annotations, {_id: data._id});
+                      if (angular.isUndefined(existing)) {
+                          addAnnotation(data);
+                      } else {
+                          updateAnnotation(data, existing);
+                      }
+                    }
+
                 };
 
                 var tempCells = {};
 
                 var createCells = function (row) {
+                    console.log('createCells(), row = ', row);
                     var headers = _.where(scope.annotations, {type: 'header'});
                     var rowId = _.uniqueId('row_'); // + new Date().getTime(); // use human-readable id for debugging --STI
                     _.each(headers, function (header, index) {
@@ -128,13 +137,13 @@
 
                 scope.$on('svgDrawing:update', function (e, rect, data) {
                     if (data.type === 'row') {
-                        createCells(rect);
+                        // createCells(rect);
                     }
                 });
 
                 scope.$on('svgDrawing:finish', function (e, rect, data) {
                     if (data.type === 'row') {
-                        createCells(rect);
+                        // createCells(rect);
                     }
                     tempCells = {};
                 });

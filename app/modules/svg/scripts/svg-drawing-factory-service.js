@@ -20,6 +20,7 @@
         };
 
         var bindMouseEvents = function (data) {
+            console.log('bindMouseEvents()');
             if (angular.isDefined(data)) {
                 self.data = data;
             } else {
@@ -46,15 +47,16 @@
         };
 
         var startDraw = function (event) {
-            console.log('startDraw()');
+            console.log('>>>>>> mousedown <<<<<<');
             // Only start drawing if panZoom is disabled, and it's a primary mouse click
             if (!svgPanZoomFactory.status() && event.which === 1) {
                 event.preventDefault();
+                event.stopPropagation();
 
                 if (self.drawing) {
                     console.log(' ...drawing');
                     draw(event);
-                    finishDraw(event);
+                    // finishDraw(event);
                 } else {
                     console.log(' ...else');
                     self.tempOrigin = svgService.createPoint(self.el, self.$viewport, event);
@@ -74,6 +76,7 @@
 
         var draw = function (event) {
             console.log('draw()');
+            return;
             var newPoint = svgService.createPoint(self.el, self.$viewport, event);
             self.tempRect.x = (self.tempOrigin.x < newPoint.x) ? self.tempOrigin.x : newPoint.x;
             self.tempRect.y = (self.tempOrigin.y < newPoint.y) ? self.tempOrigin.y : newPoint.y;
@@ -83,16 +86,17 @@
         };
 
         var finishDraw = function (event) {
-            console.log('finishDraw()');
+            console.log('>>>>>> mouseup <<<<<<');
             var newPoint = svgService.createPoint(self.el, self.$viewport, event);
             if (self.tempOrigin && !(newPoint.x === self.tempOrigin.x && newPoint.y === self.tempOrigin.y)) {
                 $rootScope.$broadcast('svgDrawing:finish', angular.extend({}, self.tempRect), self.data);
                 self.drawing = false;
                 self.tempRect = null;
                 self.tempOrigin = null;
+                console.log('branch #1');
             } else {
+                console.log('branch #2');
                 // TODO: Add a marker here.
-                console.log('ADD MARKER');
                 return;
             }
             self.$viewport.off('mousemove');

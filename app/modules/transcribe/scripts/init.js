@@ -125,6 +125,7 @@
                     if (_.isNull(scope.$parent.activeTool)) {
                         toolFactory.disable();
                     } else {
+                        console.log('ENABLE'); // --STI
                         toolFactory.enable(thisTool.id);
                     }
                 };
@@ -236,10 +237,12 @@
                 });
 
                 scope.$watch('activeTask', function () {
+                    console.log('activeTask changed, activeTask = ', scope.activeTask); // --STI
 
                     // Skip grid tasks if we're not logged in
                     if (scope.activeTask && scope.tasks[scope.activeTask].grid && !authFactory.getUser()) {
                         scope.confirm(scope.tasks[scope.activeTask].skip);
+                        return; // prevent duplicate event bindings after skipping task --STI
                     }
 
                     if (scope.activeTask && angular.isDefined(scope.tasks[scope.activeTask].tools)) {
