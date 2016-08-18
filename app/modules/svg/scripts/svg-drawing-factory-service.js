@@ -50,11 +50,10 @@
             // Only start drawing if panZoom is disabled, and it's a primary mouse click
             if (!svgPanZoomFactory.status() && event.which === 1) {
                 event.preventDefault();
-                event.stopPropagation();
 
-                if (self.drawing) {
+                if (self.drawing) { // already drawing...
                     draw(event);
-                    finishDraw(event);
+                    // finishDraw(event); // not necessary?
                 } else {
                     self.tempOrigin = svgService.createPoint(self.el, self.$viewport, event);
                     self.drawing = true;
