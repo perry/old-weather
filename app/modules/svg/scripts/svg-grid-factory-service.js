@@ -22,8 +22,8 @@
                 self.data = null;
             }
 
-            // self.$viewport.on('mousedown', startDraw);
-            // self.$viewport.on('mouseup', finishDraw);
+            self.$viewport.on('mousedown', startDraw);
+            self.$viewport.on('mouseup', finishDraw);
 
             self.eventsBound = true;
         };

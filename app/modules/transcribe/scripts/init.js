@@ -125,7 +125,6 @@
                     if (_.isNull(scope.$parent.activeTool)) {
                         toolFactory.disable();
                     } else {
-                        console.log('ENABLE'); // --STI
                         toolFactory.enable(thisTool.id);
                     }
                 };
@@ -213,9 +212,7 @@
             localStorageService.set('grids', _grids);
         }
 
-
     });
-
 
     module.directive('transcribeQuestions', function ($rootScope, $timeout, annotationsFactory, gridFactory, toolFactory, authFactory) {
         return {
@@ -251,14 +248,15 @@
                         toolFactory.disable();
                     }
 
-                    if (scope.activeTask === 'T5-use-grid') {
-                        if (gridFactory.list().length === 0) {
-                            scope.confirm(scope.tasks[scope.activeTask].skip);
-                        } else {
-                            scope.grids = gridFactory.list();
-                            scope.showGrid(0);
-                        }
-                    }
+                    // /* COMMENT FOR NOW */
+                    // if (scope.activeTask === 'T5-use-grid') {
+                    //     if (gridFactory.list().length === 0) {
+                    //         scope.confirm(scope.tasks[scope.activeTask].skip);
+                    //     } else {
+                    //         scope.grids = gridFactory.list();
+                    //         scope.showGrid(0);
+                    //     }
+                    // }
 
                 });
 
