@@ -58,7 +58,7 @@
                                 x: header.x,
                                 y: row.y,
                                 rotation: header.rotation,
-                                type: 'row_tmp' // actual row annotations need to be called something else for now --STI
+                                type: 'row_annotation' // actual row annotations need to be called something else for now --STI
                             };
 
                             var existing = _.find(scope.annotations, { _id: tempCells[index] });
@@ -156,8 +156,11 @@
             element.bind('mousedown', function (e) {
               e.stopPropagation();
               var annotation = $parse(attrs.annotation)(scope);
-              console.log('ANNOTATION.TYPE = ', annotation.type); // --STI
-              confirmationModalFactory.deployModal('Delete annotation?', function(isConfirmed){
+              var message = 'Delete annotation?'
+              if(annotation.type == 'row_annotation') {
+                message = 'Delete entire row?';
+              }
+              confirmationModalFactory.deployModal(message, function(isConfirmed){
                 if(isConfirmed){
                   scope.$parent.removeAnnotation(annotation);
                 }
