@@ -5,23 +5,25 @@
 
     module.factory('confirmationModalFactory', [ '$modal', '$controller', function($modal,$controller){
 
-      var message = 'Are you sure?'; // set default message
+      // set default parameters
+      var params = {
+        message: 'Are you sure?'
+      };
 
-      var setMessage = function(msg) {
-        message = msg;
+      var setParams = function(data) {
+        params = data;
       }
 
-      var getMessage = function() {
-        return message;
+      var getParams = function() {
+        return params;
       }
 
-      var deployModal = function(msg, callback) {
-        setMessage(msg);
+      var deployModal = function(data, callback) {
+        setParams(data);
 
         var modalInstance = $modal.open({
           templateUrl: 'templates/confirmation-modal.html',
-          controller: 'ConfirmationModalController',
-          size: 'sm'
+          controller: 'ConfirmationModalController'
         });
 
         modalInstance.result.then(function(isConfirmed) {
@@ -31,9 +33,8 @@
 
       return {
         deployModal: deployModal,
-        message: message,
-        setMessage: setMessage,
-        getMessage: getMessage
+        setParams: setParams,
+        getParams: getParams
       };
 
     }]);

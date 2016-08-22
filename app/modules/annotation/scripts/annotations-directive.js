@@ -90,7 +90,7 @@
                 };
 
                 var clearAnnotations = function () {
-                  confirmationModalFactory.deployModal('Clear all annotations?', function(isConfirmed){
+                  confirmationModalFactory.deployModal({message: 'Clear all annotations?'}, function(isConfirmed){
                     if(isConfirmed){
                       scope.annotations = [];
                       annotationsFactory.clear(null, scope.$parent.subject);
@@ -98,8 +98,8 @@
                   });
                 };
 
-                scope.removeAnnotation = function (annotation) {
-                    if(annotation._rowId) { // remove all annotations in row
+                scope.removeAnnotation = function (annotation, type) {
+                    if(type == 'row' && annotation._rowId) { // remove all annotations in row
                       var annotationsToRemove = _.filter(scope.annotations, {_rowId: annotation._rowId});
                       for(var currAnnotation of annotationsToRemove) {
                         _.remove(scope.annotations, {_rowId: currAnnotation._rowId});
@@ -156,13 +156,23 @@
             element.bind('mousedown', function (e) {
               e.stopPropagation();
               var annotation = $parse(attrs.annotation)(scope);
-              var message = 'Delete annotation?'
+
+              var params = {
+                  message: 'Delete annotation?'
+              };
+
+              // var message = 'Delete annotation?'
+
               if(annotation.type == 'row_annotation') {
-                message = 'Delete entire row?';
+                params.message = 'Delete row or annotation?';
               }
-              confirmationModalFactory.deployModal(message, function(isConfirmed){
-                if(isConfirmed){
-                  scope.$parent.removeAnnotation(annotation);
+
+              confirmationModalFactory.deployModal(params, function(deleteType){
+                console.log('deleteType = ', deleteType); // --STI
+                if(deleteType == 'row'){
+                  scope.$parent.removeAnnotation(annotation, 'row');
+                } else if(deleteType == 'annotation') {
+                  scope.$parent.removeAnnotation(annotation, 'annotation');
                 }
               });
             });
