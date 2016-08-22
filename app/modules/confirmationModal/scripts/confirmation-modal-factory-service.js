@@ -11,6 +11,7 @@
       };
 
       var setParams = function(data) {
+        console.log('Setting params..');
         params = data;
       }
 
@@ -18,15 +19,14 @@
         return params;
       }
 
-      var deployModal = function(data, callback) {
-        setParams(data);
+      var deployModal = function(callback) {
 
         var modalInstance = $modal.open({
           templateUrl: 'templates/confirmation-modal.html',
           controller: 'ConfirmationModalController'
         });
 
-        modalInstance.result.then(function(isConfirmed) {
+        modalInstance.result.then( function(isConfirmed) {
           callback(isConfirmed);
         });
       }

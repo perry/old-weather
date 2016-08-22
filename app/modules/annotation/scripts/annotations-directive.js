@@ -158,16 +158,12 @@
               var annotation = $parse(attrs.annotation)(scope);
 
               var params = {
-                  message: 'Delete annotation?'
+                  message:    annotation.type === 'row_annotation' ? 'Delete annotation or entire row?' : 'Delete annotation?',
+                  deleteType: annotation.type === 'row_annotation' ? 'row' : 'row_annotation'
               };
 
-              // var message = 'Delete annotation?'
-
-              if(annotation.type == 'row_annotation') {
-                params.message = 'Delete row or annotation?';
-              }
-
-              confirmationModalFactory.deployModal(params, function(deleteType){
+              confirmationModalFactory.setParams(params);
+              confirmationModalFactory.deployModal(function(deleteType){
                 console.log('deleteType = ', deleteType); // --STI
                 if(deleteType == 'row'){
                   scope.$parent.removeAnnotation(annotation, 'row');

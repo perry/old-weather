@@ -16,7 +16,7 @@
       }
 
       $scope.confirm = function() {
-        $scope.$close(true);
+        $scope.$close('annotation');
       }
 
       $scope.cancel = function() {
