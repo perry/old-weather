@@ -80,9 +80,10 @@
             var classification = localStorageService.get(storageKey);
 
             if (classification.annotations.length === 0) {
-
-                confirmationModalFactory.deployModal({message: 'You haven\'t added any annotations, are you sure you want to finish?'}, function(isConfirmed){
-                  if(isConfirmed){
+                var params = {message: 'You haven\'t added any annotations, are you sure you want to finish?'};
+                confirmationModalFactory.setParams(params);
+                confirmationModalFactory.deployModal( function(deleteType) {
+                  if(deleteType){
                     var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
                     _.remove(subject_set_queue, {id: id});
                     localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);

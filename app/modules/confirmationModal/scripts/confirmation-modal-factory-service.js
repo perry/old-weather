@@ -25,8 +25,8 @@
           controller: 'ConfirmationModalController'
         });
 
-        modalInstance.result.then( function(isConfirmed) {
-          callback(isConfirmed);
+        modalInstance.result.then( function(deleteType) {
+          callback(deleteType);
         });
       };
 
