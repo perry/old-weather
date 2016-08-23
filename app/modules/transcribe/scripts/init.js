@@ -234,13 +234,12 @@
                 });
 
                 scope.$watch('activeTask', function () {
-                    console.log('activeTask changed, activeTask = ', scope.activeTask); // --STI
                     toolFactory.disable(); // reset mouse events (removes duplicates)
 
                     // Skip grid tasks if we're not logged in
                     if (scope.activeTask && scope.tasks[scope.activeTask].grid && !authFactory.getUser()) {
                         scope.confirm(scope.tasks[scope.activeTask].skip);
-                        return; // prevent duplicate event bindings after skipping task --STI
+                        return; // prevent duplicate event bindings after skipping task
                     }
 
                     if (scope.activeTask && angular.isDefined(scope.tasks[scope.activeTask].tools)) {

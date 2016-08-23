@@ -11,13 +11,12 @@
       };
 
       var setParams = function(data) {
-        console.log('Setting params..');
         params = data;
-      }
+      };
 
       var getParams = function() {
         return params;
-      }
+      };
 
       var deployModal = function(callback) {
 
@@ -29,7 +28,7 @@
         modalInstance.result.then( function(isConfirmed) {
           callback(isConfirmed);
         });
-      }
+      };
 
       return {
         deployModal: deployModal,

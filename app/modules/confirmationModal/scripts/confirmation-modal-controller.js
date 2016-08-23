@@ -9,19 +9,19 @@
 
       $scope.deleteAnnotation = function() {
         $scope.$close('annotation');
-      }
+      };
 
       $scope.deleteRow = function() {
         $scope.$close('row');
-      }
+      };
 
       $scope.confirm = function() {
         $scope.$close('annotation');
-      }
+      };
 
       $scope.cancel = function() {
         $scope.$close(false);
-      }
+      };
 
     });
 

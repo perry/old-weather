@@ -28,22 +28,6 @@
                     scope.$apply();
                 };
 
-                var storeAnnotations = function (e, data) {
-                    // skip for row annotation: createCells() called separately
-                    if (data.type === 'row') {
-                      createCells(data);
-                    }
-                    else {
-                      var existing = _.find(scope.annotations, {_id: data._id});
-                      if (angular.isUndefined(existing)) {
-                          addAnnotation(data);
-                      } else {
-                          updateAnnotation(data, existing);
-                      }
-                    }
-
-                };
-
                 var tempCells = {};
 
                 var createCells = function (row) {
@@ -78,6 +62,22 @@
                     });
                 };
 
+                var storeAnnotations = function (e, data) {
+                    // skip for row annotation: createCells() called separately
+                    if (data.type === 'row') {
+                      createCells(data);
+                    }
+                    else {
+                      var existing = _.find(scope.annotations, {_id: data._id});
+                      if (angular.isUndefined(existing)) {
+                          addAnnotation(data);
+                      } else {
+                          updateAnnotation(data, existing);
+                      }
+                    }
+
+                };
+
                 var getAnnotations = function () {
                     scope.annotations = [];
 
@@ -99,7 +99,7 @@
                 };
 
                 scope.removeAnnotation = function (annotation, type) {
-                    if(type == 'row' && annotation._rowId) { // remove all annotations in row
+                    if(type === 'row' && annotation._rowId) { // remove all annotations in row
                       var annotationsToRemove = _.filter(scope.annotations, {_rowId: annotation._rowId});
                       for(var currAnnotation of annotationsToRemove) {
                         _.remove(scope.annotations, {_rowId: currAnnotation._rowId});
@@ -164,10 +164,9 @@
 
               confirmationModalFactory.setParams(params);
               confirmationModalFactory.deployModal(function(deleteType){
-                console.log('deleteType = ', deleteType); // --STI
-                if(deleteType == 'row'){
+                if(deleteType === 'row'){
                   scope.$parent.removeAnnotation(annotation, 'row');
-                } else if(deleteType == 'annotation') {
+                } else if(deleteType === 'annotation') {
                   scope.$parent.removeAnnotation(annotation, 'annotation');
                 }
               });
