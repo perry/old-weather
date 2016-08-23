@@ -28,13 +28,12 @@
       ];
 
       $scope.launchTutorial = function() {
-        // console.log('LAUNCH TUTORIAL!');
         var modalInstance = $modal.open({
           templateUrl: 'templates/tutorial.html',
           controller: 'TutorialController',
           size: 'lg'
         });
-      }
+      };
 
     }]);
 
