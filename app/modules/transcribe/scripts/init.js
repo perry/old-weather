@@ -248,15 +248,15 @@
                         toolFactory.disable();
                     }
 
-                    // /* COMMENT FOR NOW */
-                    // if (scope.activeTask === 'T5-use-grid') {
-                    //     if (gridFactory.list().length === 0) {
-                    //         scope.confirm(scope.tasks[scope.activeTask].skip);
-                    //     } else {
-                    //         scope.grids = gridFactory.list();
-                    //         scope.showGrid(0);
-                    //     }
-                    // }
+                    /* COMMENT FOR NOW */
+                    if (scope.activeTask === 'T5-use-grid') {
+                        if (gridFactory.list().length === 0) {
+                            scope.confirm(scope.tasks[scope.activeTask].skip);
+                        } else {
+                            scope.grids = gridFactory.list();
+                            scope.showGrid(0);
+                        }
+                    }
 
                 });
 
@@ -348,11 +348,11 @@
                 ]
             };
             // Commented out while we focus on getting this out of the door
-            // workflow.tasks['T5-adjust-grid'] = {
-            //     grid: true,
-            //     instruction: 'If you need to, move the grid into the correct position.',
-            //     next: 'T5-edit-grid'
-            // };
+            workflow.tasks['T5-adjust-grid'] = {
+                grid: true,
+                instruction: 'If you need to, move the grid into the correct position.',
+                next: 'T5-edit-grid'
+            };
             workflow.tasks['T5-edit-grid'] = {
                 grid: true,
                 instruction: 'Draw or remove any additional cells.',
