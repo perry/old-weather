@@ -90,8 +90,10 @@
                 };
 
                 var clearAnnotations = function () {
-                  confirmationModalFactory.deployModal({message: 'Clear all annotations?'}, function(isConfirmed){
-                    if(isConfirmed){
+                  var params = {message: 'Clear all annotations?'};
+                  confirmationModalFactory.setParams(params);
+                  confirmationModalFactory.deployModal(function(deleteType){
+                    if(deleteType){
                       scope.annotations = [];
                       annotationsFactory.clear(null, scope.$parent.subject);
                     }
@@ -163,7 +165,10 @@
               };
 
               confirmationModalFactory.setParams(params);
-              confirmationModalFactory.deployModal(function(deleteType){
+              confirmationModalFactory.deployModal( function(deleteType) {
+                if(!deleteType) {
+                  return; // no params passed, nothing to do
+                }
                 if(deleteType === 'row'){
                   scope.$parent.removeAnnotation(annotation, 'row');
                 } else if(deleteType === 'annotation') {
