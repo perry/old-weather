@@ -212,9 +212,7 @@
             localStorageService.set('grids', _grids);
         }
 
-
     });
-
 
     module.directive('transcribeQuestions', function ($rootScope, $timeout, annotationsFactory, gridFactory, toolFactory, authFactory) {
         return {
@@ -236,10 +234,12 @@
                 });
 
                 scope.$watch('activeTask', function () {
+                    toolFactory.disable(); // reset mouse events (removes duplicates)
 
                     // Skip grid tasks if we're not logged in
                     if (scope.activeTask && scope.tasks[scope.activeTask].grid && !authFactory.getUser()) {
                         scope.confirm(scope.tasks[scope.activeTask].skip);
+                        return; // prevent duplicate event bindings after skipping task
                     }
 
                     if (scope.activeTask && angular.isDefined(scope.tasks[scope.activeTask].tools)) {
@@ -248,14 +248,15 @@
                         toolFactory.disable();
                     }
 
-                    if (scope.activeTask === 'T5-use-grid') {
-                        if (gridFactory.list().length === 0) {
-                            scope.confirm(scope.tasks[scope.activeTask].skip);
-                        } else {
-                            scope.grids = gridFactory.list();
-                            scope.showGrid(0);
-                        }
-                    }
+                    // /* COMMENT FOR NOW */
+                    // if (scope.activeTask === 'T5-use-grid') {
+                    //     if (gridFactory.list().length === 0) {
+                    //         scope.confirm(scope.tasks[scope.activeTask].skip);
+                    //     } else {
+                    //         scope.grids = gridFactory.list();
+                    //         scope.showGrid(0);
+                    //     }
+                    // }
 
                 });
 
@@ -502,39 +503,39 @@
         $rootScope.bodyClass = 'annotate';
 
         $scope.loadSubject = function () {
-            $rootScope.$broadcast('transcribe:loadingSubject');
+          $rootScope.$broadcast('transcribe:loadingSubject');
 
-            $scope.subject_set_id = $stateParams.subject_set_id;
-            $scope.subject = undefined;
-            $scope.isLoading = true;
-            $scope.questions = null;
-            $scope.questionsComplete = false;
-            $scope.grid = gridFactory.get;
+          $scope.subject_set_id = $stateParams.subject_set_id;
+          $scope.subject = undefined;
+          $scope.isLoading = true;
+          $scope.questions = null;
+          $scope.questionsComplete = false;
+          $scope.grid = gridFactory.get;
 
-            workflowFactory.get($scope.subject_set_id)
-                .then(function (response) {
-                    $scope.questions = response;
+          workflowFactory.get($scope.subject_set_id)
+            .then(function (response) {
+              $scope.questions = response;
+            });
+
+          subjectFactory.get($scope.subject_set_id)
+            .then(function (response) {
+              if (response !== null) {
+                $timeout(function () {
+                  $scope.subject = response;
+                  var keys = Object.keys($scope.subject.locations[0]);
+                  var subjectImage = $scope.subject.locations[0][keys[0]];
+                  // TODO: change this. We're cache busting the image.onload event.
+                  subjectImage += '?' + new Date().getTime();
+                  $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
+                  $scope.loadHandler = $scope.subjectLoaded();
+                  $rootScope.$broadcast('transcribe:loadedSubject');
                 });
+              } else {
+                $scope.subject = null;
+                $rootScope.$broadcast('transcribe:loadedSubject');
+              }
 
-            subjectFactory.get($scope.subject_set_id)
-                .then(function (response) {
-                    if (response !== null) {
-                        $timeout(function () {
-                            $scope.subject = response;
-                            var keys = Object.keys($scope.subject.locations[0]);
-                            var subjectImage = $scope.subject.locations[0][keys[0]];
-                            // TODO: change this. We're cache busting the image.onload event.
-                            subjectImage += '?' + new Date().getTime();
-                            $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
-                            $scope.loadHandler = $scope.subjectLoaded();
-                            $rootScope.$broadcast('transcribe:loadedSubject');
-                        });
-                    } else {
-                        $scope.subject = null;
-                        $rootScope.$broadcast('transcribe:loadedSubject');
-                    }
-
-                });
+            });
         };
         $scope.loadSubject();
 

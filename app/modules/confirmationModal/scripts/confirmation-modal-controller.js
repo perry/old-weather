@@ -5,15 +5,23 @@
 
     module.controller('ConfirmationModalController', function(confirmationModalFactory, $scope){
 
-      $scope.msg = confirmationModalFactory.getMessage();
+      $scope.params = confirmationModalFactory.getParams();
+
+      $scope.deleteAnnotation = function() {
+        $scope.$close('annotation');
+      };
+
+      $scope.deleteRow = function() {
+        $scope.$close('row');
+      };
 
       $scope.confirm = function() {
-        $scope.$close(true);
-      }
+        $scope.$close('annotation');
+      };
 
       $scope.cancel = function() {
         $scope.$close(false);
-      }
+      };
 
     });
 
