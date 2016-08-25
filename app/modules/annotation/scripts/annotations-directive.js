@@ -11,6 +11,11 @@
             templateUrl: 'templates/annotation/annotations.html',
             link: function (scope, element, attrs) {
 
+                // --STI
+                element.bind('click', function(e) {
+                  console.log('ANNOTATION CLICKED');
+                });
+
                 var addAnnotation = function (data) {
                     var subject = scope.$parent.subject;
                     scope.annotations.push(data);
@@ -153,26 +158,20 @@
 
             var isClicked = false;
 
-            // console.log('SCOPE: ', scope);
-            // console.log('ELEMENT: ', element);
-            // console.log('ATTRS: ', attrs);
-
-            element.bind('mousemove', function(e) {
-                e.stopPropagation();
-
-                // click + move = drag
-                if(isClicked) {
-                  console.log('DRAGGING!'); // --STI
-
-                }
-
-            });
+            // element.bind('mousemove', function(e) {
+            //     e.stopPropagation();
+            //
+            //     // click + move = drag
+            //     if(isClicked) {
+            //       console.log('DRAGGING!'); // --STI
+            //     }
+            // });
 
             element.bind('mousedown', function (e) {
-              e.stopPropagation();
+              // e.stopPropagation(); // stops grid-level propagation
               isClicked = true;
-              console.log('isClicked = ', isClicked); // --STI
-              return;
+              console.log('isClicked = ', isClicked, e); // --STI
+              return; // skip deletion for now // --STI
 
               var annotation = $parse(attrs.annotation)(scope);
 
@@ -195,7 +194,7 @@
             });
 
             element.bind('mouseup', function(e) {
-                e.stopPropagation();
+                // e.stopPropagation();
                 isClicked = false;
                 console.log('isClicked = ', isClicked); // --STI
             });

@@ -217,15 +217,17 @@
         }
 
         function enableMove(e) {
-          console.log('gridFactory::enableMove(), e = ', e);
-          svgPanZoomFactory.disable();
-          svgGridFactory.bindMouseEvents();
+          console.log('gridFactory::enableMove(), e = ', e); // --STI
+          // svgPanZoomFactory.disable();
+          // svgGridFactory.bindMouseEvents();
+          console.log('CURRENR GRID: ', _currentGrid); // --STI
+
         };
 
         function disableMove(e) {
-          console.log('gridFactory::disableMove(), e = ', e);
-          svgPanZoomFactory.enable();
-          svgGridFactory.unBindMouseEvents();
+          console.log('gridFactory::disableMove(), e = ', e); // --STI
+          // svgPanZoomFactory.enable();
+          // svgGridFactory.unBindMouseEvents();
         };
     });
 
@@ -275,6 +277,8 @@
 
                     if (scope.activeTask === 'T5-adjust-grid') {
                       gridFactory.enableMove();
+                    } else {
+                      gridFactory.disableMove();
                     }
 
                 });
