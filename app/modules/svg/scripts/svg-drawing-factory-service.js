@@ -27,7 +27,7 @@
             self.tempRect.height = Math.abs(newPoint.y - self.tempOrigin.y);
             $rootScope.$broadcast('svgDrawing:update', self.tempRect, self.data);
         };
-        
+
         var startDraw = function (event) {
             // Only start drawing if panZoom is disabled, and it's a primary mouse click
             if (!svgPanZoomFactory.status() && event.which === 1) {
@@ -67,15 +67,16 @@
         };
 
         var bindMouseEvents = function (data) {
+            console.log('bindMouseEvents(), data = ', data); // --STI
             if (angular.isDefined(data)) {
                 self.data = data;
             } else {
+                console.log('NOTHING'); // --STI
                 self.data = null;
             }
 
             self.$viewport.on('mousedown', startDraw);
             self.$viewport.on('mouseup', finishDraw);
-
             self.eventsBound = true;
         };
 

@@ -3,7 +3,7 @@
 
     var module = angular.module('svg');
 
-    module.directive('svgPanZoom', function ($timeout, svgPanZoomFactory, svgDrawingFactory) {
+    module.directive('svgPanZoom', function ($timeout, svgPanZoomFactory, svgDrawingFactory, svgGridFactory) {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -23,6 +23,7 @@
                 var $viewport = angular.element(viewport);
 
                 svgDrawingFactory.init(scope.panZoom, el, $viewport);
+                svgGridFactory.init(scope.panZoom, el, $viewport);
 
                 scope.togglePan = function () {
                     return svgPanZoomFactory.toggle();

@@ -24,18 +24,29 @@
 
             self.$viewport.on('mousedown', startDraw);
             self.$viewport.on('mouseup', finishDraw);
-
             self.eventsBound = true;
         };
 
         var unBindMouseEvents = function () {
             self.data = null;
-
             self.$viewport.off('mousedown');
             self.$viewport.off('mouseup');
-
             self.eventsBound = false;
         };
+
+        var startDraw = function(e) {
+          console.log('svgGridFactory::startDraw()'); // --STI
+
+          // Only start drawing if panZoom is disabled, and it's a primary mouse click
+          if (!svgPanZoomFactory.status() && e.which === 1) {
+          }
+
+
+        }
+
+        var finishDraw = function(e) {
+          console.log('svgGridFactory::finishDraw()'); // --STI
+        }
 
         var hasMouseEvents = function () {
             return self.eventsBound;

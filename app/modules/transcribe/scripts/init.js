@@ -138,20 +138,29 @@
     });
 
     module.factory('toolFactory', function (svgPanZoomFactory, svgDrawingFactory, svgGridFactory) {
-        var enable = function (tool) {
-            svgPanZoomFactory.disable();
-            svgDrawingFactory.bindMouseEvents({type: tool});
-        };
 
-        var disable = function () {
-            svgPanZoomFactory.enable();
-            svgDrawingFactory.unBindMouseEvents();
-        };
+      var enable = function (tool) {
+        svgPanZoomFactory.disable();
+        svgDrawingFactory.bindMouseEvents({type: tool});
+      };
 
-        return {
-            enable: enable,
-            disable: disable
-        };
+      var disable = function () {
+        svgPanZoomFactory.enable();
+        svgDrawingFactory.unBindMouseEvents();
+      };
+
+      var enableGridAdjust = function () {
+        console.log('enableGridAdjust()'); // --STI
+        svgPanZoomFactory.disable();
+        svgGridFactory.bindMouseEvents();
+      };
+
+      return {
+        enable: enable,
+        disable: disable,
+        enableGridAdjust: enableGridAdjust
+      };
+
     });
 
     module.factory('gridFactory', function ($rootScope, annotationsFactory, localStorageService, zooAPI, zooAPIProject) {
@@ -248,7 +257,7 @@
                         toolFactory.disable();
                     }
 
-                    /* COMMENT FOR NOW */
+                    /* Begin grid-related stuff */
                     if (scope.activeTask === 'T5-use-grid') {
                         if (gridFactory.list().length === 0) {
                             scope.confirm(scope.tasks[scope.activeTask].skip);
@@ -256,6 +265,10 @@
                             scope.grids = gridFactory.list();
                             scope.showGrid(0);
                         }
+                    }
+
+                    if (scope.activeTask === 'T5-adjust-grid') {
+                      toolFactory.enableGridAdjust();
                     }
 
                 });
@@ -338,8 +351,8 @@
                 answers: [
                     {
                         label: 'Yes',
-                        // next: 'T5-adjust-grid'
-                        next: 'T5-edit-grid'
+                        next: 'T5-adjust-grid'
+                        // next: 'T5-edit-grid'
                     },
                     {
                         label: 'No',

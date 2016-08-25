@@ -63,11 +63,11 @@
                 };
 
                 var storeAnnotations = function (e, data) {
+                    console.log('storeAnnotations(), data = ', data);
                     // skip for row annotation: createCells() called separately
                     if (data.type === 'row') {
                       createCells(data);
-                    }
-                    else {
+                    } else {
                       var existing = _.find(scope.annotations, {_id: data._id});
                       if (angular.isUndefined(existing)) {
                           addAnnotation(data);
@@ -126,13 +126,9 @@
                 };
 
                 scope.$on('transcribe:clearAnnotations', clearAnnotations);
-
                 scope.$on('transcribe:loadedSubject', getAnnotations);
-
                 scope.$on('svgDrawing:add', storeAnnotations);
-
                 scope.$on('svgDrawing:update', storeAnnotations);
-
                 scope.$on('svgDrawing:update', function (e, rect, data) {
                     // if (data.type === 'row') {
                     //     createCells(rect); // this doesn't seem necessary anymore
@@ -155,8 +151,30 @@
     module.directive('annotation', function (confirmationModalFactory, $window, $parse) {
         return {
           link: function (scope, element, attrs) {
+
+            var isClicked = false;
+
+            // console.log('SCOPE: ', scope);
+            // console.log('ELEMENT: ', element);
+            // console.log('ATTRS: ', attrs);
+
+            // element.bind('mousemove', function(e) {
+            //     e.stopPropagation();
+            //
+            //     // click + move = drag
+            //     if(isClicked) {
+            //       console.log('DRAGGING!'); // --STI
+            //
+            //     }
+            //
+            // });
+
             element.bind('mousedown', function (e) {
               e.stopPropagation();
+              isClicked = true;
+              console.log('isClicked = ', isClicked); // --STI
+              return;
+
               var annotation = $parse(attrs.annotation)(scope);
 
               var params = {
@@ -175,6 +193,12 @@
                   scope.$parent.removeAnnotation(annotation, 'annotation');
                 }
               });
+            });
+
+            element.bind('mouseup', function(e) {
+                e.stopPropagation();
+                isClicked = false;
+                console.log('isClicked = ', isClicked); // --STI
             });
           }
         };
