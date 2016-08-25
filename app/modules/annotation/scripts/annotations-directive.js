@@ -63,7 +63,6 @@
                 };
 
                 var storeAnnotations = function (e, data) {
-                    console.log('storeAnnotations(), data = ', data);
                     // skip for row annotation: createCells() called separately
                     if (data.type === 'row') {
                       createCells(data);
@@ -158,16 +157,16 @@
             // console.log('ELEMENT: ', element);
             // console.log('ATTRS: ', attrs);
 
-            // element.bind('mousemove', function(e) {
-            //     e.stopPropagation();
-            //
-            //     // click + move = drag
-            //     if(isClicked) {
-            //       console.log('DRAGGING!'); // --STI
-            //
-            //     }
-            //
-            // });
+            element.bind('mousemove', function(e) {
+                e.stopPropagation();
+
+                // click + move = drag
+                if(isClicked) {
+                  console.log('DRAGGING!'); // --STI
+
+                }
+
+            });
 
             element.bind('mousedown', function (e) {
               e.stopPropagation();

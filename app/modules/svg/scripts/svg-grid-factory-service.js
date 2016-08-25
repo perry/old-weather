@@ -39,14 +39,15 @@
 
           // Only start drawing if panZoom is disabled, and it's a primary mouse click
           if (!svgPanZoomFactory.status() && e.which === 1) {
+
           }
 
 
-        }
+        };
 
         var finishDraw = function(e) {
           console.log('svgGridFactory::finishDraw()'); // --STI
-        }
+        };
 
         var hasMouseEvents = function () {
             return self.eventsBound;

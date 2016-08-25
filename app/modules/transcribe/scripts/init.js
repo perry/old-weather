@@ -149,21 +149,14 @@
         svgDrawingFactory.unBindMouseEvents();
       };
 
-      var enableGridAdjust = function () {
-        console.log('enableGridAdjust()'); // --STI
-        svgPanZoomFactory.disable();
-        svgGridFactory.bindMouseEvents();
-      };
-
       return {
         enable: enable,
-        disable: disable,
-        enableGridAdjust: enableGridAdjust
+        disable: disable
       };
 
     });
 
-    module.factory('gridFactory', function ($rootScope, annotationsFactory, localStorageService, zooAPI, zooAPIProject) {
+    module.factory('gridFactory', function ($rootScope, annotationsFactory, localStorageService, zooAPI, zooAPIProject, svgGridFactory, svgPanZoomFactory) {
 
         var factory;
         var _currentGrid = [];
@@ -177,6 +170,8 @@
             save: saveGrid,
             show: showGrid,
             use: useGrid,
+            enableMove: enableMove,
+            disableMove: disableMove
         };
 
         return factory;
@@ -221,6 +216,17 @@
             localStorageService.set('grids', _grids);
         }
 
+        function enableMove(e) {
+          console.log('gridFactory::enableMove(), e = ', e);
+          svgPanZoomFactory.disable();
+          svgGridFactory.bindMouseEvents();
+        };
+
+        function disableMove(e) {
+          console.log('gridFactory::disableMove(), e = ', e);
+          svgPanZoomFactory.enable();
+          svgGridFactory.unBindMouseEvents();
+        };
     });
 
     module.directive('transcribeQuestions', function ($rootScope, $timeout, annotationsFactory, gridFactory, toolFactory, authFactory) {
@@ -268,7 +274,7 @@
                     }
 
                     if (scope.activeTask === 'T5-adjust-grid') {
-                      toolFactory.enableGridAdjust();
+                      gridFactory.enableMove();
                     }
 
                 });
