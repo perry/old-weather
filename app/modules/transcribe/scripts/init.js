@@ -171,7 +171,9 @@
             show: showGrid,
             use: useGrid,
             enableMove: enableMove,
-            disableMove: disableMove
+            disableMove: disableMove,
+            moveGrid: moveGrid,
+            createPoint: createPoint
         };
 
         return factory;
@@ -216,6 +218,26 @@
             localStorageService.set('grids', _grids);
         }
 
+        function moveGrid(currentGrid, initialClick, e) {
+          console.log('moveGrid()');
+          var currentPos = svgGridFactory.createPoint(e);
+          var index = _grids.indexOf(currentGrid);
+
+          // use as a reference
+          var beforeGrid = localStorageService.get('grids')[index];
+
+          for(let annotation of currentGrid) {
+            var beforeAnnotation = _.filter(beforeGrid, {_id: annotation._id});
+            let xBefore = beforeAnnotation[0].x;
+            let yBefore = beforeAnnotation[0].y;
+            annotation.x = xBefore + currentPos.x - initialClick.x;
+            annotation.y = yBefore + currentPos.y - initialClick.y;
+          }
+
+          showGrid(index);
+
+        }
+
         function enableMove(e) {
           console.log('gridFactory::enableMove(), e = ', e); // --STI
           // svgPanZoomFactory.disable();
@@ -229,6 +251,13 @@
           // svgPanZoomFactory.enable();
           // svgGridFactory.unBindMouseEvents();
         };
+
+        function createPoint(e) {
+          // console.log('gridFactory::createPoint(), e = ', e); // --STI
+          var newPoint = svgGridFactory.createPoint(e);
+          return newPoint;
+        };
+
     });
 
     module.directive('transcribeQuestions', function ($rootScope, $timeout, annotationsFactory, gridFactory, toolFactory, authFactory) {

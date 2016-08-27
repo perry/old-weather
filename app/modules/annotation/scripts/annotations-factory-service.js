@@ -150,7 +150,6 @@
         };
 
         var update = function (data, subject) {
-            console.log('UPDATE', data, subject); // --STI
             $rootScope.$broadcast('annotations:update', data);
             storeData(data, subject);
         };

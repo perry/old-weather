@@ -12,36 +12,31 @@
 
               scope.isClicked = false;
               scope.isDragging = false;
-              scope.newPoint = null;
+
+              var initialClick = null;
 
               element.bind('mousedown', function(e) {
                 e.stopPropagation();
                 scope.isClicked = true;
+                initialClick = gridFactory.createPoint(e);
               });
 
               element.bind('mouseup', function(e) {
                 e.stopPropagation();
                 scope.isClicked = false;
                 scope.isDragging = false;
+                initialClick = null; // reset initial click
 
               });
 
               element.bind('mousemove', function(e) {
                 e.stopPropagation();
-
                 if(scope.isClicked) {
                   scope.isDragging = true;
-                  // console.log('CURRENT GRID = ', gridFactory.get());
                   var currentGrid = gridFactory.get();
-                  for(var annotation of currentGrid) {
-                    // update annotation
-                    console.log('UPDATE ANNOTATION'); // --STI
-                  }
-
+                  scope.$apply( gridFactory.moveGrid(currentGrid, initialClick, e ) );
                 }
-
               });
-
             }
         };
     });

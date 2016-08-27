@@ -34,6 +34,12 @@
             self.eventsBound = false;
         };
 
+        var createPoint = function (e) {
+          // console.log('svgGridFactory::createPoint(), e = ', e); // --STI
+          var newPoint = svgService.createPoint(self.el, self.$viewport, e);
+          return newPoint;
+        }
+
         var startDraw = function(e) {
           console.log('svgGridFactory::startDraw()'); // --STI
 
@@ -57,7 +63,8 @@
             init: init,
             bindMouseEvents: bindMouseEvents,
             unBindMouseEvents: unBindMouseEvents,
-            hasMouseEvents: hasMouseEvents
+            hasMouseEvents: hasMouseEvents,
+            createPoint: createPoint
         };
     });
 }(window.angular, window._));

@@ -11,11 +11,6 @@
             templateUrl: 'templates/annotation/annotations.html',
             link: function (scope, element, attrs) {
 
-                // --STI
-                element.bind('click', function(e) {
-                  console.log('ANNOTATION CLICKED');
-                });
-
                 var addAnnotation = function (data) {
                     var subject = scope.$parent.subject;
                     scope.annotations.push(data);
