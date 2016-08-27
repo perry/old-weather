@@ -212,6 +212,16 @@
             localStorageService.set('grids', _grids);
         }
 
+
+        // not sure this is needed?
+        function updateGrid(data) {
+          console.log('gridFactory::updateGrid(), data = ', data); // --STI
+          var index = _grids.indexOf(data);
+          _grids.splice(index, 1, data); // replace element with updated version
+          localStorageService.set('grids', _grids);
+          // showGrid(index);
+        }
+
         // Delete grid from local storage
         function deleteGrid(index) {
             _grids.splice(index, 1);
@@ -225,6 +235,7 @@
 
           // use as a reference
           var beforeGrid = localStorageService.get('grids')[index];
+          console.log('beforeGrid = ', beforeGrid);
 
           for(let annotation of currentGrid) {
             var beforeAnnotation = _.filter(beforeGrid, {_id: annotation._id});
@@ -234,6 +245,7 @@
             annotation.y = yBefore + currentPos.y - initialClick.y;
           }
 
+          // updateGrid(currentGrid);
           showGrid(index);
 
         }

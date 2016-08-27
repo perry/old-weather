@@ -12,29 +12,38 @@
 
               scope.isClicked = false;
               scope.isDragging = false;
-
-              var initialClick = null;
+              scope.currentGrid = null;
+              scope.initialClick = null;
 
               element.bind('mousedown', function(e) {
                 e.stopPropagation();
                 scope.isClicked = true;
-                initialClick = gridFactory.createPoint(e);
+                scope.initialClick = gridFactory.createPoint(e);
               });
 
               element.bind('mouseup', function(e) {
                 e.stopPropagation();
                 scope.isClicked = false;
                 scope.isDragging = false;
-                initialClick = null; // reset initial click
-
+                scope.initialClick = null; // reset initial click
+                gridFactory.updateGrid(scope.currentGrid);
               });
+
+
+              element.bind('mouseout', function(e) {
+                e.stopPropagation();
+                scope.isClicked = false;
+                scope.isDragging = false;
+                scope.initialClick = null; // reset initial click
+              });
+
 
               element.bind('mousemove', function(e) {
                 e.stopPropagation();
                 if(scope.isClicked) {
                   scope.isDragging = true;
-                  var currentGrid = gridFactory.get();
-                  scope.$apply( gridFactory.moveGrid(currentGrid, initialClick, e ) );
+                  scope.currentGrid = gridFactory.get();
+                  scope.$apply( gridFactory.moveGrid(scope.currentGrid, scope.initialClick, e ) );
                 }
               });
             }
