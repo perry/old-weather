@@ -173,7 +173,8 @@
             enableMove: enableMove,
             disableMove: disableMove,
             moveGrid: moveGrid,
-            createPoint: createPoint
+            createPoint: createPoint,
+            updateGrid: updateGrid
         };
 
         return factory;
