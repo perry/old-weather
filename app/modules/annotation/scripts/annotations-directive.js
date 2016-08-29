@@ -32,7 +32,7 @@
 
                 var createCells = function (row) {
                     var headers = _.where(scope.annotations, {type: 'header'});
-                    var rowId = _.uniqueId('row_'); // + new Date().getTime(); // use human-readable id for debugging --STI
+                    var rowId = _.uniqueId() + new Date().getTime();
                     _.each(headers, function (header, index) {
                         // If the row is below the header
                         if (row.y >= (header.y + header.height)) {
@@ -48,7 +48,7 @@
                             var existing = _.find(scope.annotations, { _id: tempCells[index] });
 
                             if (angular.isUndefined(existing)) {
-                                annotation._id = _.uniqueId('antn_'); //+ new Date().getTime(); // use human-readable id for debugging --STI
+                                annotation._id = _.uniqueId() + new Date().getTime();
                                 annotation._rowId = rowId;
                                 addAnnotation(annotation);
                                 tempCells[index] = annotation._id;
