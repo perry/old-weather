@@ -161,6 +161,7 @@
         var factory;
         var _currentGrid = [];
         var _grids = localStorageService.get('grids') || [];
+        var isEnabled = false;
 
         factory = {
             del: deleteGrid,
@@ -229,6 +230,7 @@
         }
 
         function moveGrid(currentGrid, initialClick, e) {
+          if (!isEnabled) return;
           var currentPos = svgGridFactory.createPoint(e);
           var index = _grids.indexOf(currentGrid);
 
@@ -250,6 +252,7 @@
 
         function enableMove(e) {
           console.log('gridFactory::enableMove(), e = ', e); // --STI
+          isEnabled = true;
           // svgPanZoomFactory.disable();
           // svgGridFactory.bindMouseEvents();
           // console.log('CURRENR GRID: ', _currentGrid); // --STI
@@ -258,6 +261,7 @@
 
         function disableMove(e) {
           console.log('gridFactory::disableMove(), e = ', e); // --STI
+          isEnabled = false;
           // svgPanZoomFactory.enable();
           // svgGridFactory.unBindMouseEvents();
         };
@@ -306,17 +310,16 @@
 
                     /* Begin grid-related stuff */
                     if (scope.activeTask === 'T5-use-grid') {
+                        annotationsFactory.isEnabled = false; // prevents deleting annotations (and modals produces)
+                        gridFactory.enableMove();
                         if (gridFactory.list().length === 0) {
                             scope.confirm(scope.tasks[scope.activeTask].skip);
                         } else {
                             scope.grids = gridFactory.list();
                             scope.showGrid(0);
                         }
-                    }
-
-                    if (scope.activeTask === 'T5-adjust-grid') {
-                      gridFactory.enableMove();
                     } else {
+                      annotationsFactory.isEnabled = true;
                       gridFactory.disableMove();
                     }
 

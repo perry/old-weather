@@ -4,6 +4,7 @@
     var module = angular.module('svg');
 
     module.factory('svgGridFactory', function ($rootScope, svgPanZoomFactory, svgService) {
+        // Note: $rootScope currently unused
 
         var self = this;
         self.data = null;
@@ -47,8 +48,6 @@
           if (!svgPanZoomFactory.status() && e.which === 1) {
 
           }
-
-
         };
 
         var finishDraw = function(e) {

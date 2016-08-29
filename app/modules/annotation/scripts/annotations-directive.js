@@ -147,25 +147,17 @@
     }]);
 
 
-    module.directive('annotation', function (confirmationModalFactory, $window, $parse) {
+    module.directive('annotation', function (confirmationModalFactory, annotationsFactory, $window, $parse) {
         return {
           link: function (scope, element, attrs) {
 
+            console.log('>>>>>>>>>> annotation directive :: annotationsFactory = ', annotationsFactory);
+
             var isClicked = false;
 
-            // element.bind('mousemove', function(e) {
-            //     e.stopPropagation();
-            //
-            //     // click + move = drag
-            //     if(isClicked) {
-            //       console.log('DRAGGING!'); // --STI
-            //     }
-            // });
-
             element.bind('mousedown', function (e) {
-              // e.stopPropagation(); // stops grid-level propagation
+              e.stopPropagation(); // stops grid-level propagation
               isClicked = true;
-              return; // skip deletion for now // --STI
 
               var annotation = $parse(attrs.annotation)(scope);
 
@@ -173,6 +165,8 @@
                   message:    annotation.type === 'row_annotation' ? 'Delete annotation or entire row?' : 'Delete annotation?',
                   deleteType: annotation.type === 'row_annotation' ? 'row' : 'row_annotation'
               };
+
+              if (!annotationsFactory.isEnabled) return;
 
               confirmationModalFactory.setParams(params);
               confirmationModalFactory.deployModal( function(deleteType) {
@@ -185,6 +179,7 @@
                   scope.$parent.removeAnnotation(annotation, 'annotation');
                 }
               });
+
             });
 
             element.bind('mouseup', function(e) {

@@ -16,8 +16,8 @@
     module.factory('annotationsFactory', function (confirmationModalFactory, $window, $filter, $rootScope, $stateParams, $q, zooAPISubjectSets, localStorageService, zooAPI) {
 
         var classification;
-
         var annotationsPrefix = 'annotation_subject_id_';
+        var isEnabled = true;
 
         var create = function (subject_id) {
             var deferred = $q.defer();
@@ -193,7 +193,8 @@
             clear: clear,
             update: update,
             save: save,
-            addMultiple: addMultiple
+            addMultiple: addMultiple,
+            isEnabled: isEnabled
         };
 
         return obj;
