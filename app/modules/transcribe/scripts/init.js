@@ -216,7 +216,6 @@
 
         // not sure this is needed?
         function updateGrid(data) {
-          console.log('gridFactory::updateGrid(), data = ', data); // --STI
           var index = _grids.indexOf(data);
           _grids.splice(index, 1, data); // replace element with updated version
           localStorageService.set('grids', _grids);
@@ -230,13 +229,11 @@
         }
 
         function moveGrid(currentGrid, initialClick, e) {
-          console.log('moveGrid()');
           var currentPos = svgGridFactory.createPoint(e);
           var index = _grids.indexOf(currentGrid);
 
           // use as a reference
           var beforeGrid = localStorageService.get('grids')[index];
-          console.log('beforeGrid = ', beforeGrid);
 
           for(let annotation of currentGrid) {
             var beforeAnnotation = _.filter(beforeGrid, {_id: annotation._id});
@@ -255,7 +252,7 @@
           console.log('gridFactory::enableMove(), e = ', e); // --STI
           // svgPanZoomFactory.disable();
           // svgGridFactory.bindMouseEvents();
-          console.log('CURRENR GRID: ', _currentGrid); // --STI
+          // console.log('CURRENR GRID: ', _currentGrid); // --STI
 
         };
 

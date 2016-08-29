@@ -1,5 +1,12 @@
 <g class="grid">
-    <g annotation="a" class="grid-annotation" ng-repeat="a in grid() track by a._id | orderBy:'y'" ng-class="{'selected': a.selected}">
+    <g
+      annotation="a"
+      class="grid-annotation"
+      ng-repeat="a in grid() track by a._id | orderBy:'y'"
+      ng-class="{'selected': a.selected}"
+      ng-mousedown="onMouseDown($event)"
+      ng-mouseup="onMouseUp($event)"
+      ng-mousemove="onMouseMove($event)">
         <rect
             ng-attr-transform="{{ 'rotate(' + (a.rotation * -1) + ')'}}"
             ng-attr-width="{{ a.width }}"

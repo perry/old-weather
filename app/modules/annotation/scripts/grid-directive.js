@@ -3,7 +3,7 @@
 
     var module = angular.module('annotation');
 
-    module.directive('grid', function (annotationsFactory, gridFactory) {
+    module.directive('grid', function (annotationsFactory, gridFactory, $document) {
         return {
             replace: true,
             restrict: 'A',
@@ -15,37 +15,45 @@
               scope.currentGrid = null;
               scope.initialClick = null;
 
-              element.bind('mousedown', function(e) {
-                e.stopPropagation(); // without this, events propagate to entire SVG document
-                scope.isClicked = true;
-                scope.initialClick = gridFactory.createPoint(e);
-              });
+              /* Begin event handlers */
 
-              element.bind('mouseup', function(e) {
+              scope.onMouseDown = function(e) {
+                  e.preventDefault();
+                  e.stopPropagation(); // without this, events propagate to entire SVG document
+
+                  scope.isClicked = true;
+                  scope.initialClick = gridFactory.createPoint(e);
+
+                  // bind mouse events to document (otherwise dragging stops if cursor moves off grid)
+                  $document.on('mousemove', scope.onMouseMove);
+                  $document.on('mouseup', scope.onMouseUp);
+              };
+
+              scope.onMouseUp = function(e) {
+                e.preventDefault();
                 e.stopPropagation();
+
                 scope.isClicked = false;
                 scope.isDragging = false;
                 scope.initialClick = null; // reset initial click
+
                 gridFactory.updateGrid(scope.currentGrid);
-              });
 
+                // unbind mouse events
+                $document.off('mousemove', scope.onMouseMove);
+                $document.off('mouseup', scope.onMouseUp);
+              };
 
-              element.bind('mouseout', function(e) {
+              scope.onMouseMove = function(e) {
+                e.preventDefault();
                 e.stopPropagation();
-                scope.isClicked = false;
-                scope.isDragging = false;
-                scope.initialClick = null; // reset initial click
-              });
 
-
-              element.bind('mousemove', function(e) {
-                e.stopPropagation();
                 if(scope.isClicked) {
                   scope.isDragging = true;
                   scope.currentGrid = gridFactory.get();
                   scope.$apply( gridFactory.moveGrid(scope.currentGrid, scope.initialClick, e ) );
                 }
-              });
+              };
             }
         };
     });

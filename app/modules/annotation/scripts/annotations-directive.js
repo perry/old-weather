@@ -165,7 +165,6 @@
             element.bind('mousedown', function (e) {
               // e.stopPropagation(); // stops grid-level propagation
               isClicked = true;
-              console.log('isClicked = ', isClicked, e); // --STI
               return; // skip deletion for now // --STI
 
               var annotation = $parse(attrs.annotation)(scope);
@@ -191,7 +190,6 @@
             element.bind('mouseup', function(e) {
                 // e.stopPropagation();
                 isClicked = false;
-                console.log('isClicked = ', isClicked); // --STI
             });
           }
         };
