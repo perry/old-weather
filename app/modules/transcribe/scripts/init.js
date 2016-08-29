@@ -385,12 +385,12 @@
             workflow.tasks['T5-use-grid'] = {
                 grid: true,
                 skip: 'T5',
-                question: 'Would you like to use this grid?',
+                question: 'Would you like to use this grid? If you need to, move the grid into the correct position.',
                 answers: [
                     {
                         label: 'Yes',
-                        next: 'T5-adjust-grid'
-                        // next: 'T5-edit-grid'
+                        // next: 'T5-adjust-grid'
+                        next: 'T5-edit-grid'
                     },
                     {
                         label: 'No',
@@ -398,12 +398,13 @@
                     }
                 ]
             };
-            // Commented out while we focus on getting this out of the door
-            workflow.tasks['T5-adjust-grid'] = {
-                grid: true,
-                instruction: 'If you need to, move the grid into the correct position.',
-                next: 'T5-edit-grid'
-            };
+            // // No longer needed?
+            // // Commented out while we focus on getting this out of the door
+            // workflow.tasks['T5-adjust-grid'] = {
+            //     grid: true,
+            //     instruction: 'If you need to, move the grid into the correct position.',
+            //     next: 'T5-edit-grid'
+            // };
             workflow.tasks['T5-edit-grid'] = {
                 grid: true,
                 instruction: 'Draw or remove any additional cells.',
