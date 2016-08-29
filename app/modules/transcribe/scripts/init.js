@@ -161,7 +161,7 @@
         var factory;
         var _currentGrid = [];
         var _grids = localStorageService.get('grids') || [];
-        var isEnabled = false;
+        var isMoveEnabled = false;
 
         factory = {
             del: deleteGrid,
@@ -214,13 +214,11 @@
             localStorageService.set('grids', _grids);
         }
 
-
         // not sure this is needed?
         function updateGrid(data) {
           var index = _grids.indexOf(data);
           _grids.splice(index, 1, data); // replace element with updated version
           localStorageService.set('grids', _grids);
-          // showGrid(index);
         }
 
         // Delete grid from local storage
@@ -230,7 +228,7 @@
         }
 
         function moveGrid(currentGrid, initialClick, e) {
-          if (!isEnabled) return;
+          if (!isMoveEnabled) return;
           var currentPos = svgGridFactory.createPoint(e);
           var index = _grids.indexOf(currentGrid);
 
@@ -244,30 +242,20 @@
             annotation.x = xBefore + currentPos.x - initialClick.x;
             annotation.y = yBefore + currentPos.y - initialClick.y;
           }
-
-          // updateGrid(currentGrid);
           showGrid(index);
-
         }
 
         function enableMove(e) {
-          console.log('gridFactory::enableMove(), e = ', e); // --STI
-          isEnabled = true;
-          // svgPanZoomFactory.disable();
-          // svgGridFactory.bindMouseEvents();
-          // console.log('CURRENR GRID: ', _currentGrid); // --STI
-
+          isMoveEnabled = true;
+          annotationsFactory.isEnabled = false; // prevents deleting annotations (and modals produces)
         };
 
         function disableMove(e) {
-          console.log('gridFactory::disableMove(), e = ', e); // --STI
-          isEnabled = false;
-          // svgPanZoomFactory.enable();
-          // svgGridFactory.unBindMouseEvents();
+          isMoveEnabled = false;
+          annotationsFactory.isEnabled = true;
         };
 
         function createPoint(e) {
-          // console.log('gridFactory::createPoint(), e = ', e); // --STI
           var newPoint = svgGridFactory.createPoint(e);
           return newPoint;
         };
@@ -310,8 +298,7 @@
 
                     /* Begin grid-related stuff */
                     if (scope.activeTask === 'T5-use-grid') {
-                        annotationsFactory.isEnabled = false; // prevents deleting annotations (and modals produces)
-                        gridFactory.enableMove();
+                        gridFactory.enableMove(); // and disable deleting annotations
                         if (gridFactory.list().length === 0) {
                             scope.confirm(scope.tasks[scope.activeTask].skip);
                         } else {
@@ -319,7 +306,6 @@
                             scope.showGrid(0);
                         }
                     } else {
-                      annotationsFactory.isEnabled = true;
                       gridFactory.disableMove();
                     }
 

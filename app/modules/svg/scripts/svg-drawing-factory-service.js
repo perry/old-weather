@@ -67,7 +67,6 @@
         };
 
         var bindMouseEvents = function (data) {
-            console.log('bindMouseEvents(), data = ', data); // --STI
             if (angular.isDefined(data)) {
                 self.data = data;
             } else {

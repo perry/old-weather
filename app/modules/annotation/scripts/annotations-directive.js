@@ -151,8 +151,6 @@
         return {
           link: function (scope, element, attrs) {
 
-            console.log('>>>>>>>>>> annotation directive :: annotationsFactory = ', annotationsFactory);
-
             var isClicked = false;
 
             element.bind('mousedown', function (e) {
