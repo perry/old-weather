@@ -110,7 +110,7 @@
                       _.remove(scope.annotations, {_id: annotation._id});
                       annotationsFactory.remove(annotation._id, scope.$parent.subject);
                     }
-                    scope.$apply();
+                    // scope.$apply();
                 };
 
                 scope.selectAnnotation = function (annotation) {
@@ -121,7 +121,7 @@
                     });
 
                     scope.annotations[index].selected = !scope.annotations[index].selected;
-                    scope.$apply();
+                    // scope.$apply();
                 };
 
                 scope.$on('transcribe:clearAnnotations', clearAnnotations);

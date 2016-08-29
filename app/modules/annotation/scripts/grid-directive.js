@@ -51,7 +51,7 @@
                 if(scope.isClicked) {
                   scope.isDragging = true;
                   scope.currentGrid = gridFactory.get();
-                  scope.$apply( gridFactory.moveGrid(scope.currentGrid, scope.initialClick, e ) );
+                  gridFactory.moveGrid(scope.currentGrid, scope.initialClick, e );
                 }
               };
             }

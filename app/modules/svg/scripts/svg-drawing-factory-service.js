@@ -70,7 +70,6 @@
             if (angular.isDefined(data)) {
                 self.data = data;
             } else {
-                console.log('NOTHING'); // --STI
                 self.data = null;
             }
 
