@@ -470,7 +470,15 @@ img
     width: 100%
     height: 90vh
     image
-        cursor: move
+      cursor: move /* fallback if grab cursor is unsupported */
+      cursor: grab
+      cursor: -moz-grab
+      cursor: -webkit-grab
+      &:active
+          cursor: move /* fallback if grab cursor is unsupported */
+          cursor: grabbing
+          cursor: -moz-grabbing
+          cursor: -webkit-grabbing
     &.annotating
         image, rect
             cursor: crosshair
@@ -490,7 +498,18 @@ img
         stroke-width: 3
         stroke: #000
 
-.grid-annotation
+.grid
+    cursor: move /* fallback if grab cursor is unsupported */
+    cursor: grab
+    cursor: -moz-grab
+    cursor: -webkit-grab
+    &:active
+        cursor: move /* fallback if grab cursor is unsupported */
+        cursor: grabbing
+        cursor: -moz-grabbing
+        cursor: -webkit-grabbing
+
+    .grid-annotation
     rect
         stroke-width: 3
         stroke: $red

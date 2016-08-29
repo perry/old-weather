@@ -16,7 +16,7 @@
               scope.initialClick = null;
 
               element.bind('mousedown', function(e) {
-                e.stopPropagation();
+                e.stopPropagation(); // without this, events propagate to entire SVG document
                 scope.isClicked = true;
                 scope.initialClick = gridFactory.createPoint(e);
               });
