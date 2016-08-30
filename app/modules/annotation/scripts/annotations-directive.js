@@ -157,26 +157,32 @@
               e.stopPropagation(); // stops grid-level propagation
               isClicked = true;
 
-              var annotation = $parse(attrs.annotation)(scope);
-
-              var params = {
-                  message:    annotation.type === 'row_annotation' ? 'Delete annotation or entire row?' : 'Delete annotation?',
-                  deleteType: annotation.type === 'row_annotation' ? 'row' : 'row_annotation'
-              };
-
+              // prevents deleting annotations (e.g. when moving grid)
               if (!annotationsFactory.isEnabled) return;
 
-              confirmationModalFactory.setParams(params);
-              confirmationModalFactory.deployModal( function(deleteType) {
-                if(!deleteType) {
-                  return; // no params passed, nothing to do
-                }
-                if(deleteType === 'row'){
-                  scope.$parent.removeAnnotation(annotation, 'row');
-                } else if(deleteType === 'annotation') {
-                  scope.$parent.removeAnnotation(annotation, 'annotation');
-                }
-              });
+              var annotation = $parse(attrs.annotation)(scope);
+
+              annotationsFactory.get(scope.$parent.subject.id)
+                .then( function(response) {
+                  // determine dialog options for modal
+                  var annotationsInRow = _.filter(response.annotations, {_rowId: annotation._rowId}).length;
+                  var params = {
+                      message:    ( annotation.type === 'row_annotation' && annotationsInRow > 1 ) ? 'Delete annotation or entire row?' : 'Delete annotation?',
+                      deleteType: ( annotation.type === 'row_annotation' && annotationsInRow > 1 ) ? 'row' : 'row_annotation'
+                  };
+
+                  confirmationModalFactory.setParams(params);
+                  confirmationModalFactory.deployModal( function(deleteType) {
+                    if(!deleteType) {
+                      return; // no params passed, nothing to do
+                    }
+                    if(deleteType === 'row'){
+                      scope.$parent.removeAnnotation(annotation, 'row');
+                    } else if(deleteType === 'annotation') {
+                      scope.$parent.removeAnnotation(annotation, 'annotation');
+                    }
+                  });
+                });
 
             });
 

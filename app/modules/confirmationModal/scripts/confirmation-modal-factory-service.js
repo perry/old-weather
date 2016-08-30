@@ -4,7 +4,7 @@
     var module = angular.module('confirmationModal');
 
     module.factory('confirmationModalFactory', [ '$modal', '$controller', function($modal,$controller){
-
+      
       // set default parameters
       var params = {
         message: 'Are you sure?'

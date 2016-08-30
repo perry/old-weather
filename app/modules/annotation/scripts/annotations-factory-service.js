@@ -119,15 +119,15 @@
             return deferred.promise;
         };
 
-        var get = function (id) {
-            var storageKey = annotationsPrefix + id;
+        var get = function (subjectId) {
+            var storageKey = annotationsPrefix + subjectId;
             var deferred = $q.defer();
 
             var data = localStorageService.get(storageKey);
             if (data && data.annotations) {
                 deferred.resolve(data);
             } else {
-                create(id)
+                create(subjectId)
                     .then(function (response) {
                         localStorageService.set(storageKey, response);
                         deferred.resolve(response);
