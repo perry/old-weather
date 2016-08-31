@@ -11,7 +11,8 @@
         'transcribe',
         'transcription',
         'zooniverse',
-        'auth'
+        'auth',
+        'classificationViewer'
     ]);
 
     module.config(

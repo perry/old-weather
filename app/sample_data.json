@@ -1,0 +1,1438 @@
+[{
+	"x": 830.7871704101562,
+	"y": 719.1997680664062,
+	"type": "location",
+	"width": 209.52886962890625,
+	"height": 34.00726318359375,
+	"content": "53°48′00″N5",
+	"rotation": 0,
+	"$$hashKey": "object:232",
+	"timestamp": 1472590071344
+}, {
+	"x": 832.9811401367188,
+	"y": 748.8190307617188,
+	"type": "location",
+	"width": 202.94683837890625,
+	"height": 42.7833251953125,
+	"content": "173°51′30″W",
+	"rotation": 0,
+	"$$hashKey": "object:233",
+	"timestamp": 1472590074227
+}, {
+	"x": 841.7572631835938,
+	"y": 775.147216796875,
+	"type": "location",
+	"width": 193.07366943359375,
+	"height": 40.58935546875,
+	"content": "53°46′27″N",
+	"rotation": 0,
+	"$$hashKey": "object:234",
+	"timestamp": 1472590078329
+}, {
+	"x": 835.1751708984375,
+	"y": 803.6694946289062,
+	"type": "location",
+	"width": 206.23779296875,
+	"height": 38.39532470703125,
+	"content": "53°46′27″N",
+	"rotation": 0,
+	"$$hashKey": "object:235",
+	"timestamp": 1472590083361
+}, {
+	"x": 841.7572631835938,
+	"y": 844.2588500976562,
+	"type": "location",
+	"width": 198.55877685546875,
+	"height": 28.522216796875,
+	"content": "53°45′15″N",
+	"rotation": 0,
+	"$$hashKey": "object:236",
+	"timestamp": 1472590087671
+}, {
+	"x": 826.3991088867188,
+	"y": 874.97509765625,
+	"type": "location",
+	"width": 215.01385498046875,
+	"height": 34.00732421875,
+	"content": "174°36′15″W",
+	"rotation": 0,
+	"$$hashKey": "object:237",
+	"timestamp": 1472590090975
+}, {
+	"x": 479.7440490722656,
+	"y": 902.4003295898438,
+	"type": "location",
+	"width": 165.64846801757812,
+	"height": 32.91033935546875,
+	"content": "S 86°30′W",
+	"rotation": 0,
+	"$$hashKey": "object:238",
+	"timestamp": 1472590094718
+}, {
+	"x": 856.0183715820312,
+	"y": 1016.4893798828125,
+	"type": "location",
+	"width": 181.00665283203125,
+	"height": 29.6192626953125,
+	"content": "53°42'15″N",
+	"rotation": 0,
+	"$$hashKey": "object:239",
+	"timestamp": 1472590099913
+}, {
+	"x": 850.5333251953125,
+	"y": 1045.0115966796875,
+	"type": "location",
+	"width": 182.1036376953125,
+	"height": 42.783447265625,
+	"content": "175°58'15″W",
+	"rotation": 0,
+	"$$hashKey": "object:240",
+	"timestamp": 1472590101766
+}, {
+	"x": 102.372802734375,
+	"y": 220.0603485107422,
+	"type": "header",
+	"width": 50.46244812011719,
+	"height": 60.33552551269531,
+	"content": "Hour",
+	"rotation": 0,
+	"$$hashKey": "object:241",
+	"timestamp": 1472590132472
+}, {
+	"x": 152.8352508544922,
+	"y": 215.67230224609375,
+	"type": "header",
+	"width": 41.686370849609375,
+	"height": 63.626556396484375,
+	"content": "Knots",
+	"rotation": 0,
+	"$$hashKey": "object:242",
+	"timestamp": 1472590135223
+}, {
+	"x": 195.61862182617188,
+	"y": 210.187255859375,
+	"type": "header",
+	"width": 36.201324462890625,
+	"height": 66.9176025390625,
+	"content": "Tenths",
+	"rotation": 0,
+	"$$hashKey": "object:243",
+	"timestamp": 1472590137580
+}, {
+	"x": 235.11097717285156,
+	"y": 193.73211669921875,
+	"type": "header",
+	"width": 63.62657165527344,
+	"height": 69.11160278320312,
+	"content": "Reading of Patent Log",
+	"rotation": 0,
+	"$$hashKey": "object:244",
+	"timestamp": 1472590141347
+}, {
+	"x": 318.48370361328125,
+	"y": 201.4111785888672,
+	"type": "header",
+	"width": 148.0963134765625,
+	"height": 65.82057189941406,
+	"content": "Courses Steered by Standard Compass",
+	"rotation": 0,
+	"$$hashKey": "object:245",
+	"timestamp": 1472590145461
+}, {
+	"x": 488.52020263671875,
+	"y": 216.76931762695312,
+	"type": "header",
+	"width": 149.19329833984375,
+	"height": 50.462432861328125,
+	"content": "(Wind) Direction by Standard Compass",
+	"rotation": 0,
+	"$$hashKey": "object:246",
+	"timestamp": 1472590148329
+}, {
+	"x": 649.7806396484375,
+	"y": 215.67230224609375,
+	"type": "header",
+	"width": 34.00726318359375,
+	"height": 55.947509765625,
+	"content": "(Wind) Force",
+	"rotation": 0,
+	"$$hashKey": "object:247",
+	"timestamp": 1472590150717
+}, {
+	"x": 783.6157836914062,
+	"y": 213.47828674316406,
+	"type": "header",
+	"width": 62.52960205078125,
+	"height": 54.85047912597656,
+	"content": "(Barometer) Height in inches",
+	"rotation": 0,
+	"$$hashKey": "object:248",
+	"timestamp": 1472590153119
+}, {
+	"x": 843.9513549804688,
+	"y": 214.57530212402344,
+	"type": "header",
+	"width": 38.39532470703125,
+	"height": 53.75346374511719,
+	"content": "(Barometer) Ther. att'd.",
+	"rotation": 0,
+	"$$hashKey": "object:249",
+	"timestamp": 1472590155699
+}, {
+	"x": 882.3466796875,
+	"y": 212.3812713623047,
+	"type": "header",
+	"width": 37.29833984375,
+	"height": 55.94749450683594,
+	"content": "(Temperature) Air, Dry Bulb",
+	"rotation": 0,
+	"$$hashKey": "object:250",
+	"timestamp": 1472590158372
+}, {
+	"x": 918.5479736328125,
+	"y": 207.9932403564453,
+	"type": "header",
+	"width": 39.49237060546875,
+	"height": 59.23851013183594,
+	"content": "(Temperature) Air, Wet, Bulb",
+	"rotation": 0,
+	"$$hashKey": "object:251",
+	"timestamp": 1472590162133
+}, {
+	"x": 956.943359375,
+	"y": 207.9932403564453,
+	"type": "header",
+	"width": 38.39532470703125,
+	"height": 60.33552551269531,
+	"content": "(Temperature) Water at Surface",
+	"rotation": 0,
+	"$$hashKey": "object:252",
+	"timestamp": 1472590164744
+}, {
+	"x": 997.53271484375,
+	"y": 197.0231475830078,
+	"type": "header",
+	"width": 86.6636962890625,
+	"height": 52.656463623046875,
+	"content": "State of Weather by symbols",
+	"rotation": 0,
+	"$$hashKey": "object:253",
+	"timestamp": 1472590279909
+}, {
+	"x": 1089.6815185546875,
+	"y": 194.82911682128906,
+	"type": "header",
+	"width": 72.402587890625,
+	"height": 59.238525390625,
+	"content": "Forms of clouds by symbols",
+	"rotation": 0,
+	"$$hashKey": "object:254",
+	"timestamp": 1472590282730
+}, {
+	"x": 1163.18115234375,
+	"y": 170.69491577148438,
+	"type": "header",
+	"width": 39.4923095703125,
+	"height": 96.53683471679688,
+	"content": "Prop of clear sky in 10ths",
+	"rotation": 0,
+	"$$hashKey": "object:255",
+	"timestamp": 1472590284814
+}, {
+	"x": 102.372802734375,
+	"y": 317.6942138671875,
+	"type": "row_annotation",
+	"width": 50.46244812011719,
+	"height": 31.813262939453125,
+	"content": "1",
+	"rotation": 0,
+	"$$hashKey": "object:256"
+}, {
+	"x": 152.8352508544922,
+	"y": 317.6942138671875,
+	"type": "row_annotation",
+	"width": 41.686370849609375,
+	"height": 31.813262939453125,
+	"content": "6",
+	"rotation": 0,
+	"$$hashKey": "object:257"
+}, {
+	"x": 195.61862182617188,
+	"y": 317.6942138671875,
+	"type": "row_annotation",
+	"width": 36.201324462890625,
+	"height": 31.813262939453125,
+	"content": "6",
+	"rotation": 0,
+	"$$hashKey": "object:258"
+}, {
+	"x": 235.11097717285156,
+	"y": 317.6942138671875,
+	"type": "row_annotation",
+	"width": 63.62657165527344,
+	"height": 31.813262939453125,
+	"content": "81.8",
+	"rotation": 0,
+	"$$hashKey": "object:259"
+}, {
+	"x": 318.48370361328125,
+	"y": 317.6942138671875,
+	"type": "row_annotation",
+	"width": 148.0963134765625,
+	"height": 31.813262939453125,
+	"content": "WSW3/4W",
+	"rotation": 0,
+	"$$hashKey": "object:260"
+}, {
+	"x": 488.52020263671875,
+	"y": 317.6942138671875,
+	"type": "row_annotation",
+	"width": 149.19329833984375,
+	"height": 31.813262939453125,
+	"content": "WNW",
+	"rotation": 0,
+	"$$hashKey": "object:261"
+}, {
+	"x": 649.7806396484375,
+	"y": 317.6942138671875,
+	"type": "row_annotation",
+	"width": 34.00726318359375,
+	"height": 31.813262939453125,
+	"content": "1",
+	"rotation": 0,
+	"$$hashKey": "object:262"
+}, {
+	"x": 102.372802734375,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 50.46244812011719,
+	"height": 44.977386474609375,
+	"content": "2",
+	"rotation": 0,
+	"$$hashKey": "object:263"
+}, {
+	"x": 152.8352508544922,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 41.686370849609375,
+	"height": 44.977386474609375,
+	"content": "6",
+	"rotation": 0,
+	"$$hashKey": "object:264"
+}, {
+	"x": 195.61862182617188,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 36.201324462890625,
+	"height": 44.977386474609375,
+	"content": "6",
+	"rotation": 0,
+	"$$hashKey": "object:265"
+}, {
+	"x": 235.11097717285156,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 63.62657165527344,
+	"height": 44.977386474609375,
+	"content": "88.2",
+	"rotation": 0,
+	"$$hashKey": "object:266"
+}, {
+	"x": 318.48370361328125,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 148.0963134765625,
+	"height": 44.977386474609375,
+	"content": "WSW3/4W",
+	"rotation": 0,
+	"$$hashKey": "object:267"
+}, {
+	"x": 488.52020263671875,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 149.19329833984375,
+	"height": 44.977386474609375,
+	"content": "WNW",
+	"rotation": 0,
+	"$$hashKey": "object:268"
+}, {
+	"x": 649.7806396484375,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 34.00726318359375,
+	"height": 44.977386474609375,
+	"content": "2",
+	"rotation": 0,
+	"$$hashKey": "object:269"
+}, {
+	"x": 783.6157836914062,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 62.52960205078125,
+	"height": 44.977386474609375,
+	"content": "30.11",
+	"rotation": 0,
+	"$$hashKey": "object:270"
+}, {
+	"x": 843.9513549804688,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 38.39532470703125,
+	"height": 44.977386474609375,
+	"content": "61",
+	"rotation": 0,
+	"$$hashKey": "object:271"
+}, {
+	"x": 882.3466796875,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 37.29833984375,
+	"height": 44.977386474609375,
+	"content": "40",
+	"rotation": 0,
+	"$$hashKey": "object:272"
+}, {
+	"x": 918.5479736328125,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 39.49237060546875,
+	"height": 44.977386474609375,
+	"content": "40",
+	"rotation": 0,
+	"$$hashKey": "object:273"
+}, {
+	"x": 956.943359375,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 38.39532470703125,
+	"height": 44.977386474609375,
+	"content": "41",
+	"rotation": 0,
+	"$$hashKey": "object:274"
+}, {
+	"x": 997.53271484375,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 86.6636962890625,
+	"height": 44.977386474609375,
+	"content": "ucf",
+	"rotation": 0,
+	"$$hashKey": "object:275"
+}, {
+	"x": 1089.6815185546875,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 72.402587890625,
+	"height": 44.977386474609375,
+	"content": "nim",
+	"rotation": 0,
+	"$$hashKey": "object:276"
+}, {
+	"x": 1163.18115234375,
+	"y": 340.7314147949219,
+	"type": "row_annotation",
+	"width": 39.4923095703125,
+	"height": 44.977386474609375,
+	"content": "0",
+	"rotation": 0,
+	"$$hashKey": "object:277"
+}, {
+	"x": 102.372802734375,
+	"y": 376.9327392578125,
+	"type": "row_annotation",
+	"width": 50.46244812011719,
+	"height": 36.2012939453125,
+	"content": "3",
+	"rotation": 0,
+	"$$hashKey": "object:278"
+}, {
+	"x": 152.8352508544922,
+	"y": 376.9327392578125,
+	"type": "row_annotation",
+	"width": 41.686370849609375,
+	"height": 36.2012939453125,
+	"content": "6",
+	"rotation": 0,
+	"$$hashKey": "object:279"
+}, {
+	"x": 195.61862182617188,
+	"y": 376.9327392578125,
+	"type": "row_annotation",
+	"width": 36.201324462890625,
+	"height": 36.2012939453125,
+	"content": "3",
+	"rotation": 0,
+	"$$hashKey": "object:280"
+}, {
+	"x": 235.11097717285156,
+	"y": 376.9327392578125,
+	"type": "row_annotation",
+	"width": 63.62657165527344,
+	"height": 36.2012939453125,
+	"content": "94.5",
+	"rotation": 0,
+	"$$hashKey": "object:281"
+}, {
+	"x": 318.48370361328125,
+	"y": 376.9327392578125,
+	"type": "row_annotation",
+	"width": 148.0963134765625,
+	"height": 36.2012939453125,
+	"content": "WSW3/4W",
+	"rotation": 0,
+	"$$hashKey": "object:282"
+}, {
+	"x": 488.52020263671875,
+	"y": 376.9327392578125,
+	"type": "row_annotation",
+	"width": 149.19329833984375,
+	"height": 36.2012939453125,
+	"content": "WNW",
+	"rotation": 0,
+	"$$hashKey": "object:283"
+}, {
+	"x": 649.7806396484375,
+	"y": 376.9327392578125,
+	"type": "row_annotation",
+	"width": 34.00726318359375,
+	"height": 36.2012939453125,
+	"content": "3",
+	"rotation": 0,
+	"$$hashKey": "object:284"
+}, {
+	"x": 102.372802734375,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 50.46244812011719,
+	"height": 36.2012939453125,
+	"content": "4",
+	"rotation": 0,
+	"$$hashKey": "object:285"
+}, {
+	"x": 152.8352508544922,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 41.686370849609375,
+	"height": 36.2012939453125,
+	"content": "7",
+	"rotation": 0,
+	"$$hashKey": "object:286"
+}, {
+	"x": 195.61862182617188,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 36.201324462890625,
+	"height": 36.2012939453125,
+	"content": "0",
+	"rotation": 0,
+	"$$hashKey": "object:287"
+}, {
+	"x": 235.11097717285156,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 63.62657165527344,
+	"height": 36.2012939453125,
+	"content": "1.5",
+	"rotation": 0,
+	"$$hashKey": "object:288"
+}, {
+	"x": 318.48370361328125,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 148.0963134765625,
+	"height": 36.2012939453125,
+	"content": "WSW3/4W",
+	"rotation": 0,
+	"$$hashKey": "object:289"
+}, {
+	"x": 488.52020263671875,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 149.19329833984375,
+	"height": 36.2012939453125,
+	"content": "NWxW",
+	"rotation": 0,
+	"$$hashKey": "object:290"
+}, {
+	"x": 649.7806396484375,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 34.00726318359375,
+	"height": 36.2012939453125,
+	"content": "3",
+	"rotation": 0,
+	"$$hashKey": "object:291"
+}, {
+	"x": 783.6157836914062,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 62.52960205078125,
+	"height": 36.2012939453125,
+	"content": "30.10",
+	"rotation": 0,
+	"$$hashKey": "object:292"
+}, {
+	"x": 843.9513549804688,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 38.39532470703125,
+	"height": 36.2012939453125,
+	"content": "58",
+	"rotation": 0,
+	"$$hashKey": "object:293"
+}, {
+	"x": 882.3466796875,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 37.29833984375,
+	"height": 36.2012939453125,
+	"content": "41",
+	"rotation": 0,
+	"$$hashKey": "object:294"
+}, {
+	"x": 918.5479736328125,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 39.49237060546875,
+	"height": 36.2012939453125,
+	"content": "40",
+	"rotation": 0,
+	"$$hashKey": "object:295"
+}, {
+	"x": 956.943359375,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 38.39532470703125,
+	"height": 36.2012939453125,
+	"content": "41",
+	"rotation": 0,
+	"$$hashKey": "object:296"
+}, {
+	"x": 997.53271484375,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 86.6636962890625,
+	"height": 36.2012939453125,
+	"content": "oc",
+	"rotation": 0,
+	"$$hashKey": "object:297"
+}, {
+	"x": 1089.6815185546875,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 72.402587890625,
+	"height": 36.2012939453125,
+	"content": "nim",
+	"rotation": 0,
+	"$$hashKey": "object:298"
+}, {
+	"x": 1163.18115234375,
+	"y": 406.552001953125,
+	"type": "row_annotation",
+	"width": 39.4923095703125,
+	"height": 36.2012939453125,
+	"content": "0",
+	"rotation": 0,
+	"$$hashKey": "object:299"
+}, {
+	"x": 102.372802734375,
+	"y": 435.0742492675781,
+	"type": "row_annotation",
+	"width": 50.46244812011719,
+	"height": 35.10430908203125,
+	"content": "5",
+	"rotation": 0,
+	"$$hashKey": "object:300"
+}, {
+	"x": 152.8352508544922,
+	"y": 435.0742492675781,
+	"type": "row_annotation",
+	"width": 41.686370849609375,
+	"height": 35.10430908203125,
+	"content": "7",
+	"rotation": 0,
+	"$$hashKey": "object:301"
+}, {
+	"x": 195.61862182617188,
+	"y": 435.0742492675781,
+	"type": "row_annotation",
+	"width": 36.201324462890625,
+	"height": 35.10430908203125,
+	"content": "3",
+	"rotation": 0,
+	"$$hashKey": "object:302"
+}, {
+	"x": 235.11097717285156,
+	"y": 435.0742492675781,
+	"type": "row_annotation",
+	"width": 63.62657165527344,
+	"height": 35.10430908203125,
+	"content": "8.8",
+	"rotation": 0,
+	"$$hashKey": "object:303"
+}, {
+	"x": 318.48370361328125,
+	"y": 435.0742492675781,
+	"type": "row_annotation",
+	"width": 148.0963134765625,
+	"height": 35.10430908203125,
+	"content": "WSW3/4W",
+	"rotation": 0,
+	"$$hashKey": "object:304"
+}, {
+	"x": 488.52020263671875,
+	"y": 435.0742492675781,
+	"type": "row_annotation",
+	"width": 149.19329833984375,
+	"height": 35.10430908203125,
+	"content": "NWxW",
+	"rotation": 0,
+	"$$hashKey": "object:305"
+}, {
+	"x": 649.7806396484375,
+	"y": 435.0742492675781,
+	"type": "row_annotation",
+	"width": 34.00726318359375,
+	"height": 35.10430908203125,
+	"content": "3",
+	"rotation": 0,
+	"$$hashKey": "object:306"
+}, {
+	"x": 102.372802734375,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 50.46244812011719,
+	"height": 41.686370849609375,
+	"content": "6",
+	"rotation": 0,
+	"$$hashKey": "object:307"
+}, {
+	"x": 152.8352508544922,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 41.686370849609375,
+	"height": 41.686370849609375,
+	"content": "6",
+	"rotation": 0,
+	"$$hashKey": "object:308"
+}, {
+	"x": 195.61862182617188,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 36.201324462890625,
+	"height": 41.686370849609375,
+	"content": "7",
+	"rotation": 0,
+	"$$hashKey": "object:309"
+}, {
+	"x": 235.11097717285156,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 63.62657165527344,
+	"height": 41.686370849609375,
+	"content": "15.5",
+	"rotation": 0,
+	"$$hashKey": "object:310"
+}, {
+	"x": 318.48370361328125,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 148.0963134765625,
+	"height": 41.686370849609375,
+	"content": "WSW3/4W",
+	"rotation": 0,
+	"$$hashKey": "object:311"
+}, {
+	"x": 488.52020263671875,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 149.19329833984375,
+	"height": 41.686370849609375,
+	"content": "NWxW",
+	"rotation": 0,
+	"$$hashKey": "object:312"
+}, {
+	"x": 649.7806396484375,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 34.00726318359375,
+	"height": 41.686370849609375,
+	"content": "3",
+	"rotation": 0,
+	"$$hashKey": "object:313"
+}, {
+	"x": 783.6157836914062,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 62.52960205078125,
+	"height": 41.686370849609375,
+	"content": "30.11",
+	"rotation": 0,
+	"$$hashKey": "object:314"
+}, {
+	"x": 843.9513549804688,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 38.39532470703125,
+	"height": 41.686370849609375,
+	"content": "54",
+	"rotation": 0,
+	"$$hashKey": "object:315"
+}, {
+	"x": 882.3466796875,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 37.29833984375,
+	"height": 41.686370849609375,
+	"content": "40",
+	"rotation": 0,
+	"$$hashKey": "object:316"
+}, {
+	"x": 918.5479736328125,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 39.49237060546875,
+	"height": 41.686370849609375,
+	"content": "39",
+	"rotation": 0,
+	"$$hashKey": "object:317"
+}, {
+	"x": 956.943359375,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 38.39532470703125,
+	"height": 41.686370849609375,
+	"content": "41",
+	"rotation": 0,
+	"$$hashKey": "object:318"
+}, {
+	"x": 997.53271484375,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 86.6636962890625,
+	"height": 41.686370849609375,
+	"content": "oc",
+	"rotation": 0,
+	"$$hashKey": "object:319"
+}, {
+	"x": 1089.6815185546875,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 72.402587890625,
+	"height": 41.686370849609375,
+	"content": "nim",
+	"rotation": 0,
+	"$$hashKey": "object:320"
+}, {
+	"x": 1163.18115234375,
+	"y": 462.4994812011719,
+	"type": "row_annotation",
+	"width": 39.4923095703125,
+	"height": 41.686370849609375,
+	"content": "0",
+	"rotation": 0,
+	"$$hashKey": "object:321"
+}, {
+	"x": 102.372802734375,
+	"y": 498.7008056640625,
+	"type": "row_annotation",
+	"width": 50.46244812011719,
+	"height": 37.29833984375,
+	"content": "7",
+	"rotation": 0,
+	"$$hashKey": "object:322"
+}, {
+	"x": 152.8352508544922,
+	"y": 498.7008056640625,
+	"type": "row_annotation",
+	"width": 41.686370849609375,
+	"height": 37.29833984375,
+	"content": "6",
+	"rotation": 0,
+	"$$hashKey": "object:323"
+}, {
+	"x": 195.61862182617188,
+	"y": 498.7008056640625,
+	"type": "row_annotation",
+	"width": 36.201324462890625,
+	"height": 37.29833984375,
+	"content": "7",
+	"rotation": 0,
+	"$$hashKey": "object:324"
+}, {
+	"x": 235.11097717285156,
+	"y": 498.7008056640625,
+	"type": "row_annotation",
+	"width": 63.62657165527344,
+	"height": 37.29833984375,
+	"content": "22.2",
+	"rotation": 0,
+	"$$hashKey": "object:325"
+}, {
+	"x": 318.48370361328125,
+	"y": 498.7008056640625,
+	"type": "row_annotation",
+	"width": 148.0963134765625,
+	"height": 37.29833984375,
+	"content": "WSW3/4W",
+	"rotation": 0,
+	"$$hashKey": "object:326"
+}, {
+	"x": 488.52020263671875,
+	"y": 498.7008056640625,
+	"type": "row_annotation",
+	"width": 149.19329833984375,
+	"height": 37.29833984375,
+	"content": "NWxW",
+	"rotation": 0,
+	"$$hashKey": "object:327"
+}, {
+	"x": 649.7806396484375,
+	"y": 498.7008056640625,
+	"type": "row_annotation",
+	"width": 34.00726318359375,
+	"height": 37.29833984375,
+	"content": "3",
+	"rotation": 0,
+	"$$hashKey": "object:328"
+}, {
+	"x": 1089.6815185546875,
+	"y": 498.7008056640625,
+	"type": "row_annotation",
+	"width": 72.402587890625,
+	"height": 37.29833984375,
+	"content": "nim stu",
+	"rotation": 0,
+	"$$hashKey": "object:329"
+}, {
+	"x": 102.372802734375,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 50.46244812011719,
+	"height": 38.39532470703125,
+	"content": "8",
+	"rotation": 0,
+	"$$hashKey": "object:330"
+}, {
+	"x": 152.8352508544922,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 41.686370849609375,
+	"height": 38.39532470703125,
+	"content": "7",
+	"rotation": 0,
+	"$$hashKey": "object:331"
+}, {
+	"x": 195.61862182617188,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 36.201324462890625,
+	"height": 38.39532470703125,
+	"content": "6",
+	"rotation": 0,
+	"$$hashKey": "object:332"
+}, {
+	"x": 235.11097717285156,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 63.62657165527344,
+	"height": 38.39532470703125,
+	"content": "29.8",
+	"rotation": 0,
+	"$$hashKey": "object:333"
+}, {
+	"x": 318.48370361328125,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 148.0963134765625,
+	"height": 38.39532470703125,
+	"content": "WSW3/4W",
+	"rotation": 0,
+	"$$hashKey": "object:334"
+}, {
+	"x": 488.52020263671875,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 149.19329833984375,
+	"height": 38.39532470703125,
+	"content": "WNW",
+	"rotation": 0,
+	"$$hashKey": "object:335"
+}, {
+	"x": 649.7806396484375,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 34.00726318359375,
+	"height": 38.39532470703125,
+	"content": "3",
+	"rotation": 0,
+	"$$hashKey": "object:336"
+}, {
+	"x": 783.6157836914062,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 62.52960205078125,
+	"height": 38.39532470703125,
+	"content": "30.15",
+	"rotation": 0,
+	"$$hashKey": "object:337"
+}, {
+	"x": 843.9513549804688,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 38.39532470703125,
+	"height": 38.39532470703125,
+	"content": "56",
+	"rotation": 0,
+	"$$hashKey": "object:338"
+}, {
+	"x": 882.3466796875,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 37.29833984375,
+	"height": 38.39532470703125,
+	"content": "39",
+	"rotation": 0,
+	"$$hashKey": "object:339"
+}, {
+	"x": 918.5479736328125,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 39.49237060546875,
+	"height": 38.39532470703125,
+	"content": "38",
+	"rotation": 0,
+	"$$hashKey": "object:340"
+}, {
+	"x": 956.943359375,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 38.39532470703125,
+	"height": 38.39532470703125,
+	"content": "41",
+	"rotation": 0,
+	"$$hashKey": "object:341"
+}, {
+	"x": 997.53271484375,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 86.6636962890625,
+	"height": 38.39532470703125,
+	"content": "oc",
+	"rotation": 0,
+	"$$hashKey": "object:342"
+}, {
+	"x": 1089.6815185546875,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 72.402587890625,
+	"height": 38.39532470703125,
+	"content": "nim stu",
+	"rotation": 0,
+	"$$hashKey": "object:343"
+}, {
+	"x": 1163.18115234375,
+	"y": 526.1260375976562,
+	"type": "row_annotation",
+	"width": 39.4923095703125,
+	"height": 38.39532470703125,
+	"content": "0",
+	"rotation": 0,
+	"$$hashKey": "object:344"
+}, {
+	"x": 102.372802734375,
+	"y": 557.9393310546875,
+	"type": "row_annotation",
+	"width": 50.46244812011719,
+	"height": 35.10430908203125,
+	"content": "9",
+	"rotation": 0,
+	"$$hashKey": "object:345"
+}, {
+	"x": 152.8352508544922,
+	"y": 557.9393310546875,
+	"type": "row_annotation",
+	"width": 41.686370849609375,
+	"height": 35.10430908203125,
+	"content": "8",
+	"rotation": 0,
+	"$$hashKey": "object:346"
+}, {
+	"x": 195.61862182617188,
+	"y": 557.9393310546875,
+	"type": "row_annotation",
+	"width": 36.201324462890625,
+	"height": 35.10430908203125,
+	"content": "0",
+	"rotation": 0,
+	"$$hashKey": "object:347"
+}, {
+	"x": 235.11097717285156,
+	"y": 557.9393310546875,
+	"type": "row_annotation",
+	"width": 63.62657165527344,
+	"height": 35.10430908203125,
+	"content": "37.8",
+	"rotation": 0,
+	"$$hashKey": "object:348"
+}, {
+	"x": 318.48370361328125,
+	"y": 557.9393310546875,
+	"type": "row_annotation",
+	"width": 148.0963134765625,
+	"height": 35.10430908203125,
+	"content": "WSW3/4W",
+	"rotation": 0,
+	"$$hashKey": "object:349"
+}, {
+	"x": 488.52020263671875,
+	"y": 557.9393310546875,
+	"type": "row_annotation",
+	"width": 149.19329833984375,
+	"height": 35.10430908203125,
+	"content": "NW",
+	"rotation": 0,
+	"$$hashKey": "object:350"
+}, {
+	"x": 649.7806396484375,
+	"y": 557.9393310546875,
+	"type": "row_annotation",
+	"width": 34.00726318359375,
+	"height": 35.10430908203125,
+	"content": "2",
+	"rotation": 0,
+	"$$hashKey": "object:351"
+}, {
+	"x": 102.372802734375,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 50.46244812011719,
+	"height": 46.07440185546875,
+	"content": "10",
+	"rotation": 0,
+	"$$hashKey": "object:352"
+}, {
+	"x": 152.8352508544922,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 41.686370849609375,
+	"height": 46.07440185546875,
+	"content": "6",
+	"rotation": 0,
+	"$$hashKey": "object:353"
+}, {
+	"x": 195.61862182617188,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 36.201324462890625,
+	"height": 46.07440185546875,
+	"content": "5",
+	"rotation": 0,
+	"$$hashKey": "object:354"
+}, {
+	"x": 235.11097717285156,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 63.62657165527344,
+	"height": 46.07440185546875,
+	"content": "44.3",
+	"rotation": 0,
+	"$$hashKey": "object:355"
+}, {
+	"x": 318.48370361328125,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 148.0963134765625,
+	"height": 46.07440185546875,
+	"content": "WSW3/4W",
+	"rotation": 0,
+	"$$hashKey": "object:356"
+}, {
+	"x": 488.52020263671875,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 149.19329833984375,
+	"height": 46.07440185546875,
+	"content": "West",
+	"rotation": 0,
+	"$$hashKey": "object:357"
+}, {
+	"x": 649.7806396484375,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 34.00726318359375,
+	"height": 46.07440185546875,
+	"content": "1",
+	"rotation": 0,
+	"$$hashKey": "object:358"
+}, {
+	"x": 783.6157836914062,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 62.52960205078125,
+	"height": 46.07440185546875,
+	"content": "30.16",
+	"rotation": 0,
+	"$$hashKey": "object:359"
+}, {
+	"x": 843.9513549804688,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 38.39532470703125,
+	"height": 46.07440185546875,
+	"content": "53",
+	"rotation": 0,
+	"$$hashKey": "object:360"
+}, {
+	"x": 882.3466796875,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 37.29833984375,
+	"height": 46.07440185546875,
+	"content": "37",
+	"rotation": 0,
+	"$$hashKey": "object:361"
+}, {
+	"x": 918.5479736328125,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 39.49237060546875,
+	"height": 46.07440185546875,
+	"content": "36",
+	"rotation": 0,
+	"$$hashKey": "object:362"
+}, {
+	"x": 956.943359375,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 38.39532470703125,
+	"height": 46.07440185546875,
+	"content": "42",
+	"rotation": 0,
+	"$$hashKey": "object:363"
+}, {
+	"x": 997.53271484375,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 86.6636962890625,
+	"height": 46.07440185546875,
+	"content": "ucr",
+	"rotation": 0,
+	"$$hashKey": "object:364"
+}, {
+	"x": 1089.6815185546875,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 72.402587890625,
+	"height": 46.07440185546875,
+	"content": "stu",
+	"rotation": 0,
+	"$$hashKey": "object:365"
+}, {
+	"x": 1163.18115234375,
+	"y": 582.0735473632812,
+	"type": "row_annotation",
+	"width": 39.4923095703125,
+	"height": 46.07440185546875,
+	"content": "0",
+	"rotation": 0,
+	"$$hashKey": "object:366"
+}, {
+	"x": 102.372802734375,
+	"y": 620.4689331054688,
+	"type": "row_annotation",
+	"width": 50.46244812011719,
+	"height": 40.58935546875,
+	"content": "11",
+	"rotation": 0,
+	"$$hashKey": "object:367"
+}, {
+	"x": 152.8352508544922,
+	"y": 620.4689331054688,
+	"type": "row_annotation",
+	"width": 41.686370849609375,
+	"height": 40.58935546875,
+	"content": "6",
+	"rotation": 0,
+	"$$hashKey": "object:368"
+}, {
+	"x": 195.61862182617188,
+	"y": 620.4689331054688,
+	"type": "row_annotation",
+	"width": 36.201324462890625,
+	"height": 40.58935546875,
+	"content": "4",
+	"rotation": 0,
+	"$$hashKey": "object:369"
+}, {
+	"x": 235.11097717285156,
+	"y": 620.4689331054688,
+	"type": "row_annotation",
+	"width": 63.62657165527344,
+	"height": 40.58935546875,
+	"content": "50.7",
+	"rotation": 0,
+	"$$hashKey": "object:370"
+}, {
+	"x": 318.48370361328125,
+	"y": 620.4689331054688,
+	"type": "row_annotation",
+	"width": 148.0963134765625,
+	"height": 40.58935546875,
+	"content": "WSW3/4W",
+	"rotation": 0,
+	"$$hashKey": "object:371"
+}, {
+	"x": 488.52020263671875,
+	"y": 620.4689331054688,
+	"type": "row_annotation",
+	"width": 149.19329833984375,
+	"height": 40.58935546875,
+	"content": "West",
+	"rotation": 0,
+	"$$hashKey": "object:372"
+}, {
+	"x": 649.7806396484375,
+	"y": 620.4689331054688,
+	"type": "row_annotation",
+	"width": 34.00726318359375,
+	"height": 40.58935546875,
+	"content": "1",
+	"rotation": 0,
+	"$$hashKey": "object:373"
+}, {
+	"x": 102.372802734375,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 50.46244812011719,
+	"height": 44.9774169921875,
+	"content": "Noon",
+	"rotation": 0,
+	"$$hashKey": "object:374"
+}, {
+	"x": 152.8352508544922,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 41.686370849609375,
+	"height": 44.9774169921875,
+	"content": "6",
+	"rotation": 0,
+	"$$hashKey": "object:375"
+}, {
+	"x": 195.61862182617188,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 36.201324462890625,
+	"height": 44.9774169921875,
+	"content": "4",
+	"rotation": 0,
+	"$$hashKey": "object:376"
+}, {
+	"x": 235.11097717285156,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 63.62657165527344,
+	"height": 44.9774169921875,
+	"content": "57.1",
+	"rotation": 0,
+	"$$hashKey": "object:377"
+}, {
+	"x": 318.48370361328125,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 148.0963134765625,
+	"height": 44.9774169921875,
+	"content": "WSW3/4W",
+	"rotation": 0,
+	"$$hashKey": "object:378"
+}, {
+	"x": 488.52020263671875,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 149.19329833984375,
+	"height": 44.9774169921875,
+	"content": "WxS",
+	"rotation": 0,
+	"$$hashKey": "object:379"
+}, {
+	"x": 649.7806396484375,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 34.00726318359375,
+	"height": 44.9774169921875,
+	"content": "1",
+	"rotation": 0,
+	"$$hashKey": "object:380"
+}, {
+	"x": 783.6157836914062,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 62.52960205078125,
+	"height": 44.9774169921875,
+	"content": "30.17",
+	"rotation": 0,
+	"$$hashKey": "object:381"
+}, {
+	"x": 843.9513549804688,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 38.39532470703125,
+	"height": 44.9774169921875,
+	"content": "56",
+	"rotation": 0,
+	"$$hashKey": "object:382"
+}, {
+	"x": 882.3466796875,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 37.29833984375,
+	"height": 44.9774169921875,
+	"content": "40",
+	"rotation": 0,
+	"$$hashKey": "object:383"
+}, {
+	"x": 918.5479736328125,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 39.49237060546875,
+	"height": 44.9774169921875,
+	"content": "39",
+	"rotation": 0,
+	"$$hashKey": "object:384"
+}, {
+	"x": 956.943359375,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 38.39532470703125,
+	"height": 44.9774169921875,
+	"content": "42",
+	"rotation": 0,
+	"$$hashKey": "object:385"
+}, {
+	"x": 997.53271484375,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 86.6636962890625,
+	"height": 44.9774169921875,
+	"content": "ocr",
+	"rotation": 0,
+	"$$hashKey": "object:386"
+}, {
+	"x": 1089.6815185546875,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 72.402587890625,
+	"height": 44.9774169921875,
+	"content": "nimo stu",
+	"rotation": 0,
+	"$$hashKey": "object:387"
+}, {
+	"x": 1163.18115234375,
+	"y": 644.6030883789062,
+	"type": "row_annotation",
+	"width": 39.4923095703125,
+	"height": 44.9774169921875,
+	"content": "0",
+	"rotation": 0,
+	"$$hashKey": "object:388"
+}]
