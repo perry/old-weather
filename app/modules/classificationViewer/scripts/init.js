@@ -45,7 +45,7 @@
 
   module.controller('classificationViewerController', function ($stateParams, $scope, $sce, $http, zooAPI) {
 
-    $scope.isLoading = true;
+    // $scope.isLoading = true;
     $scope.classificationId = $stateParams.classification_id;
     $scope.image_src = null //$sce.trustAsResourceUrl('https://panoptes-uploads.zooniverse.org/production/subject_location/4556b6b4-d8e6-4c77-8e2a-083010644546.jpeg');
     $scope.data = null;
@@ -61,7 +61,7 @@
           .then( function(response) {
             var keys = Object.keys(response[0].locations[0]);
             $scope.image_src = $sce.trustAsResourceUrl( response[0].locations[0][keys[0]] );
-            $scope.isLoading = false;
+            // $scope.isLoading = false;
             console.log('IMAGE SRC = ', $scope.image_src);
           });
       })
