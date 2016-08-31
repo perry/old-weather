@@ -32,7 +32,7 @@
 
                 var createCells = function (row) {
                     var headers = _.where(scope.annotations, {type: 'header'});
-                    var rowId = _.uniqueId('row_'); // + new Date().getTime(); // use human-readable id for debugging --STI
+                    var rowId = _.uniqueId() + new Date().getTime();
                     _.each(headers, function (header, index) {
                         // If the row is below the header
                         if (row.y >= (header.y + header.height)) {
@@ -48,7 +48,7 @@
                             var existing = _.find(scope.annotations, { _id: tempCells[index] });
 
                             if (angular.isUndefined(existing)) {
-                                annotation._id = _.uniqueId('antn_'); //+ new Date().getTime(); // use human-readable id for debugging --STI
+                                annotation._id = _.uniqueId() + new Date().getTime();
                                 annotation._rowId = rowId;
                                 addAnnotation(annotation);
                                 tempCells[index] = annotation._id;
@@ -66,8 +66,7 @@
                     // skip for row annotation: createCells() called separately
                     if (data.type === 'row') {
                       createCells(data);
-                    }
-                    else {
+                    } else {
                       var existing = _.find(scope.annotations, {_id: data._id});
                       if (angular.isUndefined(existing)) {
                           addAnnotation(data);
@@ -111,7 +110,7 @@
                       _.remove(scope.annotations, {_id: annotation._id});
                       annotationsFactory.remove(annotation._id, scope.$parent.subject);
                     }
-                    scope.$apply();
+                    // scope.$apply();
                 };
 
                 scope.selectAnnotation = function (annotation) {
@@ -122,17 +121,13 @@
                     });
 
                     scope.annotations[index].selected = !scope.annotations[index].selected;
-                    scope.$apply();
+                    // scope.$apply();
                 };
 
                 scope.$on('transcribe:clearAnnotations', clearAnnotations);
-
                 scope.$on('transcribe:loadedSubject', getAnnotations);
-
                 scope.$on('svgDrawing:add', storeAnnotations);
-
                 scope.$on('svgDrawing:update', storeAnnotations);
-
                 scope.$on('svgDrawing:update', function (e, rect, data) {
                     // if (data.type === 'row') {
                     //     createCells(rect); // this doesn't seem necessary anymore
@@ -152,29 +147,48 @@
     }]);
 
 
-    module.directive('annotation', function (confirmationModalFactory, $window, $parse) {
+    module.directive('annotation', function (confirmationModalFactory, annotationsFactory, $window, $parse) {
         return {
           link: function (scope, element, attrs) {
+
+            var isClicked = false;
+
             element.bind('mousedown', function (e) {
-              e.stopPropagation();
+              e.stopPropagation(); // stops grid-level propagation
+              isClicked = true;
+
+              // prevents deleting annotations (e.g. when moving grid)
+              if (!annotationsFactory.isEnabled) return;
+
               var annotation = $parse(attrs.annotation)(scope);
 
-              var params = {
-                  message:    annotation.type === 'row_annotation' ? 'Delete annotation or entire row?' : 'Delete annotation?',
-                  deleteType: annotation.type === 'row_annotation' ? 'row' : 'row_annotation'
-              };
+              annotationsFactory.get(scope.$parent.subject.id)
+                .then( function(response) {
+                  // determine dialog options for modal
+                  var annotationsInRow = _.filter(response.annotations, {_rowId: annotation._rowId}).length;
+                  var params = {
+                      message:    ( annotation.type === 'row_annotation' && annotationsInRow > 1 ) ? 'Delete annotation or entire row?' : 'Delete annotation?',
+                      deleteType: ( annotation.type === 'row_annotation' && annotationsInRow > 1 ) ? 'row' : 'row_annotation'
+                  };
 
-              confirmationModalFactory.setParams(params);
-              confirmationModalFactory.deployModal( function(deleteType) {
-                if(!deleteType) {
-                  return; // no params passed, nothing to do
-                }
-                if(deleteType === 'row'){
-                  scope.$parent.removeAnnotation(annotation, 'row');
-                } else if(deleteType === 'annotation') {
-                  scope.$parent.removeAnnotation(annotation, 'annotation');
-                }
-              });
+                  confirmationModalFactory.setParams(params);
+                  confirmationModalFactory.deployModal( function(deleteType) {
+                    if(!deleteType) {
+                      return; // no params passed, nothing to do
+                    }
+                    if(deleteType === 'row'){
+                      scope.$parent.removeAnnotation(annotation, 'row');
+                    } else if(deleteType === 'annotation') {
+                      scope.$parent.removeAnnotation(annotation, 'annotation');
+                    }
+                  });
+                });
+
+            });
+
+            element.bind('mouseup', function(e) {
+                // e.stopPropagation();
+                isClicked = false;
             });
           }
         };

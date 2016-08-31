@@ -138,27 +138,30 @@
     });
 
     module.factory('toolFactory', function (svgPanZoomFactory, svgDrawingFactory, svgGridFactory) {
-        var enable = function (tool) {
-            svgPanZoomFactory.disable();
-            svgDrawingFactory.bindMouseEvents({type: tool});
-        };
 
-        var disable = function () {
-            svgPanZoomFactory.enable();
-            svgDrawingFactory.unBindMouseEvents();
-        };
+      var enable = function (tool) {
+        svgPanZoomFactory.disable();
+        svgDrawingFactory.bindMouseEvents({type: tool});
+      };
 
-        return {
-            enable: enable,
-            disable: disable
-        };
+      var disable = function () {
+        svgPanZoomFactory.enable();
+        svgDrawingFactory.unBindMouseEvents();
+      };
+
+      return {
+        enable: enable,
+        disable: disable
+      };
+
     });
 
-    module.factory('gridFactory', function ($rootScope, annotationsFactory, localStorageService, zooAPI, zooAPIProject) {
+    module.factory('gridFactory', function ($rootScope, annotationsFactory, localStorageService, zooAPI, zooAPIProject, svgGridFactory, svgPanZoomFactory) {
 
         var factory;
         var _currentGrid = [];
         var _grids = localStorageService.get('grids') || [];
+        var isMoveEnabled = false;
 
         factory = {
             del: deleteGrid,
@@ -168,6 +171,11 @@
             save: saveGrid,
             show: showGrid,
             use: useGrid,
+            enableMove: enableMove,
+            disableMove: disableMove,
+            moveGrid: moveGrid,
+            createPoint: createPoint,
+            updateGrid: updateGrid
         };
 
         return factory;
@@ -206,11 +214,51 @@
             localStorageService.set('grids', _grids);
         }
 
+        // not sure this is needed?
+        function updateGrid(data) {
+          var index = _grids.indexOf(data);
+          _grids.splice(index, 1, data); // replace element with updated version
+          localStorageService.set('grids', _grids);
+        }
+
         // Delete grid from local storage
         function deleteGrid(index) {
             _grids.splice(index, 1);
             localStorageService.set('grids', _grids);
         }
+
+        function moveGrid(currentGrid, initialClick, e) {
+          if (!isMoveEnabled) return;
+          var currentPos = svgGridFactory.createPoint(e);
+          var index = _grids.indexOf(currentGrid);
+
+          // use as a reference
+          var beforeGrid = localStorageService.get('grids')[index];
+
+          for(let annotation of currentGrid) {
+            var beforeAnnotation = _.filter(beforeGrid, {_id: annotation._id});
+            let xBefore = beforeAnnotation[0].x;
+            let yBefore = beforeAnnotation[0].y;
+            annotation.x = xBefore + currentPos.x - initialClick.x;
+            annotation.y = yBefore + currentPos.y - initialClick.y;
+          }
+          showGrid(index);
+        }
+
+        function enableMove(e) {
+          isMoveEnabled = true;
+          annotationsFactory.isEnabled = false; // prevents deleting annotations (and modals produces)
+        };
+
+        function disableMove(e) {
+          isMoveEnabled = false;
+          annotationsFactory.isEnabled = true;
+        };
+
+        function createPoint(e) {
+          var newPoint = svgGridFactory.createPoint(e);
+          return newPoint;
+        };
 
     });
 
@@ -248,15 +296,18 @@
                         toolFactory.disable();
                     }
 
-                    // /* COMMENT FOR NOW */
-                    // if (scope.activeTask === 'T5-use-grid') {
-                    //     if (gridFactory.list().length === 0) {
-                    //         scope.confirm(scope.tasks[scope.activeTask].skip);
-                    //     } else {
-                    //         scope.grids = gridFactory.list();
-                    //         scope.showGrid(0);
-                    //     }
-                    // }
+                    /* Begin grid-related stuff */
+                    if (scope.activeTask === 'T5-use-grid') {
+                        gridFactory.enableMove(); // and disable deleting annotations
+                        if (gridFactory.list().length === 0) {
+                            scope.confirm(scope.tasks[scope.activeTask].skip);
+                        } else {
+                            scope.grids = gridFactory.list();
+                            scope.showGrid(0);
+                        }
+                    } else {
+                      gridFactory.disableMove();
+                    }
 
                 });
 
@@ -334,7 +385,7 @@
             workflow.tasks['T5-use-grid'] = {
                 grid: true,
                 skip: 'T5',
-                question: 'Would you like to use this grid?',
+                question: 'Would you like to use this grid? If you need to, move the grid into the correct position.',
                 answers: [
                     {
                         label: 'Yes',
@@ -347,7 +398,8 @@
                     }
                 ]
             };
-            // Commented out while we focus on getting this out of the door
+            // // No longer needed?
+            // // Commented out while we focus on getting this out of the door
             // workflow.tasks['T5-adjust-grid'] = {
             //     grid: true,
             //     instruction: 'If you need to, move the grid into the correct position.',

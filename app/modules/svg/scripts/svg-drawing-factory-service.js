@@ -27,7 +27,7 @@
             self.tempRect.height = Math.abs(newPoint.y - self.tempOrigin.y);
             $rootScope.$broadcast('svgDrawing:update', self.tempRect, self.data);
         };
-        
+
         var startDraw = function (event) {
             // Only start drawing if panZoom is disabled, and it's a primary mouse click
             if (!svgPanZoomFactory.status() && event.which === 1) {
@@ -43,7 +43,7 @@
                         width: 0,
                         height: 0,
                         timestamp: new Date().getTime(),
-                        _id: _.uniqueId('antn_'), //+ new Date().getTime(), // use human-readable id for debugging --STI
+                        _id: _.uniqueId() + new Date().getTime(),
                         rotation: svgPanZoomFactory.getRotation()
                     }, self.data);
                     $rootScope.$broadcast('svgDrawing:add', self.tempRect, self.data);
@@ -75,7 +75,6 @@
 
             self.$viewport.on('mousedown', startDraw);
             self.$viewport.on('mouseup', finishDraw);
-
             self.eventsBound = true;
         };
 
