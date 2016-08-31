@@ -23,23 +23,11 @@
               </image>
             </g>
 
-            <g
-              classification
+            <g annotation
               ng-repeat="annotation in data"
               ng-mousedown="displayContent($event)">
-              <rect
-                x="{{annotation.x}}"
-                y="{{annotation.y}}"
-                width="{{annotation.width}}"
-                height="{{annotation.height}}"
-                style="fill:none;stroke:red;stroke-width:3;opacity:0.5">
-              <text
-                x="{{annotation.x}}"
-                y="{{ annotation.y+annotation.height/2 }}"
-                style="stroke:green">
-                {{content}}
-              </text>
             </g>
+
             <g grid ng-if="!isLoading"></g>
             <g annotations ng-if="!isLoading"></g>
           </g>

@@ -21,27 +21,26 @@
       });
   });
 
-  module.directive('classification', function (svgPanZoomFactory, svgDrawingFactory, toolFactory) {
+  module.directive('annotation', function (svgPanZoomFactory, svgDrawingFactory, toolFactory) {
     return {
       restrict: 'A',
-      // templateUrl: 'templates/transcribe/_tools.html',
-      scope: true,
+      templateUrl: 'templates/_annotation.html',
       link: function (scope, element, attrs) {
-        element.bind('mouseover', function(e) {
-          e.stopPropagation();
-          scope.content = scope.$parent.annotation.content;
-          console.log('CONTENT: ', scope.content);
-          scope.isContentVisible = true;
-          scope.cursor = {x: e.x, y: e.y}
-          scope.$apply();
-        });
 
-        element.bind('mouseout', function(e) {
-          scope.content = null; //scope.$parent.annotation.content;
-          // console.log('CONTENT: ', scope.content);
-          scope.isContentVisible = false;
-          // scope.$apply();
-        });
+        scope.onMouseOver = function(e) {
+          console.log('onMouseOver(), scope: ', scope);
+          e.stopPropagation();
+          scope.isHovered = true;
+          scope.$apply();
+        };
+
+        scope.onMouseOut = function(e) {
+          console.log('onMouseOut(), scope: ', scope);
+          e.stopPropagation();
+          scope.isHovered = false;
+          scope.$apply();
+        };
+
       }
     };
   });

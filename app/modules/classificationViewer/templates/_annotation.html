@@ -1,0 +1,20 @@
+<!-- bounding box -->
+<rect
+  ng-mouseover="onMouseOver($event)"
+  ng-mouseout="onMouseOut($event)"
+  x="{{annotation.x}}"
+  y="{{annotation.y}}"
+  rx="5"
+  rx="5"
+  width="{{annotation.width}}"
+  height="{{annotation.height}}"
+  style="fill:transparent;stroke:red;stroke-width:1;opacity:{{isHovered ? 0.75 : 0.1}}">
+</rect>
+
+<!-- transcribed content -->
+<text
+  x="{{annotation.x}}"
+  y="{{ annotation.y-5 }}"
+  style="fill:red;opacity:{{isHovered ? 0.75 : 0.1}}">
+  {{annotation.content}}
+</text>
