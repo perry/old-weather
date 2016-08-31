@@ -45,14 +45,25 @@
 
   module.controller('classificationViewerController', function ($stateParams, $scope, $sce, $http, zooAPI) {
 
+    $scope.isLoading = true;
     $scope.classificationId = $stateParams.classification_id;
-    $scope.image_src = $sce.trustAsResourceUrl('https://panoptes-uploads.zooniverse.org/production/subject_location/4556b6b4-d8e6-4c77-8e2a-083010644546.jpeg');
+    $scope.image_src = null //$sce.trustAsResourceUrl('https://panoptes-uploads.zooniverse.org/production/subject_location/4556b6b4-d8e6-4c77-8e2a-083010644546.jpeg');
     $scope.data = null;
     $scope.error = '';
 
     zooAPI.type('classifications').get({id: $scope.classificationId})
       .then( function(response) {
+        console.log('RESPONSE = ', response);
         $scope.data = response[0].annotations;
+
+        // get subject id from resource
+        zooAPI.type('subjects').get({id: response[0].links.subjects[0]})
+          .then( function(response) {
+            var keys = Object.keys(response[0].locations[0]);
+            $scope.image_src = $sce.trustAsResourceUrl( response[0].locations[0][keys[0]] );
+            $scope.isLoading = false;
+            console.log('IMAGE SRC = ', $scope.image_src);
+          });
       })
       .catch( function(error) {
         $scope.error = error.toString();
