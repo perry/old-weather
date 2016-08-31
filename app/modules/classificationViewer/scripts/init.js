@@ -21,6 +21,31 @@
       });
   });
 
+  module.directive('classification', function (svgPanZoomFactory, svgDrawingFactory, toolFactory) {
+    return {
+      restrict: 'A',
+      // templateUrl: 'templates/transcribe/_tools.html',
+      scope: true,
+      link: function (scope, element, attrs) {
+        element.bind('mouseover', function(e) {
+          e.stopPropagation();
+          scope.content = scope.$parent.annotation.content;
+          console.log('CONTENT: ', scope.content);
+          scope.isContentVisible = true;
+          scope.cursor = {x: e.x, y: e.y}
+          scope.$apply();
+        });
+
+        element.bind('mouseout', function(e) {
+          scope.content = null; //scope.$parent.annotation.content;
+          // console.log('CONTENT: ', scope.content);
+          scope.isContentVisible = false;
+          // scope.$apply();
+        });
+      }
+    };
+  });
+
   module.controller('classificationViewerController', function ($http, $rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
 
     $scope.classification_id = $stateParams.classification_id;
