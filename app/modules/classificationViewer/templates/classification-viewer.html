@@ -63,10 +63,7 @@
             </g>
 
             <!-- annotation/transcriptions -->
-            <g annotation-review
-              ng-repeat="annotation in data"
-              ng-mousedown="displayContent($event)">
-            </g>
+            <g annotation-review ng-repeat="a in annotations"></g>
 
             <!-- show loading spinner -->
             <span us-spinner ng-show="isLoading"></span>
