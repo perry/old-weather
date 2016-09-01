@@ -235,10 +235,10 @@
           // use as a reference
           var beforeGrid = localStorageService.get('grids')[index];
 
-          for(let annotation of currentGrid) {
+          for(var annotation of currentGrid) {
             var beforeAnnotation = _.filter(beforeGrid, {_id: annotation._id});
-            let xBefore = beforeAnnotation[0].x;
-            let yBefore = beforeAnnotation[0].y;
+            var xBefore = beforeAnnotation[0].x;
+            var yBefore = beforeAnnotation[0].y;
             annotation.x = xBefore + currentPos.x - initialClick.x;
             annotation.y = yBefore + currentPos.y - initialClick.y;
           }
