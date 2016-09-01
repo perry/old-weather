@@ -3,39 +3,8 @@
   <p>Requested classification id: <b>{{classificationId}}</b></p>
   <p class="error">{{error}}</p>
   <div class="content">
-    <svg class="log annotate" svg-pan-zoom ng-class="{'annotating': isAnnotating}">
-      <g class="pan-zoom">
-        <g class="rotate-container" ng-attr-transform="{{ 'rotate(' + rotation + ')'}}">
-          <g
-            class="animated image-wrapper"
-            ng-show="!isLoading"
-            ng-class="{
-              'isLoading': isLoading,
-              'fadeIn': !isLoading,
-              'fadeOut': isLoading
-            }">
-            <g class="image">
-              <image subject class="subject"></image>
-              <image
-                xlink:href="{{ image_src }}"
-                ng-attr-onload="{{ loadHandler }} svg.reset();"
-                width="1300"
-                height="1893">
-              </image>
-            </g>
 
-            <g annotation
-              ng-repeat="annotation in data"
-              ng-mousedown="displayContent($event)">
-            </g>
-
-            <g grid ng-if="!isLoading"></g>
-            <g annotations ng-if="!isLoading"></g>
-          </g>
-        </g>
-      </g>
-    </svg>
-
+    <!-- begin buttons -->
     <div
         class="btn-group-vertical log-controls animated"
         ng-show="!isLoading"
@@ -68,7 +37,44 @@
             <span class="glyphicon glyphicon-repeat"></span> Rotate CW
         </button>
     </div>
+    <!-- end buttons -->
 
+    <svg class="log annotate" svg-pan-zoom ng-class="{'annotating': isAnnotating}">
+      <g class="pan-zoom">
+        <g class="rotate-container" ng-attr-transform="{{ 'rotate(' + rotation + ')'}}">
+          <g
+            class="animated image-wrapper"
+            ng-show="!isLoading"
+            ng-class="{
+              'isLoading': isLoading,
+              'fadeIn': !isLoading,
+              'fadeOut': isLoading
+            }">
+
+            <!-- subject image -->
+            <g class="image">
+              <image subject class="subject"></image>
+              <image
+                xlink:href="{{image_src}}"
+                ng-attr-onload="svg.reset();"
+                width="1300"
+                height="1893">
+              </image>
+            </g>
+
+            <!-- annotation/transcriptions -->
+            <g annotation
+              ng-repeat="annotation in data"
+              ng-mousedown="displayContent($event)">
+            </g>
+
+            <!-- show loading spinner -->
+            <span us-spinner ng-show="isLoading"></span>
+
+          </g>
+        </g>
+      </g>
+    </svg>
 
   </div>
 </div>
