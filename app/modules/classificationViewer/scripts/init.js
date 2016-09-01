@@ -10,18 +10,19 @@
   ]);
 
   module.config(function ($stateProvider) {
-      $stateProvider.state('viewClassification', {
-        url: '/classification/:classification_id',
-        views: {
-          main: {
-            controller: 'classificationViewerController',
-            templateUrl: 'templates/classification-viewer.html'
+      $stateProvider
+        .state('classificationViewer', {
+          url: '/classification/:classification_id',
+          views: {
+            main: {
+              controller: 'classificationViewerController',
+              templateUrl: 'templates/classification-viewer.html'
+            }
           }
-        }
-      });
+        });
   });
 
-  module.directive('annotation', function () {
+  module.directive('annotationReview', function () {
     return {
       restrict: 'A',
       templateUrl: 'templates/_annotation.html',
@@ -30,13 +31,13 @@
         scope.onMouseOver = function(e) {
           e.stopPropagation();
           scope.isHovered = true;
-          scope.$apply();
+          // scope.$apply();
         };
 
         scope.onMouseOut = function(e) {
           e.stopPropagation();
           scope.isHovered = false;
-          scope.$apply();
+          // scope.$apply();
         };
 
       }
