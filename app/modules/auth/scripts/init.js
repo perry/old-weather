@@ -64,13 +64,7 @@
 
         function signIn() {
             localStorageService.set('redirectOnSignIn', $location.absUrl());
-            $window.location.href = zooAPI.root.match(/^(.*)\/[^/]*$/)[1] +
-                '/oauth/authorize' +
-                '?response_type=token' +
-                '&client_id=' +
-                zooAPIConfig.app_id +
-                '&redirect_uri=' +
-                $location.absUrl().match(/.+?(?=\#\/)/)[0];
+            $window.zooOAuth.signIn($location.absUrl().match(/.+?(?=\#\/)/)[0]);
         }
 
         function _setToken(token) {
