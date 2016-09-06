@@ -1,0 +1,10 @@
+<div class="classification-list">
+  <h3>Completed Classifications</h3>
+  <ul>
+    <li ng-repeat="classification in completedClassifications">
+      <a href={{'/#'+classification.href}}>
+        {{classification.id}}
+      </a>
+    </li>
+  </ul>
+</div>

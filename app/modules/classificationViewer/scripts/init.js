@@ -11,13 +11,22 @@
   module.config(function ($stateProvider) {
       $stateProvider
         .state('classificationViewer', {
-          url: '/classification/:classification_id',
+          url: '/classifications/:classification_id',
           views: {
             main: {
               controller: 'classificationViewerController',
               templateUrl: 'templates/classification-viewer.html'
             }
           }
+        })
+        .state('classificationList', {
+            url: '/classifications',
+            views: {
+              main: {
+                controller: 'classificationListController',
+                templateUrl: 'templates/_classification-list.html'
+              }
+            }
         });
   });
 
@@ -40,6 +49,17 @@
       }
     };
   });
+
+  module.controller('classificationListController', function($scope, zooAPI) {
+    $scope.completedClassifications = [];
+
+    zooAPI.type('classifications').get().then( function(response) {
+      console.log('CLASSIFICATIONS: ', response);
+      $scope.completedClassifications = response;
+      $scope.$apply();
+    });
+
+  })
 
   module.controller('classificationViewerController', function ($stateParams, $scope, $sce, $http, localStorageService, zooAPI) {
     $scope.isLoading = true;
