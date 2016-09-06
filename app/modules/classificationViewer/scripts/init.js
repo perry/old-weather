@@ -10,7 +10,7 @@
 
   module.config(function ($stateProvider) {
       $stateProvider
-        .state('classificationViewer', {
+        .state('classificationsDetail', {
           url: '/classifications/:classification_id',
           views: {
             main: {
@@ -19,8 +19,8 @@
             }
           }
         })
-        .state('classificationList', {
-            url: '/classifications',
+        .state('classifications', {
+            url: '/classifications?page',
             views: {
               main: {
                 controller: 'classificationListController',
@@ -50,14 +50,36 @@
     };
   });
 
-  module.controller('classificationListController', function($scope, zooAPI) {
-    $scope.completedClassifications = [];
+  module.controller('classificationListController', function($stateParams, $scope, zooAPI, localStorageService) {
 
-    zooAPI.type('classifications').get().then( function(response) {
-      console.log('CLASSIFICATIONS: ', response);
-      $scope.completedClassifications = response;
-      $scope.$apply();
-    });
+    // get current user (if any)
+    if (!localStorageService.get('user')) {
+      $scope.statusMessage = 'You must be signed in!';
+      return;
+    }
+
+    $scope.completedClassifications = [];
+    var params = {
+      project_id: localStorageService.get('project').id
+    };
+
+    if($stateParams.page) {
+      params.page = $stateParams.page;
+    }
+    zooAPI.type('classifications').get(params)
+      .then( function(response) {
+        console.log('RESPONSE = ', response);
+
+        $scope.meta = response[0]._meta;
+        $scope.page = $scope.meta.classifications.page;
+        $scope.pageCount = $scope.meta.classifications.page_count;
+        $scope.statusMessage = 'Showing page ' + $scope.page + ' of ' + $scope.pageCount;
+        $scope.completedClassifications = response;
+        $scope.$apply();
+      })
+      .catch( function(error) {
+        $scope.statusMessage = 'There was an error loading classifications!';
+      });
 
   })
 
@@ -76,6 +98,7 @@
 
     zooAPI.type('classifications').get({id: $scope.classificationId})
       .then( function(response) {
+
         $scope.annotations = response[0].annotations;
 
         // get subject id from resource
