@@ -68,7 +68,7 @@
     }
     zooAPI.type('classifications').get(params)
       .then( function(response) {
-        console.log('RESPONSE = ', response);
+        // console.log('RESPONSE = ', response); // FOR DEBUG --STI
 
         $scope.meta = response[0]._meta;
         $scope.page = $scope.meta.classifications.page;

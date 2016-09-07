@@ -1,9 +1,9 @@
-<g>
+<g class="annotation">
 
   <text
     ng-attr-x={{a.x}}
     ng-attr-y={{a.y}}
-    style="fill:red;opacity:{{isHovered ? 0.75 : 0.1}}">
+    ng-class="{'hovered': isHovered}">
     {{a.content}}
   </text>
 
@@ -16,7 +16,7 @@
     rx="5"
     ng-attr-width="{{a.width}}"
     ng-attr-height="{{a.height}}"
-    style="fill:transparent;stroke:red;stroke-width:1;opacity:{{isHovered ? 0.75 : 0.1}}">
+    ng-class="{'hovered': isHovered}">
   </rect>
 
 </g>
