@@ -1,15 +1,15 @@
-<div class="container classification-viewer">
-  <h1>Completed Classifications</h1>
-  <p class="status">{{statusMessage}}</p>
+<div class="classification-viewer">
+  <div class="header">
+    <h1>Completed Classifications</h1>
+    <p class="status">{{statusMessage}}</p>
+  </div>
   <div class="classification-list">
-    <!-- <ul> -->
       <a ng-show="page > 1" href={{'/#'+meta.classifications.previous_href}}><<< Prev</a>
-      <div class="item" ng-repeat="classification in completedClassifications">
+      <div class="classification-item" ng-repeat="classification in completedClassifications">
         <a href={{'/#'+classification.href}}>
           {{classification.id}}
         </a>
       </div>
       <a ng-show="page < pageCount" href={{'/#'+meta.classifications.next_href}}>Next >>></a>
-    <!-- </ul> -->
   </div>
 </div>

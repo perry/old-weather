@@ -742,6 +742,8 @@ img
 .classification-viewer
   width: 100%
   color: #fff
+  .header
+    margin-left: 40px
   .content
     background-color: #ededed
   .error
@@ -770,15 +772,15 @@ img
         opacity: 1.0
 
 .classification-list
-  position: absolute
   background-color: #ededec
-  border-radius: 5px
-  display: grid
-  // ul
-  //   // display: flex
-  //   li
-  .item
-    display: inline-grid
+  display: inline-block
+  padding: 20px 0px
+  width: 100%
+  box-shadow: inset 0px 5px 10px rgba(0,0,0,0.75)
+  a
+    display: block
+  .classification-item
+    display: inline-block
     margin: 5px
     width: 60px
     height: 60px
