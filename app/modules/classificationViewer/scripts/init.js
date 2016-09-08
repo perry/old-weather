@@ -52,9 +52,8 @@
     $scope.currentClassification = null;
     $scope.completedClassifications = [];
 
-
     var params = {
-      project_id: localStorageService.get('project').id
+      project_id: localStorageService.get('project').id,
     };
 
     if($stateParams.page) {
@@ -63,10 +62,11 @@
 
     zooAPI.type('classifications').get(params)
       .then( function(response) {
+        console.log('CLASSIFICATIONS: ', response);
         $scope.meta = response[0]._meta;
         $scope.page = $scope.meta.classifications.page;
         $scope.pageCount = $scope.meta.classifications.page_count;
-        $scope.statusMessage = 'Showing page ' + $scope.page + ' of ' + $scope.pageCount;
+        // $scope.statusMessage = 'Showing page ' + $scope.page + ' of ' + $scope.pageCount;
         $scope.completedClassifications = response;
         $scope.$apply();
       })

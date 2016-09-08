@@ -3,17 +3,19 @@
   <div class="header">
     <h1>Completed Classifications</h1>
     <p class="status">{{statusMessage}}</p>
+    <p ng-show="currentClassificationId">Id: {{isLoading ? '' : currentClassificationId}}</p>
     <p ng-show="currentClassificationId">Number of annotations: {{isLoading ? '' : annotations.length}}</p>
   </div>
 
   <div class="classification-list">
-      <a ng-show="page > 1" href={{'/#'+meta.classifications.previous_href}}><<< Prev</a>
+      <a ng-show="(page > 1)" href={{'/#'+meta.classifications.previous_href}}><<< Prev</a>
       <div class="classification-item" ng-class="{'is-selected': currentClassificationId == classification.id}" ng-repeat="classification in completedClassifications">
         <a ng-mouseup="loadClassification(classification.id)">
           {{classification.id}}
         </a>
       </div>
-      <a ng-show="page < pageCount" href={{'/#'+meta.classifications.next_href}}>Next >>></a>
+      <a ng-show="(page < pageCount)" href={{'/#'+meta.classifications.next_href}}>Next >>></a>
+      <p class="page-indicator" ng-show="!isLoading">{{'Page ' + page + ' of ' + pageCount}}</p>
   </div>
 
   <!-- begin buttons -->
