@@ -58,6 +58,7 @@
                         'bounceOutRight': isLoading
                     }"
                 >
+                    <div class="nav-tools" ng-click="moveNavTools($event)">Nav Tools</div>
                     <button class="btn btn-default" ng-click="togglePan()" ng-show="isAnnotating || hasMouseEvents()">
                         <span ng-show="isAnnotating"><span class="glyphicon glyphicon-move"></span> Pan</span>
                         <span ng-show="!isAnnotating && hasMouseEvents()"><span class="glyphicon glyphicon-screenshot"></span> Draw</span>
