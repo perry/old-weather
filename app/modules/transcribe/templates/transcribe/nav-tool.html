@@ -1,0 +1,39 @@
+<div
+    class="btn-group-vertical log-controls animated"
+    ng-show="!isLoading"
+    ng-class="{
+        'isLoading': isLoading,
+        'bounceInRight': !isLoading,
+        'bounceOutRight': isLoading
+    }"
+>
+    <div
+      class="nav-tools-handle"
+      ng-mousedown="onMouseDown($event)"
+      ng-mouseup="onMouseUp($event)">
+      Nav Tools
+    </div>
+
+    <button class="btn btn-default" ng-click="togglePan()" ng-show="isAnnotating || hasMouseEvents()">
+        <span ng-show="isAnnotating"><span class="glyphicon glyphicon-move"></span> Pan</span>
+        <span ng-show="!isAnnotating && hasMouseEvents()"><span class="glyphicon glyphicon-screenshot"></span> Draw</span>
+    </button>
+    <button class="btn btn-default" ng-click="panZoom.zoomIn()">
+        <span class="glyphicon glyphicon-zoom-in"></span> Zoom in
+    </button>
+    <button class="btn btn-default" ng-click="panZoom.zoomOut()">
+        <span class="glyphicon glyphicon-zoom-out"></span> Zoom out
+    </button>
+    <button class="btn btn-default" ng-click="reset()">
+        <span class="glyphicon glyphicon-resize-full"></span> Fit page
+    </button>
+    <button class="btn btn-default" ng-click="clearAnnotations()">
+        <span class="glyphicon glyphicon-trash"></span> Clear
+    </button>
+    <button class="btn btn-default" ng-click="rotate('-0.1')" ng-mousedown="startLongRotation('-0.1')" ng-mouseup="stopLongRotation()" ng-mousemove="stopLongRotation()">
+        <span class="glyphicon glyphicon-repeat mirror"></span> Rotate CCW
+    </button>
+    <button class="btn btn-default" ng-click="rotate('+0.1')" ng-mousedown="startLongRotation('+0.1')" ng-mouseup="stopLongRotation()" ng-mousemove="stopLongRotation()">
+        <span class="glyphicon glyphicon-repeat"></span> Rotate CW
+    </button>
+</div>

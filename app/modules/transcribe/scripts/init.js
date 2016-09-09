@@ -554,10 +554,6 @@
     module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
         $rootScope.bodyClass = 'annotate';
 
-        $scope.moveNavTools = function(e, el) {
-          console.log('moveNavTools()', e, el);
-        };
-
         $scope.loadSubject = function () {
           $rootScope.$broadcast('transcribe:loadingSubject');
 

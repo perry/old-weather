@@ -400,6 +400,8 @@ img
     background: #ededed
 
 .transcribe-col
+    padding-left: 0px
+    padding-right: 0px
     $animation-duration = 1000ms
 
     min-height: 100vh
@@ -421,6 +423,8 @@ img
     position: relative
     font-size: 0
     overflow: hidden
+    padding-left: 0px
+    padding-right: 0px
 
     .guides
         pointer-events: none
@@ -445,9 +449,11 @@ img
             top: 20%
 
     .log-controls
+        border-radius: 5px
+        box-shadow: 0 0 5px 3px rgba(0,0,0,0.4)
         position: absolute
-        bottom: 35px
-        right: 15px
+        top: 100px
+        left: 20px
 
     .input-area
         width: 100%
@@ -482,14 +488,14 @@ img
     &.annotating
         image, rect
             cursor: crosshair
-.nav-tools
+.nav-tools-handle
   color: black
   height: auto
   background-color: #efefef
   font-size: 16px
   font-family: inherit
   text-decoration: uppercase
-  font-weight: bold
+  font-weight: 700
   text-align: center
   border-bottom: 2px solid #dedede
   padding: 5px
