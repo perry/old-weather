@@ -46,7 +46,7 @@
                 }));
             }).then(function(annotationsFiltered) {
                 // Strip out false values from promise result
-                return Promise.resolve(annotationsFiltered.filter({annotation: annotation}));
+                return Promise.resolve(annotationsFiltered.filter( function(annotation){return annotation}));
             })
             .catch(function(err) {
                 throw err;
