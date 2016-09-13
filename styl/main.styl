@@ -454,6 +454,21 @@ img
         position: absolute
         top: 100px
         left: 20px
+        .btn
+          outline: none
+        .nav-tools-handle
+          color: black
+          height: auto
+          background-color: #efefef
+          font-size: 16px
+          font-family: inherit
+          text-transform: uppercase
+          font-weight: 600
+          text-align: center
+          border-bottom: 2px solid #dedede
+          padding: 5px
+          user-select: none
+          cursor: move
 
     .input-area
         width: 100%
@@ -475,6 +490,7 @@ img
     max-width: 100%
     width: 100%
     height: 90vh
+
     image
       cursor: move /* fallback if grab cursor is unsupported */
       cursor: grab
@@ -488,19 +504,6 @@ img
     &.annotating
         image, rect
             cursor: crosshair
-.nav-tools-handle
-  color: black
-  height: auto
-  background-color: #efefef
-  font-size: 16px
-  font-family: inherit
-  text-transform: uppercase
-  font-weight: 600
-  text-align: center
-  border-bottom: 2px solid #dedede
-  padding: 5px
-  user-select: none
-  cursor: move
 
 .annotation
     rect
