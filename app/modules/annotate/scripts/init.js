@@ -11,7 +11,7 @@
         }
     };
 
-    var module = angular.module('transcribe', [
+    var module = angular.module('annotate', [
         // 'ngAnimate',
         'ui.router',
         'angularSpinner',
@@ -22,21 +22,21 @@
 
     module.config(function ($stateProvider) {
         $stateProvider
-            .state('transcribe', {
+            .state('annotate', {
                 url: '/annotate/:subject_set_id/',
                 views: {
                     main: {
-                        controller: 'transcribeCtrl',
-                        templateUrl: 'templates/transcribe/transcribe.html'
+                        controller: 'annotateController',
+                        templateUrl: 'templates/annotate.html'
                     }
                 }
             });
     });
 
-    module.directive('transcribeTools', function (svgPanZoomFactory, svgDrawingFactory, toolFactory) {
+    module.directive('annotateTools', function (svgPanZoomFactory, svgDrawingFactory, toolFactory) {
         return {
             restrict: 'A',
-            templateUrl: 'templates/transcribe/_tools.html',
+            templateUrl: 'templates/_tools.html',
             scope: true,
             link: function (scope, element, attrs) {
                 scope.tools = [
@@ -262,13 +262,13 @@
 
     });
 
-    module.directive('transcribeQuestions', function ($rootScope, $timeout, annotationsFactory, gridFactory, toolFactory, authFactory) {
+    module.directive('annotateQuestions', function ($rootScope, $timeout, annotationsFactory, gridFactory, toolFactory, authFactory) {
         return {
             restrict: 'A',
             scope: {
-                questions: '=transcribeQuestions'
+                questions: '=annotateQuestions'
             },
-            templateUrl: 'templates/transcribe/_questions.html',
+            templateUrl: 'templates/_questions.html',
             link: function (scope, element, attrs) {
 
                 scope.grids = [];
@@ -353,13 +353,13 @@
                         scope.activeTask = value;
                     } else {
                         scope.activeTask = undefined;
-                        $rootScope.$broadcast('transcribe:questionsComplete');
+                        $rootScope.$broadcast('annotate:questionsComplete');
                     }
                 };
 
                 scope.skipQuestions = function () {
                     scope.activeTask = undefined;
-                    $rootScope.$broadcast('transcribe:questionsComplete');
+                    $rootScope.$broadcast('annotate:questionsComplete');
                 };
             }
         };
@@ -551,11 +551,11 @@
         };
     });
 
-    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
+    module.controller('annotateController', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
         $rootScope.bodyClass = 'annotate';
 
         $scope.loadSubject = function () {
-          $rootScope.$broadcast('transcribe:loadingSubject');
+          $rootScope.$broadcast('annotate:loadingSubject');
 
           $scope.subject_set_id = $stateParams.subject_set_id;
           $scope.subject = undefined;
@@ -580,11 +580,11 @@
                   subjectImage += '?' + new Date().getTime();
                   $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
                   $scope.loadHandler = $scope.subjectLoaded();
-                  $rootScope.$broadcast('transcribe:loadedSubject');
+                  $rootScope.$broadcast('annotate:loadedSubject');
                 });
               } else {
                 $scope.subject = null;
-                $rootScope.$broadcast('transcribe:loadedSubject');
+                $rootScope.$broadcast('annotate:loadedSubject');
               }
 
             });
@@ -609,16 +609,16 @@
                 });
         };
 
-        $scope.$on('transcribe:svgPanZoomToggle', function () {
+        $scope.$on('annotate:svgPanZoomToggle', function () {
             $scope.isAnnotating = !svgPanZoomFactory.status();
         });
 
-        $scope.$on('transcribe:questionsComplete', function () {
+        $scope.$on('annotate:questionsComplete', function () {
             $scope.questionsComplete = true;
         });
 
         $scope.clearAnnotations = function () {
-            $rootScope.$broadcast('transcribe:clearAnnotations');
+            $rootScope.$broadcast('annotate:clearAnnotations');
         };
 
     });

@@ -8,7 +8,7 @@
         '404',
         'content',
         'ships',
-        'transcribe',
+        'annotate',
         'transcription',
         'zooniverse',
         'auth'
