@@ -1,19 +1,19 @@
 (function (angular, _) {
     'use strict';
 
-    var module = angular.module('transcription', [
+    var module = angular.module('transcribe', [
         'ui.router',
         'angularSpinner'
     ]);
 
     module.config(function ($stateProvider) {
         $stateProvider
-            .state('transcription', {
-                url: '/transcription/:subject_set_id/',
+            .state('transcribe', {
+                url: '/transcribe/:subject_set_id/',
                 views: {
                     main: {
-                        controller: 'transcriptionCtrl',
-                        templateUrl: 'templates/transcription/transcription.html'
+                        controller: 'transcribeController',
+                        templateUrl: 'templates/transcribe.html'
                     }
                 }
             });
@@ -54,7 +54,7 @@
         };
     }]);
 
-    module.controller('transcriptionCtrl', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
+    module.controller('transcribeController', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
         $rootScope.bodyClass = 'transcribe';
 
         function zoomToCurrentAnnotation() {

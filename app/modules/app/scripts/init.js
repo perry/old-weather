@@ -9,7 +9,7 @@
         'content',
         'ships',
         'annotate',
-        'transcription',
+        'transcribe',
         'zooniverse',
         'auth'
     ]);

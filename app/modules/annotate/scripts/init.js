@@ -605,7 +605,7 @@
         $scope.saveSubjectAndTranscribe = function () {
             annotationsFactory.save($scope.subject.id)
                 .then(function () {
-                    $state.go('transcription', { subject_set_id: $scope.subject_set_id });
+                    $state.go('transcribe', { subject_set_id: $scope.subject_set_id });
                 });
         };
 
