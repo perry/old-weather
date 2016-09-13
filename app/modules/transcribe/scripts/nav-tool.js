@@ -4,7 +4,6 @@
     var module = angular.module('transcribe');
 
     module.controller('NavToolController', function($scope, $state) {
-      console.log('NAV TOOL CONTROLLER: ', $scope, $state.current.name); // --STI
       $scope.state = $state;
     });
 
@@ -17,7 +16,6 @@
           var startX = 0, startY = 100, x = 20, y = 100;
 
           scope.onMouseDown = function(event) {
-            console.log('MOUSE FDOWN!!');
             event.preventDefault();
             startX = event.pageX - x;
             startY = event.pageY - y;
@@ -26,7 +24,6 @@
           };
 
          function mousemove(event) {
-           console.log('MOUSE MOVE!!!, element = ', element.children(0));
            y = event.pageY - startY;
            x = event.pageX - startX;
            element.children(0).css({
