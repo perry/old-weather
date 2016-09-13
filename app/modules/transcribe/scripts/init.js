@@ -1,210 +1,55 @@
 (function (angular, _) {
     'use strict';
 
-    var upsert = function (arr, key, newVal) {
-        var match = _.find(arr, key);
-        if (match) {
-            var index = _.indexOf(arr, match);
-            arr.splice(index, 1, newVal);
-        } else {
-            arr.push(newVal);
-        }
-    };
-
     var module = angular.module('transcribe', [
-        // 'ngAnimate',
         'ui.router',
-        'angularSpinner',
-        'svg',
-        'annotation',
-        'tutorial'
+        'angularSpinner'
     ]);
 
     module.config(function ($stateProvider) {
         $stateProvider
             .state('transcribe', {
-                url: '/annotate/:subject_set_id/',
+                url: '/transcribe/:subject_set_id/',
                 views: {
                     main: {
-                        controller: 'transcribeCtrl',
-                        templateUrl: 'templates/transcribe/transcribe.html'
+                        controller: 'transcribeController',
+                        templateUrl: 'templates/transcribe.html'
                     }
                 }
             });
     });
 
-    module.directive('transcribeTools', function (svgPanZoomFactory, svgDrawingFactory, toolFactory) {
-        return {
-            restrict: 'A',
-            templateUrl: 'templates/transcribe/_tools.html',
-            scope: true,
-            link: function (scope, element, attrs) {
-                scope.tools = [
-                    {
-                        id: 'header',
-                        title: 'Table header'
-                    },
-                    {
-                        id: 'row',
-                        title: 'Table row'
-                    },
-                    {
-                        id: 'cell',
-                        title: 'Table cell'
-                    },
-                    {
-                        id: 'date',
-                        title: 'Date',
-                        icon: 'calendar',
-                        tooltip: 'Record any mentions of the date'
-                    },
-                    {
-                        id: 'location',
-                        title: 'Location',
-                        icon: 'globe',
-                        tooltip: 'Record any mentions of location'
-                    },
-                    {
-                        id: 'weather',
-                        title: 'Weather',
-                        icon: 'cloud'
-                    },
-                    {
-                        id: 'sea-ice',
-                        title: 'Sea Ice',
-                        icon: 'asterisk',
-                        tooltip: 'Record any mentions of sea ice'
-                    },
-                    {
-                        id: 'refueling',
-                        title: 'Refueling',
-                        icon: 'oil',
-                        tooltip: 'Enter any mentions of the ship\'s refueling'
-                    },
-                    {
-                        id: 'events',
-                        title: 'Events',
-                        icon: 'list-alt',
-                        tooltip: 'Note any other interesting events on the ship'
-                    },
-                    {
-                        id: 'animals',
-                        title: 'Animals',
-                        icon: 'piggy-bank',
-                        tooltip: 'Enter any mentions of animals sighted or captured'
-                    },
-                    {
-                        id: 'mentions',
-                        title: 'Mentions',
-                        icon: 'bullhorn',
-                        tooltip: 'Record any mentions of people or ships'
-                    }
-                ];
-
-                scope.toggleHover = function (i) {
-                    scope.tools[i].hover = !scope.tools[i].hover;
-                };
-
-                scope.toggleTool = function (i) {
-                    var thisTool = scope.tools[i];
-
-                    // Disable all other tools.
-                    angular.forEach(scope.tools, function (tool, index) {
-                        if (index !== i) { tool.active = false; }
-                    });
-
-                    // Toggle the active state of this tool.
-                    if (angular.isDefined(i)) {
-                        thisTool.active = !thisTool.active;
-                    }
-
-                    // Define the active tool on the parent scope.
-                    scope.$parent.activeTool = thisTool && thisTool.active ? thisTool : null;
-
-                    // Toggle pan zoom based on the active tool.
-                    if (_.isNull(scope.$parent.activeTool)) {
-                        toolFactory.disable();
-                    } else {
-                        toolFactory.enable(thisTool.id);
-                    }
-                };
-
-                scope.newSubject = function () {
-                    scope.toggleTool();
-                    scope.$parent.loadSubject();
-                };
-            }
-        };
-    });
-
-    module.factory('toolFactory', function (svgPanZoomFactory, svgDrawingFactory, svgGridFactory) {
-
-      var enable = function (tool) {
-        svgPanZoomFactory.disable();
-        svgDrawingFactory.bindMouseEvents({type: tool});
-      };
-
-      var disable = function () {
-        svgPanZoomFactory.enable();
-        svgDrawingFactory.unBindMouseEvents();
-      };
-
-      return {
-        enable: enable,
-        disable: disable
-      };
-
-    });
-
-    module.factory('gridFactory', function ($rootScope, annotationsFactory, localStorageService, zooAPI, zooAPIProject, svgGridFactory, svgPanZoomFactory) {
-
-        var factory;
-        var _currentGrid = [];
-        var _grids = localStorageService.get('grids') || [];
-        var isMoveEnabled = false;
-
-        factory = {
-            del: deleteGrid,
-            get: getGrid,
-            hide: hideGrid,
-            list: listGrids,
-            save: saveGrid,
-            show: showGrid,
-            use: useGrid,
-            enableMove: enableMove,
-            disableMove: disableMove,
-            moveGrid: moveGrid,
-            createPoint: createPoint,
-            updateGrid: updateGrid
-        };
-
-        return factory;
-
-        // Returns all the grids in local storage
-        function listGrids() {
-            return _grids;
-        }
-
-        // Hides the grid from view
-        function hideGrid() {
-            _currentGrid = [];
-        }
-
-        // Show a grid with a given ID
-        function showGrid(id) {
-            id = id || 0;
-            _currentGrid = _grids[id];
-        }
-
-        // Return the _currentGrid so it can be bound to the view
-        function getGrid() {
-            return _currentGrid;
-        }
-
-        // Copy the content of the grid as annotations
-        function useGrid() {
-            _currentGrid.forEach(function (cell) {
-                $rootScope.$broadcast('svgDrawing:add', cell);
+    module.service('pendingAnnotationsService', ['zooAPI', function(zooAPI) {
+        this.get = function(subjectSet, page) {
+            // Fetch current user's incomplete classifications
+            return zooAPI.type('classifications/incomplete').get({
+                page: page || 1,
+                project_id: subjectSet.links.project
+            }).then(function(annotations) {
+                // Filter them to the current subject set
+                return Promise.all(annotations.map(function (annotation) {
+                    annotation.metadata.subjects = [];
+                    var subjectId = annotation.links.subjects[0];
+                    return zooAPI.type('set_member_subjects').get({ subject_id: subjectId })
+                        .then(function(sets) {
+                            var setsMatching = sets.filter(function(set) {
+                                return set.links.subject_set === subjectSet.id;
+                            });
+                            if (setsMatching.length) {
+                                // Subject in set; keep
+                                return Promise.resolve(annotation);
+                            } else {
+                                // Subject not in set; discard
+                                return Promise.resolve(false);
+                            }
+                        });
+                }));
+            }).then(function(annotationsFiltered) {
+                // Strip out false values from promise result
+                return Promise.resolve(annotationsFiltered.filter(annotation => annotation));
+            })
+            .catch(function(err) {
+                throw err;
             });
         }
 
@@ -248,379 +93,149 @@
         function enableMove(e) {
           isMoveEnabled = true;
           annotationsFactory.isEnabled = false; // prevents deleting annotations (and modals produces)
+
         };
+    }]);
 
-        function disableMove(e) {
-          isMoveEnabled = false;
-          annotationsFactory.isEnabled = true;
-        };
+    module.controller('transcribeController', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
+        $rootScope.bodyClass = 'transcribe';
 
-        function createPoint(e) {
-          var newPoint = svgGridFactory.createPoint(e);
-          return newPoint;
-        };
+        function zoomToCurrentAnnotation() {
+            if ($scope.annotations && $scope.annotations.length > 0) {
+                var annotation = $scope.annotations[0];
+                var obj = svgPanZoomFactory.zoomToRect(annotation);
 
-    });
-
-    module.directive('transcribeQuestions', function ($rootScope, $timeout, annotationsFactory, gridFactory, toolFactory, authFactory) {
-        return {
-            restrict: 'A',
-            scope: {
-                questions: '=transcribeQuestions'
-            },
-            templateUrl: 'templates/transcribe/_questions.html',
-            link: function (scope, element, attrs) {
-
-                scope.grids = [];
-
-                scope.$watch('questions', function () {
-                    if (scope.questions && scope.questions.tasks) {
-                        scope.tasks = scope.questions.tasks;
-                        scope.activeTask = scope.questions.first_task;
-                        scope.questionsCompleted = false;
-                    }
-                });
-
-                scope.$watch('activeTask', function () {
-                    toolFactory.disable(); // reset mouse events (removes duplicates)
-
-                    // Skip grid tasks if we're not logged in
-                    if (scope.activeTask && scope.tasks[scope.activeTask].grid && !authFactory.getUser()) {
-                        scope.confirm(scope.tasks[scope.activeTask].skip);
-                        return; // prevent duplicate event bindings after skipping task
-                    }
-
-                    if (scope.activeTask && angular.isDefined(scope.tasks[scope.activeTask].tools)) {
-                        toolFactory.enable(scope.tasks[scope.activeTask].tools[0].label);
-                    } else {
-                        toolFactory.disable();
-                    }
-
-                    /* Begin grid-related stuff */
-                    if (scope.activeTask === 'T5-use-grid') {
-                        gridFactory.enableMove(); // and disable deleting annotations
-                        if (gridFactory.list().length === 0) {
-                            scope.confirm(scope.tasks[scope.activeTask].skip);
-                        } else {
-                            scope.grids = gridFactory.list();
-                            scope.showGrid(0);
-                        }
-                    } else {
-                      gridFactory.disableMove();
-                    }
-
-                });
-
-                scope.loadGrid = function (answer, next) {
-                    if (answer === 'Yes') {
-                        gridFactory.use();
-                    }
-
-                    gridFactory.hide();
-                    scope.confirm(next);
-                };
-
-                scope.showGrid = function (index) {
-                    scope.active = index;
-                    gridFactory.show(index);
-                };
-
-                scope.deleteGrid = function (index) {
-                    gridFactory.del(index);
-                    if (gridFactory.list().length) {
-                        scope.showGrid(0);
-                    } else {
-                        gridFactory.hide();
-                        scope.confirm(scope.tasks[scope.activeTask].skip);
-                    }
-                };
-
-                scope.saveGrid = function (answer, next) {
-                    if (answer === 'Yes') {
-                        annotationsFactory.get(scope.$parent.subject.id)
-                            .then(function (response) {
-                                gridFactory.save(response.annotations);
-                            });
-                    }
-
-                    // In practice this will be undefined as this is the last task,
-                    // but this is consistent with the current API.
-                    scope.confirm(next);
-                };
-
-                scope.confirm = function (value) {
-                    if (value && _.isString(value)) {
-                        scope.activeTask = value;
-                    } else {
-                        scope.activeTask = undefined;
-                        $rootScope.$broadcast('transcribe:questionsComplete');
-                    }
-                };
-
-                scope.skipQuestions = function () {
-                    scope.activeTask = undefined;
-                    $rootScope.$broadcast('transcribe:questionsComplete');
-                };
+                $scope.uiPositionTop = (obj.sizes.height / 2) + ((annotation.height * obj.sizes.realZoom) / 2);
+                $scope.annotationContent = $scope.annotations[0].content;
             }
-        };
-    });
-
-    module.factory('workflowFactory', function ($q, authFactory, zooAPI, zooAPISubjectSets, zooAPIWorkflows, localStorageService, gridFactory) {
-        var get = function (subject_set_id) {
-            var deferred = $q.defer();
-            zooAPISubjectSets.get({id: subject_set_id})
-                .then(function (response) {
-                    var workflowID = response[0].links.workflows[0]; // Note: Defaulting to first workflow may cause unexpected issues
-                    zooAPIWorkflows.get(workflowID)
-                        .then(addReuseGridTask)
-                        .then(deferred.resolve, deferred.reject, deferred.notify);
-                });
-
-            return deferred.promise;
-        };
-
-        function addReuseGridTask(workflow) {
-            workflow.tasks.T4.answers[0].next = 'T5-use-grid';
-            workflow.tasks.T6.next = 'T6-save-grid';
-            workflow.tasks['T5-use-grid'] = {
-                grid: true,
-                skip: 'T5',
-                question: 'Would you like to use this grid? If you need to, move the grid into the correct position.',
-                answers: [
-                    {
-                        label: 'Yes',
-                        // next: 'T5-adjust-grid'
-                        next: 'T5-edit-grid'
-                    },
-                    {
-                        label: 'No',
-                        next: 'T5'
-                    }
-                ]
-            };
-            // // No longer needed?
-            // // Commented out while we focus on getting this out of the door
-            // workflow.tasks['T5-adjust-grid'] = {
-            //     grid: true,
-            //     instruction: 'If you need to, move the grid into the correct position.',
-            //     next: 'T5-edit-grid'
-            // };
-            workflow.tasks['T5-edit-grid'] = {
-                grid: true,
-                instruction: 'Draw or remove any additional cells.',
-                next: 'T6-save-grid',
-                type: 'drawing',
-                tools: [
-                    {
-                        color: '#00ff00',
-                        details: [],
-                        label: 'cell',
-                        type: 'rectangle'
-                    }
-                ]
-            };
-            workflow.tasks['T6-save-grid'] = {
-                grid: true,
-                // Skip to the end...
-                skip: undefined,
-                question: 'Would you like to save this grid for future use?',
-                answers: [
-                    {
-                        // We'll handle grid saving from the annotations factory
-                        label: 'Yes'
-                    },
-                    {
-                        label: 'No'
-                    }
-                ]
-            };
-            return workflow;
         }
 
-        return {
-            get: get
-        };
-    });
+        window.zoomToCurrentAnnotation = zoomToCurrentAnnotation;
 
-    module.factory('subjectFactory', function ($q, $filter, zooAPI, localStorageService, zooAPIProject, $timeout) {
-        var _getQueueCache = function (subject_set_id) {
-            var cache = localStorageService.get('subject_set_queue_' + subject_set_id);
-            if (!cache) {
-                cache = localStorageService.set('subject_set_queue_' + subject_set_id, []);
-            }
+        var subject_set_id = $stateParams.subject_set_id;
+        $scope.isLoading = true;
+        zooAPISubjectSets.get({id: subject_set_id})
+            .then(function (response) {
+                $scope.ship = response[0];
+                return pendingAnnotationsService.get($scope.ship);
+            })
+            .then(function (annotations_for_subject_set) {
 
-            return cache;
-        };
+                $scope.showAllAnnotations = false;
 
-        var _addToQueue = function (subject_set_id, subjects) {
-            var cache = _getQueueCache(subject_set_id);
+                var load_next = function () {
+                    $scope.subjectImage = null;
+                    $scope.isLoading = true;
 
-            angular.forEach(subjects, function (subject) {
-                upsert(cache, {id: subject.id}, subject);
-            });
+                    if (annotations_for_subject_set.length > 0) {
+                        var annotation = annotations_for_subject_set[0];
+                        $scope.subject_id = annotation.links.subjects[0];
+                        annotations_for_subject_set.shift();
 
-            cache = $filter('removeCircularDeps')(cache);
+                        $scope.annotations = annotation.annotations;
+                        $scope.classification = annotation;
 
-            return localStorageService.set('subject_set_queue_' + subject_set_id, cache);
-        };
+                        // Our best friend $timeout is back. Used here to delay setting
+                        // of first / last until the $$hashKey has been set.
+                        $timeout(function() {
+                            $scope.first = $scope.annotations[0].$$hashKey;
+                            $scope.last = $scope.annotations[$scope.annotations.length - 1].$$hashKey;
+                        }, 0);
 
-        var _loadNewSubjects = function (subject_set_id) {
-            var deferred = $q.defer();
+                        // This is presumably to allow saving of header rows, but this
+                        // feature never got implemented. I'm not quite sure why there
+                        // are separate entries for rows and cells (possibly to create
+                        // subsequent rows off the columns), but we want to be able to
+                        // transcribe the header cells for now.
+                        // _.remove($scope.annotations, {type: 'header'});
 
-            var lastPage = localStorageService.get('subject_set_page_' + subject_set_id);
-            if (!lastPage) {
-                lastPage = 0;
-            }
+                        _.remove($scope.annotations, {type: 'row'});
 
-            var _getSubjectsPage = function (project) {
-                return zooAPI.type('subjects').get({
-                    sort: 'queued',
-                    workflow_id: project.configuration.default_workflow, //project.links.workflows[0],
-                    // page: lastPage + 1,
-                    page_size: 20,
-                    subject_set_id: subject_set_id
-                }).then(function (res) {
-                    return res;
-                });
-            };
-
-            var project;
-
-            zooAPIProject.get()
-                .then(function (response) {
-                    project = response;
-                    return _getSubjectsPage(response);
-                })
-                .then(function (response) {
-                    return response;
-                }, function (response) {
-                    return $timeout(_getSubjectsPage, 3000, true, project);
-                })
-                .then(function (response) {
-                    if (response.length > 0) {
-                        _addToQueue(subject_set_id, response);
-
-                        localStorageService.set('subject_set_page_' + subject_set_id, (lastPage + 1));
-                        deferred.resolve();
+                        zooAPI.type('subjects').get({id: $scope.subject_id})
+                            .then(function (response) {
+                                var subject = response[0];
+                                var keys = Object.keys(subject.locations[0]);
+                                var subjectImage = subject.locations[0][keys[0]];
+                                subjectImage += '?' + new Date().getTime();
+                                $timeout(function () {
+                                    $scope.subjectImage = $sce.trustAsResourceUrl(subjectImage);
+                                    $scope.loadHandler = $scope.subjectLoaded();
+                                }, 0);
+                            });
                     } else {
-                        deferred.reject();
+                        $scope.annotations = null;
+                        $scope.isLoading = false;
                     }
+                };
 
-                });
+                load_next();
 
-            return deferred.promise;
-        };
+                $scope.$watch('annotations', zoomToCurrentAnnotation, true);
 
-        var _getNextInQueue = function (subject_set_id) {
-            var deferred = $q.defer();
+                $scope.subjectLoaded = function () {
+                    $scope.isLoading = false;
+                    // Image is loaded, we can safely calculate zoom for first annotation
+                    $timeout(zoomToCurrentAnnotation, 0);
+                };
 
-            var cache = _getQueueCache(subject_set_id);
+                $scope.prevAnnotation = function () {
+                    $scope.save();
+                    $scope.annotations.unshift($scope.annotations.pop());
+                };
 
-            if (!angular.isArray(cache) || cache.length === 0) {
-                _loadNewSubjects(subject_set_id)
-                    .then(function () {
-                        cache = _getQueueCache(subject_set_id);
+                $scope.nextAnnotation = function () {
+                    $scope.save();
+                    $scope.annotations.push($scope.annotations.shift());
+                };
 
-                        if (cache.length === 0) {
-                            deferred.resolve(null);
-                        } else {
-                            deferred.resolve(cache[0]);
-                        }
+                $scope.save = function () {
+                    $scope.annotations[0].content = $scope.annotationContent;
+                    $scope.annotationContent = null;
+                };
+
+                $scope.toggleAllAnnotations = function () {
+                    $scope.showAllAnnotations = true;
+                    $scope.panZoom.fit();
+                    $scope.panZoom.center();
+                };
+
+                var annotationInput = document.getElementById('annotation-input');
+
+                $scope.insertChar = function (insertValue) {
+                    var input = annotationInput;
+                    if (document.selection) {
+                        input.focus();
+                        document.selection.createRange().text = insertValue;
+                    } else if (input.selectionStart || input.selectionStart === '0') {
+                        var endPos = input.selectionStart + 1;
+                        input.value = input.value.substring(0, input.selectionStart) + insertValue + input.value.substring(input.selectionEnd, input.value.length);
+                        input.selectionStart = endPos;
+                        input.selectionEnd = endPos;
+                        input.focus();
+                    } else {
+                        input.value += insertValue;
+                    }
+                };
+
+                $scope.finish = function () {
+                    $scope.save();
+                    $scope.classification.update({
+                      completed: true, // otherwise classification remains incomplete!
+                      annotations: $scope.annotations,
+                      metadata: {
+                          started_at: new Date().toISOString(),
+                          finished_at: new Date().toISOString(),
+                          user_agent: navigator.userAgent,
+                          user_language: navigator.language
+                      }
                     });
-            } else {
-                deferred.resolve(cache[0]);
-            }
 
-            return deferred.promise;
-        };
-
-        var get = function (subject_set_id) {
-            var deferred = $q.defer();
-
-            _getNextInQueue(subject_set_id)
-                .then(function (subject) {
-                    deferred.resolve(subject);
-                });
-
-
-            return deferred.promise;
-        };
-
-        return {
-            get: get
-        };
-    });
-
-    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
-        $rootScope.bodyClass = 'annotate';
-
-        $scope.loadSubject = function () {
-          $rootScope.$broadcast('transcribe:loadingSubject');
-
-          $scope.subject_set_id = $stateParams.subject_set_id;
-          $scope.subject = undefined;
-          $scope.isLoading = true;
-          $scope.questions = null;
-          $scope.questionsComplete = false;
-          $scope.grid = gridFactory.get;
-
-          workflowFactory.get($scope.subject_set_id)
-            .then(function (response) {
-              $scope.questions = response;
-            });
-
-          subjectFactory.get($scope.subject_set_id)
-            .then(function (response) {
-              if (response !== null) {
-                $timeout(function () {
-                  $scope.subject = response;
-                  var keys = Object.keys($scope.subject.locations[0]);
-                  var subjectImage = $scope.subject.locations[0][keys[0]];
-                  // TODO: change this. We're cache busting the image.onload event.
-                  subjectImage += '?' + new Date().getTime();
-                  $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
-                  $scope.loadHandler = $scope.subjectLoaded();
-                  $rootScope.$broadcast('transcribe:loadedSubject');
-                });
-              } else {
-                $scope.subject = null;
-                $rootScope.$broadcast('transcribe:loadedSubject');
-              }
-
-            });
-        };
-        $scope.loadSubject();
-
-        $scope.subjectLoaded = function () {
-            $scope.isLoading = false;
-        };
-
-        $scope.saveSubject = function () {
-            annotationsFactory.save($scope.subject.id)
-                .then(function () {
-                    $scope.loadSubject();
-                });
-        };
-
-        $scope.saveSubjectAndTranscribe = function () {
-            annotationsFactory.save($scope.subject.id)
-                .then(function () {
-                    $state.go('transcription', { subject_set_id: $scope.subject_set_id });
-                });
-        };
-
-        $scope.$on('transcribe:svgPanZoomToggle', function () {
-            $scope.isAnnotating = !svgPanZoomFactory.status();
+                    $scope.classification.save()
+                        .then(function (response) {
+                            $scope.$apply(load_next);
+                        });
+                };
         });
-
-        $scope.$on('transcribe:questionsComplete', function () {
-            $scope.questionsComplete = true;
-        });
-
-        $scope.clearAnnotations = function () {
-            $rootScope.$broadcast('transcribe:clearAnnotations');
-        };
-
     });
 
 }(window.angular, window._));

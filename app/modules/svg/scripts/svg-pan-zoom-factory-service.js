@@ -35,13 +35,13 @@
                 self.svgInstance.enablePan();
                 self.svgInstance.enableZoom();
 
-                $rootScope.$broadcast('transcribe:svgPanZoomToggle');
+                $rootScope.$broadcast('annotate:svgPanZoomToggle');
             },
             disable: function () {
                 self.svgInstance.disablePan();
                 self.svgInstance.disableZoom();
 
-                $rootScope.$broadcast('transcribe:svgPanZoomToggle');
+                $rootScope.$broadcast('annotate:svgPanZoomToggle');
             },
             toggle: function () {
                 var method = self.svgInstance.isZoomEnabled() || self.svgInstance.isPanEnabled() ? 'disable' : 'enable';
@@ -49,7 +49,7 @@
                 self.svgInstance[method + 'Pan']();
                 self.svgInstance[method + 'Zoom']();
 
-                $rootScope.$broadcast('transcribe:svgPanZoomToggle');
+                $rootScope.$broadcast('annotate:svgPanZoomToggle');
 
                 return method;
             },

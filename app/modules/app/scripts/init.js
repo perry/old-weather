@@ -8,8 +8,8 @@
         '404',
         'content',
         'ships',
+        'annotate',
         'transcribe',
-        'transcription',
         'zooniverse',
         'auth',
         'classificationViewer'

@@ -1,7 +1,7 @@
 (function (angular) {
     'use strict';
 
-    var module = angular.module('transcribe');
+    var module = angular.module('annotate');
 
     module.controller('NavToolController', function($scope, $state) {
       $scope.state = $state;
@@ -10,7 +10,7 @@
     module.directive('navTool', function ($document) {
       return {
         restrict: 'E',
-        templateUrl: 'templates/transcribe/nav-tool.html',
+        templateUrl: 'templates/nav-tool.html',
         link: function (scope, element, attrs) {
 
           var startX = 0, startY = 100, x = 20, y = 100;
