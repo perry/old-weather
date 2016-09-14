@@ -4,4 +4,3 @@
     angular.module('svg', []);
 
 }(window.angular));
-

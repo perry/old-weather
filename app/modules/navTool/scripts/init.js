@@ -1,19 +1,19 @@
 (function (angular) {
     'use strict';
 
-    var module = angular.module('annotate');
+    var module = angular.module('navTool', []);
 
-    module.controller('NavToolController', function($scope, $state) {
+    module.controller('NavToolController', function($scope, $state, svgPanZoomFactory) {
       $scope.state = $state;
     });
 
-    module.directive('navTool', function ($document) {
+    module.directive('navTool', function ($document, svgPanZoomFactory) {
       return {
         restrict: 'E',
         templateUrl: 'templates/nav-tool.html',
         link: function (scope, element, attrs) {
 
-          var startX = 0, startY = 100, x = 20, y = 100;
+          var startX = 0, startY = 0, x = 20, y = 100;
 
           scope.onMouseDown = function(event) {
             event.preventDefault();
