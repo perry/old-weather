@@ -472,16 +472,30 @@
                 lastPage = 0;
             }
 
+            var current_subject = localStorageService.get('current_subject');
+
             var _getSubjectsPage = function (project) {
-                return zooAPI.type('subjects').get({
+                var params = {}
+                if (!current_subject || !current_subject.metadata.nextSubjectId) {
+                  console.log(' *** FETCHING RANDOM SUBJECT ID ***'); // --STI
+                  console.log('project_id = ' + project.id + '; workflow id = ', project.configuration.default_workflow, '; subject_set_id = ', subject_set_id);
+                  params = {
+                    subject_set_id: subject_set_id,
+                    page_size: 1,
                     sort: 'queued',
-                    workflow_id: project.configuration.default_workflow, //project.links.workflows[0],
-                    // page: lastPage + 1,
-                    page_size: 20,
-                    subject_set_id: subject_set_id
-                }).then(function (res) {
+                    workflow_id: project.configuration.default_workflow //project.links.workflows[0]
+                  };
+                } else {
+                  console.log(' *** FETCHING NEXT SUBJECT ID: ' + current_subject.metadata.nextSubjectId + ' ***'); // --STI
+                  params = { id: current_subject.metadata.nextSubjectId }
+                }
+                return zooAPI.type('subjects').get(params)
+                  .then(function (res) {
+                    localStorageService.set('current_subject', res[0] ); // --STI
+                    console.log('Subject(s): ', res); // --STI
+                    console.log('      >>>>>>>>> CURRENT PAGE: ' + res[0].metadata.pageNumber + ', ID: ' + res[0].id + ' <<<<<<<<<<'); // --STI
                     return res;
-                });
+                  });
             };
 
             var project;
@@ -499,7 +513,6 @@
                 .then(function (response) {
                     if (response.length > 0) {
                         _addToQueue(subject_set_id, response);
-
                         localStorageService.set('subject_set_page_' + subject_set_id, (lastPage + 1));
                         deferred.resolve();
                     } else {
@@ -541,7 +554,6 @@
                 .then(function (subject) {
                     deferred.resolve(subject);
                 });
-
 
             return deferred.promise;
         };
