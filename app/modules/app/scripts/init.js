@@ -8,10 +8,12 @@
         '404',
         'content',
         'ships',
+        'annotate',
         'transcribe',
-        'transcription',
         'zooniverse',
-        'auth'
+        'auth',
+        'classificationViewer',
+        'navTool'
     ]);
 
     module.config(

@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="row" ng-if="subject === null">
-        <p>There aren't any log pages to annotate on this ship. <a ui-sref="transcription({subject_set_id: subject_set_id})">Transcribe annotations</a>, or find <a ui-sref="ships-list">another ship</a>?</p>
+        <p>There aren't any log pages to annotate on this ship. <a ui-sref="transcribe({subject_set_id: subject_set_id})">Transcribe annotations</a>, or find <a ui-sref="ships-list">another ship</a>?</p>
     </div>
 
     <div class="row" ng-if="subject !== null">
@@ -49,38 +49,9 @@
 
                 <div class="guides" ng-if="showGuides"></div>
 
-                <div
-                    class="btn-group-vertical log-controls animated"
-                    ng-show="!isLoading"
-                    ng-class="{
-                        'isLoading': isLoading,
-                        'bounceInRight': !isLoading,
-                        'bounceOutRight': isLoading
-                    }"
-                >
-                    <button class="btn btn-default" ng-click="togglePan()" ng-show="isAnnotating || hasMouseEvents()">
-                        <span ng-show="isAnnotating"><span class="glyphicon glyphicon-move"></span> Pan</span>
-                        <span ng-show="!isAnnotating && hasMouseEvents()"><span class="glyphicon glyphicon-screenshot"></span> Draw</span>
-                    </button>
-                    <button class="btn btn-default" ng-click="panZoom.zoomIn()">
-                        <span class="glyphicon glyphicon-zoom-in"></span> Zoom in
-                    </button>
-                    <button class="btn btn-default" ng-click="panZoom.zoomOut()">
-                        <span class="glyphicon glyphicon-zoom-out"></span> Zoom out
-                    </button>
-                    <button class="btn btn-default" ng-click="reset()">
-                        <span class="glyphicon glyphicon-resize-full"></span> Fit page
-                    </button>
-                    <button class="btn btn-default" ng-click="clearAnnotations()">
-                        <span class="glyphicon glyphicon-trash"></span> Clear
-                    </button>
-                    <button class="btn btn-default" ng-click="rotate('-0.1')" ng-mousedown="startLongRotation('-0.1')" ng-mouseup="stopLongRotation()" ng-mousemove="stopLongRotation()">
-                        <span class="glyphicon glyphicon-repeat mirror"></span> Rotate CCW
-                    </button>
-                    <button class="btn btn-default" ng-click="rotate('+0.1')" ng-mousedown="startLongRotation('+0.1')" ng-mouseup="stopLongRotation()" ng-mousemove="stopLongRotation()">
-                        <span class="glyphicon glyphicon-repeat"></span> Rotate CW
-                    </button>
-                </div>
+                <!-- navigation tools -->
+                <nav-tool></nav-tool>
+
             </div>
         </div>
     </div>
@@ -91,7 +62,7 @@
 
         <div
             class="questions-panel"
-            transcribe-questions="questions"
+            annotate-questions="questions"
             ng-show="!questionsComplete && questions && !isLoading"
         >
         </div>
@@ -111,7 +82,7 @@
             <p>Feel free to mark any other data using the tools below.</p>
             <ul
                 class="nav nav-pills nav-stacked"
-                transcribe-tools
+                annotate-tools
             ></ul>
         </div>
         <div ng-controller="TutorialController">

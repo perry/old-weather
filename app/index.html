@@ -77,7 +77,9 @@
             <div ui-view="header-bottom" class="header-bottom"></div>
         </header>
 
-        <div ui-view="main" id="site-main"></div>
+        <div ui-view="main" id="site-main">
+          <!-- router content gets injected here -->
+        </div>
 
         <footer id="site-footer" zooniverse-footer>
             <div class="container-wrapper top">
@@ -190,8 +192,8 @@
         <script src="modules/auth/scripts/init.js"></script>
         <script src="modules/auth/scripts/templates.js"></script>
 
-        <script src="modules/transcription/scripts/init.js"></script>
-        <script src="modules/transcription/scripts/templates.js"></script>
+        <script src="modules/transcribe/scripts/init.js"></script>
+        <script src="modules/transcribe/scripts/templates.js"></script>
 
         <script src="modules/404/scripts/init.js"></script>
         <script src="modules/404/scripts/templates.js"></script>
@@ -223,18 +225,25 @@
         <script src="modules/annotation/scripts/annotations-directive.js"></script>
         <script src="modules/annotation/scripts/grid-directive.js"></script>
 
-        <script src="modules/transcribe/scripts/init.js"></script>
-        <script src="modules/transcribe/scripts/templates.js"></script>
+        <script src="modules/annotate/scripts/init.js"></script>
+        <script src="modules/annotate/scripts/templates.js"></script>
 
         <script src="modules/tutorial/scripts/init.js"></script>
         <script src="modules/tutorial/scripts/templates.js"></script>
 
+        <script src="modules/navTool/scripts/init.js"></script>
+        <script src="modules/navTool/scripts/templates.js"></script>
 
         <script src="modules/zooniverse/scripts/init.js"></script>
         <script src="modules/zooniverse/scripts/zooniverse-footer.factory.js"></script>
         <script src="modules/zooniverse/scripts/zooniverse-footer.directive.js"></script>
 
         <script src="modules/zooniverse/scripts/zooniverse-footer.directive.js"></script>
+
+        <script src="modules/classificationViewer/scripts/init.js"></script>
+        <script src="modules/classificationViewer/scripts/templates.js"></script>
+
+
         <!-- endbuild -->
 
         <!-- Google Tag Manager -->

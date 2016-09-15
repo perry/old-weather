@@ -13,7 +13,17 @@
                 self.opts = opts;
                 self.svgInstance = svgPanZoom(self.el, self.opts);
                 self.rotation = 0;
+
+                // center subject image on viewable area
+                var svgWidth = self.svgInstance.getSizes().width - 300; // subtract right column width
+                var zoomFactor = self.svgInstance.getSizes().realZoom;
+                var subjectWidth = self.svgInstance.getSizes().viewBox.width * zoomFactor;
+                self.svgInstance.pan({x: svgWidth/2 - subjectWidth/2, y:0});
+
                 return self.svgInstance;
+            },
+            getSVGInstance: function () {
+              return self.svgInstance;
             },
             viewport: function () {
                 return self.el.querySelectorAll('.svg-pan-zoom_viewport')[0];
@@ -28,13 +38,13 @@
                 self.svgInstance.enablePan();
                 self.svgInstance.enableZoom();
 
-                $rootScope.$broadcast('transcribe:svgPanZoomToggle');
+                $rootScope.$broadcast('annotate:svgPanZoomToggle');
             },
             disable: function () {
                 self.svgInstance.disablePan();
                 self.svgInstance.disableZoom();
 
-                $rootScope.$broadcast('transcribe:svgPanZoomToggle');
+                $rootScope.$broadcast('annotate:svgPanZoomToggle');
             },
             toggle: function () {
                 var method = self.svgInstance.isZoomEnabled() || self.svgInstance.isPanEnabled() ? 'disable' : 'enable';
@@ -42,7 +52,7 @@
                 self.svgInstance[method + 'Pan']();
                 self.svgInstance[method + 'Zoom']();
 
-                $rootScope.$broadcast('transcribe:svgPanZoomToggle');
+                $rootScope.$broadcast('annotate:svgPanZoomToggle');
 
                 return method;
             },
