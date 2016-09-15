@@ -124,8 +124,8 @@
                     // scope.$apply();
                 };
 
-                scope.$on('transcribe:clearAnnotations', clearAnnotations);
-                scope.$on('transcribe:loadedSubject', getAnnotations);
+                scope.$on('annotate:clearAnnotations', clearAnnotations);
+                scope.$on('annotate:loadedSubject', getAnnotations);
                 scope.$on('svgDrawing:add', storeAnnotations);
                 scope.$on('svgDrawing:update', storeAnnotations);
                 scope.$on('svgDrawing:update', function (e, rect, data) {
