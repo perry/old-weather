@@ -51,6 +51,49 @@
             .catch(function(err) {
                 throw err;
             });
+        }
+
+        // Save the grid to local storage for reuse
+        function saveGrid(data) {
+            _grids.push(angular.copy(data));
+            localStorageService.set('grids', _grids);
+        }
+
+        // not sure this is needed?
+        function updateGrid(data) {
+          var index = _grids.indexOf(data);
+          _grids.splice(index, 1, data); // replace element with updated version
+          localStorageService.set('grids', _grids);
+        }
+
+        // Delete grid from local storage
+        function deleteGrid(index) {
+            _grids.splice(index, 1);
+            localStorageService.set('grids', _grids);
+        }
+
+        function moveGrid(currentGrid, initialClick, e) {
+          if (!isMoveEnabled) return;
+          var currentPos = svgGridFactory.createPoint(e);
+          var index = _grids.indexOf(currentGrid);
+
+          // use as a reference
+          var beforeGrid = localStorageService.get('grids')[index];
+
+          for(var annotation of currentGrid) {
+            var beforeAnnotation = _.filter(beforeGrid, {_id: annotation._id});
+            var xBefore = beforeAnnotation[0].x;
+            var yBefore = beforeAnnotation[0].y;
+            annotation.x = xBefore + currentPos.x - initialClick.x;
+            annotation.y = yBefore + currentPos.y - initialClick.y;
+          }
+          showGrid(index);
+        }
+
+        function enableMove(e) {
+          isMoveEnabled = true;
+          annotationsFactory.isEnabled = false; // prevents deleting annotations (and modals produces)
+
         };
     }]);
 

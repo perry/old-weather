@@ -14,51 +14,51 @@
         ></span>
     <div class="log-container" ng-show="annotations && !isLoading">
 
-    <svg class="log" masked="annotations" svg-pan-zoom="{'fit': false, 'maxZoom': 5}" ng-class="{'annotating': isAnnotating}">
-        <g class="pan-zoom">
-            <g
-                class="animated image-wrapper"
-                ng-show="!isLoading"
-                ng-class="{
-                'isLoading': isLoading,
-                'fadeIn': !isLoading,
-                'fadeOut': isLoading
-                }"
-                ng-attr-transform="{{ 'rotate(' + annotations[0].rotation + ')'}}"
-            >
-                <g class="image">
-                    <image
-                    xlink:href="{{ subjectImage }}"
-                    ng-attr-onload="{{ loadHandler }} svg.reset();"
-                    width="1300"
-                    height="1893"
-                    ></image>
-                </g>
+      <svg class="log" masked="annotations" svg-pan-zoom="{'fit': false, 'maxZoom': 5}" ng-class="{'annotating': isAnnotating}">
+          <g class="pan-zoom">
+              <g
+                  class="animated image-wrapper"
+                  ng-show="!isLoading"
+                  ng-class="{
+                  'isLoading': isLoading,
+                  'fadeIn': !isLoading,
+                  'fadeOut': isLoading
+                  }"
+                  ng-attr-transform="{{ 'rotate(' + annotations[0].rotation + ')'}}"
+              >
+                  <g class="image">
+                      <image
+                      xlink:href="{{ subjectImage }}"
+                      ng-attr-onload="{{ loadHandler }} svg.reset();"
+                      width="1300"
+                      height="1893"
+                      ></image>
+                  </g>
 
-                <rect class="masked-rect" width="1300" height="1893" fill="rgba(0, 73, 77, 0.7)" mask="url(#hole)"></rect>
+                  <rect class="masked-rect" width="1300" height="1893" fill="rgba(0, 73, 77, 0.7)" mask="url(#hole)"></rect>
 
-                <mask id="hole">
-                    <rect x="0" y="0" width="1300" height="1893" fill="white"></rect>
-                    <g class="annotation" ng-repeat="a in annotations" ng-show="$first || showAllAnnotations">
-                        <rect
-                            ng-attr-transform="{{ 'rotate(' + (a.rotation * -1) + ')'}}"
-                            ng-attr-width="{{ a.width }}"
-                            ng-attr-height="{{ a.height }}"
-                            ng-attr-x="{{ a.x }}"
-                            ng-attr-y="{{ a.y }}"
-                            type="{{ a.type }}"
-                            fill="black"
-                            ng-click="foo($index)"
-                        ></rect>
+                  <mask id="hole">
+                      <rect x="0" y="0" width="1300" height="1893" fill="white"></rect>
+                      <g class="annotation" ng-repeat="a in annotations" ng-show="$first || showAllAnnotations">
+                          <rect
+                              ng-attr-transform="{{ 'rotate(' + (a.rotation * -1) + ')'}}"
+                              ng-attr-width="{{ a.width }}"
+                              ng-attr-height="{{ a.height }}"
+                              ng-attr-x="{{ a.x }}"
+                              ng-attr-y="{{ a.y }}"
+                              type="{{ a.type }}"
+                              fill="black"
+                              ng-click="foo($index)"
+                          ></rect>
 
-                    </g>
-                </mask>
+                      </g>
+                  </mask>
 
-            </g>
-        </g>
-    </svg>
+              </g>
+          </g>
+      </svg>
 
-    <div class="input-area" ng-show="!showAllAnnotations" ng-style="{'top': uiPositionTop + 'px'}">
+      <div class="input-area" ng-show="!showAllAnnotations" ng-style="{'top': uiPositionTop + 'px'}">
         <div>
 
             <form ng-submit="$event.preventDefault(); nextAnnotation()">
@@ -84,32 +84,12 @@
             <button ng-click="insertChar('°')" class="btn btn-skeleton teal pull-right" ng-show="annotations[0].type === 'location'">&deg;</button>
 
         </div>
-    </div>
+      </div>
 
-            <div
-                class="btn-group-vertical log-controls animated"
-                ng-show="!isLoading"
-                ng-class="{
-                    'isLoading': isLoading,
-                    'bounceInRight': !isLoading,
-                    'bounceOutRight': isLoading
-                }"
-            >
-                <button class="btn btn-default" ng-click="togglePan()" ng-show="isAnnotating || hasMouseEvents()">
-                    <span class="glyphicon glyphicon-move" ng-show="isAnnotating"></span>
-                    <span class="glyphicon glyphicon-screenshot" ng-show="!isAnnotating && hasMouseEvents()"></span>
-                </button>
-                <button class="btn btn-default" ng-click="panZoom.zoomIn()">
-                    <span class="glyphicon glyphicon-zoom-in"></span>
-                </button>
-                <button class="btn btn-default" ng-click="panZoom.zoomOut()">
-                    <span class="glyphicon glyphicon-zoom-out"></span>
-                </button>
-                <button class="btn btn-default" ng-click="panZoom.fit(); panZoom.center()">
-                    <span class="glyphicon glyphicon-resize-full"></span>
-                </button>
-            </div>
-        </div>
+      <!-- navigation tools -->
+      <nav-tool></nav-tool>
+
+    </div>
 
     <div class="workflow-col">
         <span class="workflow-title">Transcription</span>

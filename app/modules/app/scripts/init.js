@@ -11,7 +11,9 @@
         'annotate',
         'transcribe',
         'zooniverse',
-        'auth'
+        'auth',
+        'classificationViewer',
+        'navTool'
     ]);
 
     module.config(

@@ -77,7 +77,9 @@
             <div ui-view="header-bottom" class="header-bottom"></div>
         </header>
 
-        <div ui-view="main" id="site-main"></div>
+        <div ui-view="main" id="site-main">
+          <!-- router content gets injected here -->
+        </div>
 
         <footer id="site-footer" zooniverse-footer>
             <div class="container-wrapper top">
@@ -229,12 +231,19 @@
         <script src="modules/tutorial/scripts/init.js"></script>
         <script src="modules/tutorial/scripts/templates.js"></script>
 
+        <script src="modules/navTool/scripts/init.js"></script>
+        <script src="modules/navTool/scripts/templates.js"></script>
 
         <script src="modules/zooniverse/scripts/init.js"></script>
         <script src="modules/zooniverse/scripts/zooniverse-footer.factory.js"></script>
         <script src="modules/zooniverse/scripts/zooniverse-footer.directive.js"></script>
 
         <script src="modules/zooniverse/scripts/zooniverse-footer.directive.js"></script>
+
+        <script src="modules/classificationViewer/scripts/init.js"></script>
+        <script src="modules/classificationViewer/scripts/templates.js"></script>
+
+
         <!-- endbuild -->
 
         <!-- Google Tag Manager -->
