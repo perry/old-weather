@@ -20,13 +20,15 @@ var minifyCSS = require('gulp-minify-css');
 var rev = require('gulp-rev');
 var karma = require('karma').server;
 var jshint = require('gulp-jshint');
+var concat = require('gulp-concat');
+var rename = require('gulp-rename');
 
 var baseDir = __dirname
 var appDir = baseDir + '/app';
 var modulesDir = appDir + '/modules';
 var stylDir = baseDir + '/styl';
 var files = {
-    templates: appDir + '/modules/**/templates/**/*.html',
+    templates: appDir + '/./src/**/templates/**/*.html',
     scripts: modulesDir + '/**/*.js'
 }
 
@@ -153,6 +155,80 @@ gulp.task('ngdocs', function () {
         .pipe(gulpDocs.process(options))
         .pipe(gulp.dest('.tmp/docs'));
 });
+
+// Combine module scripts in required order - possibly worth considering creating a bundle for each module instead?
+gulp.task('scripts', function () {
+    return gulp.src([
+        './src/app/scripts/init.js',
+        './src/app/scripts/home-controller.js',
+        './src/app/scripts/templates.js',
+
+        './src/zoo-api/scripts/init.js',
+        './src/zoo-api/scripts/project-service.js',
+
+        './src/auth/scripts/init.js',
+        './src/auth/scripts/templates.js',
+
+        './src/transcription/scripts/init.js',
+        './src/transcription/scripts/templates.js',
+
+        './src/404/scripts/init.js',
+        './src/404/scripts/templates.js',
+
+        './src/content/scripts/init.js',
+        './src/content/scripts/templates.js',
+
+        './src/ships/scripts/init.js',
+        './src/ships/scripts/templates.js',
+        './src/ships/scripts/ships-list-controller.js',
+        './src/ships/scripts/ships-detail-controller.js',
+        './src/ships/scripts/ships-detail-constant.js',
+
+        './src/svg/scripts/init.js',
+        './src/svg/scripts/svg-pan-zoom-directive.js',
+        './src/svg/scripts/svg-service.js',
+        './src/svg/scripts/svg-grid-factory-service.js',
+        './src/svg/scripts/svg-drawing-factory-service.js',
+        './src/svg/scripts/svg-pan-zoom-factory-service.js',
+
+        './src/confirmationModal/scripts/init.js',
+        './src/confirmationModal/scripts/confirmation-modal-factory-service.js',
+        './src/confirmationModal/scripts/confirmation-modal-controller.js',
+        './src/confirmationModal/scripts/templates.js',
+
+        './src/annotation/scripts/init.js',
+        './src/annotation/scripts/templates.js',
+        './src/annotation/scripts/annotations-factory-service.js',
+        './src/annotation/scripts/annotations-directive.js',
+        './src/annotation/scripts/grid-directive.js',
+
+        './src/transcribe/scripts/init.js',
+        './src/transcribe/scripts/templates.js',
+
+        './src/tutorial/scripts/init.js',
+        './src/tutorial/scripts/templates.js',
+
+        './src/zooniverse/scripts/init.js',
+        './src/zooniverse/scripts/zooniverse-footer.factory.js',
+        './src/zooniverse/scripts/zooniverse-footer.directive.js',
+        './src/zooniverse/scripts/zooniverse-footer.directive.js',
+        ])
+        .pipe(concat('app.js'))
+        .pipe(gulp.dest('./app/'));
+});
+
+
+// Copy module view templates to public dir
+gulp.task('templates', function () {
+    return gulp.src(['./src/**/*.html'])
+        .pipe(rename(function (path) {
+            // Remove leading module folder so combined js file can find templates
+            path.dirname = path.dirname.split('/').slice(1).join('/');
+            console.log(path);
+            return path;
+        }))
+        .pipe(gulp.dest('./app'));
+})
 
 gulp.task('watch', function () {
     gulp.watch([files.templates], ['templates']);

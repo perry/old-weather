@@ -1,0 +1,103 @@
+<div class="container-fluid">
+    <div ng-show="!annotations && !isLoading">
+        <p>There isn't anything to transcribe on this ship. Help <a ui-sref="annotate({subject_set_id: ship.id})">annotate logs on this ship</a> or try <a ui-sref="ships-list">another ship</a>?</p>
+    </div>
+    <span
+    us-spinner
+    ng-show="isLoading"
+    class="animated"
+    ng-class="{
+        'isLoading': isLoading,
+        'fadeIn': isLoading,
+        'fadeOut': !isLoading
+        }"
+        ></span>
+    <div class="log-container" ng-show="annotations && !isLoading">
+
+      <svg class="log" masked="annotations" svg-pan-zoom="{'fit': false, 'maxZoom': 5}" ng-class="{'annotating': isAnnotating}">
+          <g class="pan-zoom">
+              <g
+                  class="animated image-wrapper"
+                  ng-show="!isLoading"
+                  ng-class="{
+                  'isLoading': isLoading,
+                  'fadeIn': !isLoading,
+                  'fadeOut': isLoading
+                  }"
+                  ng-attr-transform="{{ 'rotate(' + annotations[0].rotation + ')'}}"
+              >
+                  <g class="image">
+                      <image
+                      xlink:href="{{ subjectImage }}"
+                      ng-attr-onload="{{ loadHandler }} svg.reset();"
+                      width="1300"
+                      height="1893"
+                      ></image>
+                  </g>
+
+                  <rect class="masked-rect" width="1300" height="1893" fill="rgba(0, 73, 77, 0.7)" mask="url(#hole)"></rect>
+
+                  <mask id="hole">
+                      <rect x="0" y="0" width="1300" height="1893" fill="white"></rect>
+                      <g class="annotation" ng-repeat="a in annotations" ng-show="$first || showAllAnnotations">
+                          <rect
+                              ng-attr-transform="{{ 'rotate(' + (a.rotation * -1) + ')'}}"
+                              ng-attr-width="{{ a.width }}"
+                              ng-attr-height="{{ a.height }}"
+                              ng-attr-x="{{ a.x }}"
+                              ng-attr-y="{{ a.y }}"
+                              type="{{ a.type }}"
+                              fill="black"
+                              ng-click="foo($index)"
+                          ></rect>
+
+                      </g>
+                  </mask>
+
+              </g>
+          </g>
+      </svg>
+
+      <div class="input-area" ng-show="!showAllAnnotations" ng-style="{'top': uiPositionTop + 'px'}">
+        <div>
+
+            <form ng-submit="$event.preventDefault(); nextAnnotation()">
+                <input id="annotation-input" class="form-control input-lg" type="text" ng-model="annotationContent" autofocus>
+            </form>
+
+            <button
+                ng-disabled="annotations[0].$$hashKey === first"
+                ng-click="prevAnnotation()"
+                class="btn btn-teal"
+            >Prev</button>
+
+            <!-- <button ng-click="toggleAllAnnotations()" class="btn btn-default">Show all</button> -->
+
+            <button
+                ng-disabled="annotations[0].$$hashKey === last"
+                ng-click="nextAnnotation()"
+                class="btn btn-teal"
+            >Next</button>
+
+            <button ng-click="insertChar('″')" class="btn btn-skeleton teal pull-right" ng-show="annotations[0].type === 'location'">&Prime;</button>
+            <button ng-click="insertChar('′')" class="btn btn-skeleton teal pull-right" ng-show="annotations[0].type === 'location'">&prime;</button>
+            <button ng-click="insertChar('°')" class="btn btn-skeleton teal pull-right" ng-show="annotations[0].type === 'location'">&deg;</button>
+
+        </div>
+      </div>
+
+      <!-- navigation tools -->
+      <nav-tool></nav-tool>
+
+    </div>
+
+    <div class="workflow-col">
+        <span class="workflow-title">Transcription</span>
+        <p>Type out what you see in each marking that appears. Press [Enter] to move to the next mark.</p>
+        <button class="btn btn-orange" ng-click="finish();" ng-show="annotations">I've finished with this page</button>
+        <div ng-controller="TutorialController">
+          Need help? <button class="tutorial-btn" ng-click="launchTutorial()">Launch tutorial</button>
+        </div>
+    </div>
+
+</div>
