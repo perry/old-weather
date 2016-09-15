@@ -2,7 +2,7 @@
     'use strict';
 
     // use to determine if in production or staging
-    var isProd = window.location.hostname === 'www.oldweather.org' || window.location.hostname === 'oldweather.org';
+    var isProd = window.location.hostname === 'arctic.oldweather.org';
 
     var module = angular.module('zooAPI');
 
