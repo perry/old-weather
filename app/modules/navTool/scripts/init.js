@@ -11,52 +11,43 @@
 
           scope.state = $state;
 
-          // set initial position
           var svgWid = element.parent()[0].clientWidth;
           var svgHei = element.parent()[0].clientHeight;
-          scope.xPos = parseInt(svgWid/2-100);;
-          scope.yPos = parseInt(svgHei/2-100);;
 
-          angular.element($window).bind('resize', function() {
-            console.log('RESIZE!');
-            console.log('ELEMENT PARENT: ', element.parent()[0].clientWidth );
+          // set initial position
+          scope.xPos = parseInt(svgWid-500);
+          scope.yPos = parseInt(svgHei-400);
 
-            scope.updatePosition(svgWid/2-100, svgHei/2-100);
-
-          });
-
-          scope.updatePosition = function(x,y) {
-            scope.xPos = x;
-            scope.yPos = y;
-          }
-
-          scope.style = function() {
-            console.log('x, y = ', scope.xPos, scope.yPos);
-            return {
-              left: scope.xPos + 'px',
-              top: scope.yPos + 'px'
-            };
-          }
+          // // TO DO: this part needs work
+          // angular.element($window).bind('resize', function(event) {
+          //
+          //   console.log('RESISE ', event);
+          //   // get updated dimensions
+          //   svgWid = element.parent()[0].clientWidth;
+          //   svgHei = element.parent()[0].clientHeight;
+          //
+          //   console.log('WID HEI = ', svgWid, svgHei);
+          //
+          //   // this last part is incorrect --STI
+          //   startX = x;
+          //   startY = y;
+          //   // moveElement(svgWid-x,y);
+          //   moveElement(x,y); // basically do nothing
+          //
+          // });
 
           var startX = 0, startY = 0, x = scope.xPos, y = scope.yPos;
-
-          scope.onMouseDown = function(event) {
-            event.preventDefault();
-            startX = event.pageX - x;
-            startY = event.pageY - y;
-            $document.on('mousemove', mousemove);
-            $document.on('mouseup', mouseup);
-          };
 
           function mousemove(event) {
             y = event.pageY - startY;
             x = event.pageX - startX;
-            scope.moveElement(x,y);
+            moveElement(x,y);
           }
 
-          scope.moveElement = function(x,y) {
-            console.log('moveElement()');
-            scope.updatePosition(x,y);
+          function moveElement(x,y) {
+            // console.log('moveElement(), ', x, y);
+            scope.xPos = x;
+            scope.yPos = y;
             element.children(0).css({
               top: y + 'px',
               left: x + 'px'
@@ -67,6 +58,22 @@
             $document.off('mousemove', mousemove);
             $document.off('mouseup', mouseup);
           }
+
+          scope.style = function() {
+            console.log('x, y = ', scope.xPos, scope.yPos);
+            return {
+              left: scope.xPos + 'px',
+              top: scope.yPos + 'px'
+            };
+          }
+
+          scope.onMouseDown = function(event) {
+            event.preventDefault();
+            startX = event.pageX - x;
+            startY = event.pageY - y;
+            $document.on('mousemove', mousemove);
+            $document.on('mouseup', mouseup);
+          };
 
         }
       };
