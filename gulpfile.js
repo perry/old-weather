@@ -28,8 +28,8 @@ var appDir = baseDir + '/app';
 var modulesDir = appDir + '/modules';
 var stylDir = baseDir + '/styl';
 var files = {
-    templates: appDir + '/./src/**/templates/**/*.html',
-    scripts: modulesDir + '/**/*.js'
+    templates: './src/**/templates/**/*.html',
+    scripts: './src/**/*.js'
 }
 
 gulp.task('cleanHooks', function () {
@@ -216,7 +216,6 @@ gulp.task('templates', function () {
         .pipe(rename(function (path) {
             // Remove leading module folder so combined js file can find templates
             path.dirname = path.dirname.split('/').slice(1).join('/');
-            console.log(path);
             return path;
         }))
         .pipe(gulp.dest('./app'));
@@ -224,7 +223,7 @@ gulp.task('templates', function () {
 
 gulp.task('watch', function () {
     gulp.watch([files.templates], ['templates']);
-    gulp.watch([files.scripts], ['ngdocs']);
+    gulp.watch([files.scripts], ['ngdocs', 'scripts']);
     gulp.watch([stylDir + '/**/*'], ['stylus']);
 });
 
