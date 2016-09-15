@@ -22,6 +22,9 @@
 
                 return self.svgInstance;
             },
+            getSVGInstance: function () {
+              return self.svgInstance;
+            },
             viewport: function () {
                 return self.el.querySelectorAll('.svg-pan-zoom_viewport')[0];
             },
