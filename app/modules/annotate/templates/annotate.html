@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="row" ng-if="subject === null">
-        <p>There aren't any log pages to annotate on this ship. <a ui-sref="transcription({subject_set_id: subject_set_id})">Transcribe annotations</a>, or find <a ui-sref="ships-list">another ship</a>?</p>
+        <p>There aren't any log pages to annotate on this ship. <a ui-sref="transcribe({subject_set_id: subject_set_id})">Transcribe annotations</a>, or find <a ui-sref="ships-list">another ship</a>?</p>
     </div>
 
     <div class="row" ng-if="subject !== null">
@@ -91,7 +91,7 @@
 
         <div
             class="questions-panel"
-            transcribe-questions="questions"
+            annotate-questions="questions"
             ng-show="!questionsComplete && questions && !isLoading"
         >
         </div>
@@ -114,6 +114,17 @@
                 transcribe-tools
             ></ul>
         </div>
+
+        <hr>
+
+        <div class="page-nav" ng-controller="PageNavController">
+          <h4>Page Navigation</h4>
+          <button ng-click="prevPage()" ng-disabled="prevDisabled">PREV</button>
+          <button ng-click="nextPage()" ng-disabled="nextDisabled">NEXT</button>
+        </div>
+
+        <hr>
+
         <div ng-controller="TutorialController">
           Need help? <button class="tutorial-btn" ng-click="launchTutorial()">Launch tutorial</button>
         </div>
