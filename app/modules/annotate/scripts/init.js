@@ -26,7 +26,7 @@
                 url: '/annotate/:subject_set_id/',
                 views: {
                     main: {
-                        controller: 'annotateController',
+                        controller: 'AnnotateController',
                         templateUrl: 'templates/annotate.html'
                     }
                 }
@@ -647,10 +647,10 @@
         };
     }); // END SUBJECT FACTORY
 
-    module.controller('TranscribeNavController', function ($scope, $stateParams, $modal, subjectFactory, localStorageService) {
+    module.controller('PageNavController', function ($scope, $stateParams, $modal, subjectFactory, localStorageService) {
 
       // update prev/next buttons
-      $scope.$on('transcribe:loadedSubject', function(newValue, oldValue) {
+      $scope.$on('annotate:loadedSubject', function(newValue, oldValue) {
         var currentSubject = subjectFactory.getCurrentSubject($stateParams.subject_set_id);
         var prevCache = localStorageService.get('subject_set_prev_queue_' + $stateParams.subject_set_id);
         $scope.nextDisabled = currentSubject.metadata.nextSubjectIds ? false : true
@@ -669,7 +669,7 @@
 
     });
 
-    module.controller('annotateController', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
+    module.controller('AnnotateController', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
       $rootScope.bodyClass = 'annotate';
 
       $scope.loadSubjects = function (cacheDirection) {
@@ -741,6 +741,6 @@
         $rootScope.$broadcast('annotate:clearAnnotations');
       };
 
-    }); // end annotateController
+    }); // end AnnotateController
 
 }(window.angular, window._));

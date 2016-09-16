@@ -12,7 +12,7 @@
                 url: '/transcribe/:subject_set_id/',
                 views: {
                     main: {
-                        controller: 'transcribeController',
+                        controller: 'TranscribeController',
                         templateUrl: 'templates/transcribe.html'
                     }
                 }
@@ -40,7 +40,7 @@
         };
     }]);
 
-    module.controller('transcribeController', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
+    module.controller('TranscribeController', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
         $rootScope.bodyClass = 'transcribe';
 
         function zoomToCurrentAnnotation() {

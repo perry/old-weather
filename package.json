@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "postinstall": "(cd subject-set-util && npm install) && bower install && browserify panoptes-client-wrapper/index.js > app/panoptes-client.js && gulp hookmeup",
+    "postinstall": "bower install && browserify panoptes-client-wrapper/index.js > app/panoptes-client.js && gulp hookmeup",
     "test": "gulp test-ci"
   },
   "repository": {
