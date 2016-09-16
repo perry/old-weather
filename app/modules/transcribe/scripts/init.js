@@ -33,6 +33,9 @@
             }).catch(function(err) {
                 throw err;
             });
+          } else {
+            return []; // nothing to do for non-logged-in users
+          }
         }
 
         // Save the grid to local storage for reuse
@@ -75,10 +78,6 @@
         function enableMove(e) {
           isMoveEnabled = true;
           annotationsFactory.isEnabled = false; // prevents deleting annotations (and modals produces)
-          } else {
-            return []; // nothing to do for non-logged-in users
-          }
-
         };
     }]);
 
