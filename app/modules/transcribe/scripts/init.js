@@ -12,43 +12,25 @@
                 url: '/transcribe/:subject_set_id/',
                 views: {
                     main: {
-                        controller: 'transcribeController',
+                        controller: 'TranscribeController',
                         templateUrl: 'templates/transcribe.html'
                     }
                 }
             });
     });
 
-    module.service('pendingAnnotationsService', ['zooAPI', function(zooAPI) {
+    module.service('pendingAnnotationsService', ['zooAPI', 'localStorageService', function(zooAPI, localStorageService) {
         this.get = function(subjectSet, page) {
-            // Fetch current user's incomplete classifications
-            return zooAPI.type('classifications/incomplete').get({
+          var user = localStorageService.get('user');
+          if (typeof user !== "undefined" && user !== null) { // user exists?
+            var current_subject = localStorageService.get('current_subject_' + subjectSet.id);
+            return zooAPI.type('classifications/incomplete').get({ // fetch user's incomplete classification
                 page: page || 1,
-                project_id: subjectSet.links.project
-            }).then(function(annotations) {
-                // Filter them to the current subject set
-                return Promise.all(annotations.map(function (annotation) {
-                    annotation.metadata.subjects = [];
-                    var subjectId = annotation.links.subjects[0];
-                    return zooAPI.type('set_member_subjects').get({ subject_id: subjectId })
-                        .then(function(sets) {
-                            var setsMatching = sets.filter(function(set) {
-                                return set.links.subject_set === subjectSet.id;
-                            });
-                            if (setsMatching.length) {
-                                // Subject in set; keep
-                                return Promise.resolve(annotation);
-                            } else {
-                                // Subject not in set; discard
-                                return Promise.resolve(false);
-                            }
-                        });
-                }));
-            }).then(function(annotationsFiltered) {
-                // Strip out false values from promise result
-                return Promise.resolve(annotationsFiltered.filter(annotation => annotation));
-            })
-            .catch(function(err) {
+                project_id: subjectSet.links.project,
+                subject_id: current_subject.id
+            }).then(function(classifications) {
+                return Promise.resolve(classifications);
+            }).catch(function(err) {
                 throw err;
             });
         }
@@ -93,11 +75,14 @@
         function enableMove(e) {
           isMoveEnabled = true;
           annotationsFactory.isEnabled = false; // prevents deleting annotations (and modals produces)
+          } else {
+            return []; // nothing to do for non-logged-in users
+          }
 
         };
     }]);
 
-    module.controller('transcribeController', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
+    module.controller('TranscribeController', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
         $rootScope.bodyClass = 'transcribe';
 
         function zoomToCurrentAnnotation() {
