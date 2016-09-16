@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div ng-show="!annotations && !isLoading">
-        <p>There isn't anything to transcribe on this ship. Help <a ui-sref="transcribe({subject_set_id: ship.id})">annotate logs on this ship</a> or try <a ui-sref="ships-list">another ship</a>?</p>
+        <p>There isn't anything to transcribe on this ship. Help <a ui-sref="annotate({subject_set_id: ship.id})">annotate logs on this ship</a> or try <a ui-sref="ships-list">another ship</a>?</p>
     </div>
     <span
     us-spinner
@@ -29,7 +29,7 @@
                 <g class="image">
                     <image
                     xlink:href="{{ subjectImage }}"
-                    ng-attr-onload="svg.reset()"
+                    ng-attr-onload="{{ loadHandler }} svg.reset();"
                     width="1300"
                     height="1893"
                     ></image>

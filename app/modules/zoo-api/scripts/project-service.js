@@ -27,8 +27,7 @@
     });
 
     module.factory('zooAPI', function ($window, zooAPIConfig) {
-      $window.zooAPI.root = zooAPIConfig.url;
-      $window.zooAPI.appID = zooAPIConfig.app_id;
+      $window.zooOAuth.init(zooAPIConfig.app_id);
       return $window.zooAPI;
     });
 
@@ -54,16 +53,10 @@
         var get = function () {
             var deferred = $q.defer();
 
-            var cache = localStorageService.get('project');
-            if (cache) {
-                deferred.resolve(cache);
-            }
-
             zooAPI.type('projects').get({display_name: zooAPIConfig.display_name})
                 .then(function (response) {
                     var data = $filter('removeCircularDeps')(response[0]);
-                    localStorageService.set('project', data);
-                    deferred.resolve(localStorageService.get('project'));
+                    deferred.resolve(data);
                 });
 
             return deferred.promise;
@@ -78,26 +71,9 @@
         var get = function (filter) {
             var deferred = $q.defer();
 
-            var cache = localStorageService.get('workflows');
-            if (cache) {
-                if (filter) {
-                    var cacheByID = _.find(cache, filter);
-                    if (angular.isDefined(cacheByID)) {
-                        deferred.notify([cacheByID]);
-                    }
-                } else {
-                    deferred.notify(cache);
-                }
-            } else {
-                cache = [];
-            }
-
             zooAPI.type('workflows').get(filter)
                 .then(function (response) {
-                    upsert(cache, {id: response.id}, response);
-                    cache = $filter('removeCircularDeps')(cache);
-                    localStorageService.set('workflows', cache);
-                    deferred.resolve(response);
+                    deferred.resolve($filter('removeCircularDeps')(response));
                 });
 
             return deferred.promise;
@@ -111,20 +87,6 @@
     module.factory('zooAPISubjectSets', function ($q, $filter, localStorageService, zooAPI, zooAPIProject) {
         var get = function (filter) {
             var deferred = $q.defer();
-
-            var cache = localStorageService.get('subject_sets');
-            if (cache) {
-                if (filter) {
-                    var cacheByID = _.find(cache, filter);
-                    if (angular.isDefined(cacheByID)) {
-                        deferred.notify([cacheByID]);
-                    }
-                } else {
-                    deferred.notify(cache);
-                }
-            } else {
-                cache = [];
-            }
 
             zooAPIProject.get()
                 .then(function (response) {
@@ -158,24 +120,7 @@
                             deferred.notify(subjectSets);
                             loadPages(angular.extend({}, options, {page: meta.next_page}));
                         } else {
-                            angular.forEach(subjectSets, function (s) {
-                                upsert(cache, {'id': s.id}, s);
-                            });
-
-                            // If an item in the cache, is not in the list returned by the server
-                            // and we're not filtering (assuming we're loading all data here!)
-                            if (!filter) {
-                                angular.forEach(cache, function (c) {
-                                    if (angular.isUndefined(_.find(subjectSets, {id: c.id}))) {
-                                        _.remove(cache, c);
-                                    }
-                                });
-                            }
-
-                            cache = $filter('removeCircularDeps')(cache);
-                            localStorageService.set('subject_sets', cache);
-
-                            deferred.resolve(subjectSets);
+                            deferred.resolve($filter('removeCircularDeps')(subjectSets));
                         }
                     };
 

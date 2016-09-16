@@ -47,7 +47,7 @@
     "karma-firefox-launcher": "^0.1.6",
     "karma-jasmine": "0.3.5",
     "nib": "1.1.0",
-    "panoptes-client": "^2.5.1",
+    "panoptes-client": "^2.5.2",
     "run-sequence": "^1.1.0",
     "stylus": "^0.51.1"
   },

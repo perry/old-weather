@@ -11,7 +11,7 @@
         }
     };
 
-    var module = angular.module('transcribe', [
+    var module = angular.module('annotate', [
         // 'ngAnimate',
         'ui.router',
         'angularSpinner',
@@ -22,21 +22,21 @@
 
     module.config(function ($stateProvider) {
         $stateProvider
-            .state('transcribe', {
+            .state('annotate', {
                 url: '/annotate/:subject_set_id/',
                 views: {
                     main: {
-                        controller: 'transcribeCtrl',
-                        templateUrl: 'templates/transcribe/transcribe.html'
+                        controller: 'annotateController',
+                        templateUrl: 'templates/annotate.html'
                     }
                 }
             });
     });
 
-    module.directive('transcribeTools', function (svgPanZoomFactory, svgDrawingFactory, toolFactory) {
+    module.directive('annotateTools', function (svgPanZoomFactory, svgDrawingFactory, toolFactory) {
         return {
             restrict: 'A',
-            templateUrl: 'templates/transcribe/_tools.html',
+            templateUrl: 'templates/_tools.html',
             scope: true,
             link: function (scope, element, attrs) {
                 scope.tools = [
@@ -131,34 +131,37 @@
 
                 scope.newSubject = function () {
                     scope.toggleTool();
-                    scope.$parent.loadSubjects('next');
+                    scope.$parent.loadSubjects('next'); // check that this works!
                 };
             }
         };
     });
 
     module.factory('toolFactory', function (svgPanZoomFactory, svgDrawingFactory, svgGridFactory) {
-        var enable = function (tool) {
-            svgPanZoomFactory.disable();
-            svgDrawingFactory.bindMouseEvents({type: tool});
-        };
 
-        var disable = function () {
-            svgPanZoomFactory.enable();
-            svgDrawingFactory.unBindMouseEvents();
-        };
+      var enable = function (tool) {
+        svgPanZoomFactory.disable();
+        svgDrawingFactory.bindMouseEvents({type: tool});
+      };
 
-        return {
-            enable: enable,
-            disable: disable
-        };
+      var disable = function () {
+        svgPanZoomFactory.enable();
+        svgDrawingFactory.unBindMouseEvents();
+      };
+
+      return {
+        enable: enable,
+        disable: disable
+      };
+
     });
 
-    module.factory('gridFactory', function ($rootScope, annotationsFactory, localStorageService, zooAPI, zooAPIProject) {
+    module.factory('gridFactory', function ($rootScope, annotationsFactory, localStorageService, zooAPI, zooAPIProject, svgGridFactory, svgPanZoomFactory) {
 
         var factory;
         var _currentGrid = [];
         var _grids = localStorageService.get('grids') || [];
+        var isMoveEnabled = false;
 
         factory = {
             del: deleteGrid,
@@ -168,6 +171,11 @@
             save: saveGrid,
             show: showGrid,
             use: useGrid,
+            enableMove: enableMove,
+            disableMove: disableMove,
+            moveGrid: moveGrid,
+            createPoint: createPoint,
+            updateGrid: updateGrid
         };
 
         return factory;
@@ -206,23 +214,61 @@
             localStorageService.set('grids', _grids);
         }
 
+        // not sure this is needed?
+        function updateGrid(data) {
+          var index = _grids.indexOf(data);
+          _grids.splice(index, 1, data); // replace element with updated version
+          localStorageService.set('grids', _grids);
+        }
+
         // Delete grid from local storage
         function deleteGrid(index) {
             _grids.splice(index, 1);
             localStorageService.set('grids', _grids);
         }
 
+        function moveGrid(currentGrid, initialClick, e) {
+          if (!isMoveEnabled) return;
+          var currentPos = svgGridFactory.createPoint(e);
+          var index = _grids.indexOf(currentGrid);
+
+          // use as a reference
+          var beforeGrid = localStorageService.get('grids')[index];
+
+          for(let annotation of currentGrid) {
+            var beforeAnnotation = _.filter(beforeGrid, {_id: annotation._id});
+            let xBefore = beforeAnnotation[0].x;
+            let yBefore = beforeAnnotation[0].y;
+            annotation.x = xBefore + currentPos.x - initialClick.x;
+            annotation.y = yBefore + currentPos.y - initialClick.y;
+          }
+          showGrid(index);
+        }
+
+        function enableMove(e) {
+          isMoveEnabled = true;
+          annotationsFactory.isEnabled = false; // prevents deleting annotations (and modals produces)
+        };
+
+        function disableMove(e) {
+          isMoveEnabled = false;
+          annotationsFactory.isEnabled = true;
+        };
+
+        function createPoint(e) {
+          var newPoint = svgGridFactory.createPoint(e);
+          return newPoint;
+        };
 
     });
 
-
-    module.directive('transcribeQuestions', function ($rootScope, $timeout, annotationsFactory, gridFactory, toolFactory, authFactory) {
+    module.directive('annotateQuestions', function ($rootScope, $timeout, annotationsFactory, gridFactory, toolFactory, authFactory) {
         return {
             restrict: 'A',
             scope: {
-                questions: '=transcribeQuestions'
+                questions: '=annotateQuestions'
             },
-            templateUrl: 'templates/transcribe/_questions.html',
+            templateUrl: 'templates/_questions.html',
             link: function (scope, element, attrs) {
 
                 scope.grids = [];
@@ -237,9 +283,12 @@
 
                 scope.$watch('activeTask', function () {
 
+                    toolFactory.disable(); // reset mouse events (removes duplicates)
+
                     // Skip grid tasks if we're not logged in
                     if (scope.activeTask && scope.tasks[scope.activeTask].grid && !authFactory.getUser()) {
                         scope.confirm(scope.tasks[scope.activeTask].skip);
+                        return; // prevent duplicate event bindings after skipping task
                     }
 
                     if (scope.activeTask && angular.isDefined(scope.tasks[scope.activeTask].tools)) {
@@ -248,13 +297,18 @@
                         toolFactory.disable();
                     }
 
+                    /* Begin grid-related stuff */
                     if (scope.activeTask === 'T5-use-grid') {
+                        gridFactory.enableMove(); // and disable deleting annotations
                         if (gridFactory.list().length === 0) {
                             scope.confirm(scope.tasks[scope.activeTask].skip);
                         } else {
                             scope.grids = gridFactory.list();
                             scope.showGrid(0);
                         }
+
+                    } else {
+                      gridFactory.disableMove();
                     }
 
                 });
@@ -301,13 +355,13 @@
                         scope.activeTask = value;
                     } else {
                         scope.activeTask = undefined;
-                        $rootScope.$broadcast('transcribe:questionsComplete');
+                        $rootScope.$broadcast('annotate:questionsComplete');
                     }
                 };
 
                 scope.skipQuestions = function () {
                     scope.activeTask = undefined;
-                    $rootScope.$broadcast('transcribe:questionsComplete');
+                    $rootScope.$broadcast('annotate:questionsComplete');
                 };
             }
         };
@@ -333,7 +387,7 @@
             workflow.tasks['T5-use-grid'] = {
                 grid: true,
                 skip: 'T5',
-                question: 'Would you like to use this grid?',
+                question: 'Would you like to use this grid? If you need to, move the grid into the correct position.',
                 answers: [
                     {
                         label: 'Yes',
@@ -346,7 +400,9 @@
                     }
                 ]
             };
-            // Commented out while we focus on getting this out of the door
+
+            // // No longer needed?
+            // // Commented out while we focus on getting this out of the door
             // workflow.tasks['T5-adjust-grid'] = {
             //     grid: true,
             //     instruction: 'If you need to, move the grid into the correct position.',
@@ -417,8 +473,8 @@
             });
 
             cache = $filter('removeCircularDeps')(cache);
-
             return localStorageService.set('subject_set_next_queue_' + subject_set_id, cache);
+
         };
 
         var _loadNewSubjects = function (subject_set_id) {
@@ -613,87 +669,78 @@
 
     });
 
-    module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
-        $rootScope.bodyClass = 'annotate';
+    module.controller('annotateController', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
+      $rootScope.bodyClass = 'annotate';
 
-        $scope.loadSubjects = function (cacheDirection) {
-            $rootScope.$broadcast('transcribe:loadingSubject');
-            $scope.subject_set_id = $stateParams.subject_set_id;
-            $scope.subject = undefined;
-            $scope.isLoading = true;
-            $scope.questions = null;
-            $scope.questionsComplete = false;
-            $scope.grid = gridFactory.get;
+      $scope.loadSubjects = function (cacheDirection) {
+        $rootScope.$broadcast('annotate:loadingSubject');
 
-            workflowFactory.get($scope.subject_set_id)
-                .then(function (response) {
-                    $scope.questions = response;
-                });
+        $scope.subject_set_id = $stateParams.subject_set_id;
+        $scope.subject = undefined;
+        $scope.isLoading = true;
+        $scope.questions = null;
+        $scope.questionsComplete = false;
+        $scope.grid = gridFactory.get;
 
-            subjectFactory.get($scope.subject_set_id, cacheDirection)
-                .then(function (response) {
-                    if (response !== null) {
-                        $timeout(function () {
-                            $scope.subject = response;
-                            var keys = Object.keys($scope.subject.locations[0]);
-                            var subjectImage = $scope.subject.locations[0][keys[0]];
+        workflowFactory.get($scope.subject_set_id)
+          .then(function (response) {
+            $scope.questions = response;
+          });
 
-                            // // TODO: change this. We're cache busting the image.onload event.
-                            // subjectImage += '?' + new Date().getTime();
-                            $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
-                            $scope.subjectLoaded();
-                            $rootScope.$broadcast('transcribe:loadedSubject');
-                        });
-                    } else {
-                        $scope.subject = null;
-                        $rootScope.$broadcast('transcribe:loadedSubject');
-                    }
+        subjectFactory.get($scope.subject_set_id, cacheDirection)
+          .then(function (response) {
+            if (response !== null) {
+              $timeout(function () {
+                $scope.subject = response;
+                var keys = Object.keys($scope.subject.locations[0]);
+                var subjectImage = $scope.subject.locations[0][keys[0]];
 
-                });
-        };
+                // TODO: change this. We're cache busting the image.onload event.
+                // subjectImage += '?' + new Date().getTime();
+                $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
+                $scope.loadHandler = $scope.subjectLoaded(); // is loadHandler still used? --STI
+                $rootScope.$broadcast('annotate:loadedSubject');
+              });
+            } else {
+              $scope.subject = null;
+              $rootScope.$broadcast('annotate:loadedSubject');
+            }
 
-        $scope.loadSubjects('initial');
+          });
+      };
 
-        // // DEBUGGING CODE: checks if resource has been downloaded
-        // var isCached = function (uri) {
-        //   var image = new Image();
-        //   image.onload = function() {
-        //     console.log('IMAGE LOADED! ', uri);
-        //   }
-        //   image.src = uri;
-        //   return image.complete; //|| (image.width + image.height)
-        // }
+      $scope.loadSubjects('initial');
 
-        $scope.subjectLoaded = function () {
-            $scope.isLoading = false;
-        };
+      $scope.subjectLoaded = function () {
+        $scope.isLoading = false;
+      };
 
-        $scope.saveSubject = function () {
-            annotationsFactory.save($scope.subject.id)
-                .then(function () {
-                    $scope.loadSubjects('next');
-                });
-        };
+      $scope.saveSubject = function () {
+        annotationsFactory.save($scope.subject.id)
+          .then(function () {
+            $scope.loadSubjects('next');
+          });
+      };
 
-        $scope.saveSubjectAndTranscribe = function () {
-            annotationsFactory.save($scope.subject.id)
-                .then(function () {
-                    $state.go('transcription', { subject_set_id: $scope.subject_set_id });
-                });
-        };
+      $scope.saveSubjectAndTranscribe = function () {
+        annotationsFactory.save($scope.subject.id)
+          .then(function () {
+            $state.go('transcribe', { subject_set_id: $scope.subject_set_id });
+          });
+      };
 
-        $scope.$on('transcribe:svgPanZoomToggle', function () {
-            $scope.isAnnotating = !svgPanZoomFactory.status();
-        });
+      $scope.$on('annotate:svgPanZoomToggle', function () {
+        $scope.isAnnotating = !svgPanZoomFactory.status();
+      });
 
-        $scope.$on('transcribe:questionsComplete', function () {
-            $scope.questionsComplete = true;
-        });
+      $scope.$on('annotate:questionsComplete', function () {
+        $scope.questionsComplete = true;
+      });
 
-        $scope.clearAnnotations = function () {
-            $rootScope.$broadcast('transcribe:clearAnnotations');
-        };
+      $scope.clearAnnotations = function () {
+        $rootScope.$broadcast('annotate:clearAnnotations');
+      };
 
-    });
+    }); // end annotateController
 
 }(window.angular, window._));

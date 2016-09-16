@@ -16,8 +16,8 @@
     module.factory('annotationsFactory', function (confirmationModalFactory, $window, $filter, $rootScope, $stateParams, $q, zooAPISubjectSets, localStorageService, zooAPI) {
 
         var classification;
-
         var annotationsPrefix = 'annotation_subject_id_';
+        var isEnabled = true;
 
         var create = function (subject_id) {
             var deferred = $q.defer();
@@ -80,19 +80,21 @@
             var classification = localStorageService.get(storageKey);
 
             if (classification.annotations.length === 0) {
-
-                confirmationModalFactory.deployModal('You haven\'t added any annotations, are you sure you want to finish?', function(isConfirmed){
-                  if(isConfirmed){
+              var params = {message: 'You haven\'t added any annotations, are you sure you want to finish?'};
+              confirmationModalFactory.setParams(params);
+              confirmationModalFactory.deployModal(
+                function(deleteType) {
+                  if(deleteType){
                     var subject_set_next_queue = localStorageService.get('subject_set_next_queue_' + $stateParams.subject_set_id);
                     _.remove(subject_set_next_queue, {id: id});
                     localStorageService.set('subject_set_next_queue_' + $stateParams.subject_set_id, subject_set_next_queue);
                     deferred.resolve();
                   }
-                });
+              });
             } else {
                 // Only leave incomplete classifications if user is logged in
                 // Unfortunately, this means there will be no transciption otherwise
-                // TO DO: fix this! 
+                // TO DO: fix this!
                 var user = localStorageService.get('user');
                 if (typeof user !== "undefined" && user !== null) {
                   classification.completed = false;
@@ -126,15 +128,15 @@
             return deferred.promise;
         };
 
-        var get = function (id) {
-            var storageKey = annotationsPrefix + id;
+        var get = function (subjectId) {
+            var storageKey = annotationsPrefix + subjectId;
             var deferred = $q.defer();
 
             var data = localStorageService.get(storageKey);
             if (data && data.annotations) {
                 deferred.resolve(data);
             } else {
-                create(id)
+                create(subjectId)
                     .then(function (response) {
                         localStorageService.set(storageKey, response);
                         deferred.resolve(response);
@@ -200,7 +202,8 @@
             clear: clear,
             update: update,
             save: save,
-            addMultiple: addMultiple
+            addMultiple: addMultiple,
+            isEnabled: isEnabled
         };
 
         return obj;

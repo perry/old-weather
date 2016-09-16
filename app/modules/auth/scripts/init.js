@@ -40,7 +40,6 @@
             var auth = localStorageService.get('auth');
             if (0 < (Math.floor(Date.now() / 1000) - auth.token_start) < auth.expires_in) {
                 _setToken(auth.access_token);
-                _startTimer();
                 _setUserData();
             } else {
                 signOut();
@@ -55,7 +54,6 @@
                 expires_in: params.expires_in * 1000
             });
             _setToken(params.access_token);
-            _startTimer();
             return _setUserData()
                 .then(function () {
                     $window.location.href = localStorageService.get('redirectOnSignIn');
@@ -64,13 +62,7 @@
 
         function signIn() {
             localStorageService.set('redirectOnSignIn', $location.absUrl());
-            $window.location.href = zooAPI.root.match(/^(.*)\/[^/]*$/)[1] +
-                '/oauth/authorize' +
-                '?response_type=token' +
-                '&client_id=' +
-                zooAPIConfig.app_id +
-                '&redirect_uri=' +
-                $location.absUrl().match(/.+?(?=\#\/)/)[0];
+            $window.zooOAuth.signIn($location.absUrl().match(/.+?(?=\#\/)/)[0]);
         }
 
         function _setToken(token) {
@@ -106,18 +98,6 @@
             localStorageService.set('avatar', null);
             $window.zooAuth.signOut();
             $rootScope.$broadcast('auth:signout');
-        }
-
-        function _startTimer() {
-            var auth = localStorageService.get('auth');
-            var expiry = auth.token_start + auth.expires_in - Date.now();
-            $interval(function () {
-                signOut();
-                $modal.open({
-                    templateUrl: 'templates/auth/session-expired.html',
-                    controller: 'SessionExpiredModalController'
-                });
-            }, expiry, 1);
         }
 
         return {
