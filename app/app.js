@@ -541,7 +541,7 @@
                 ['finally'](function () {
                     $scope.loading = false;
                     $scope.ships = $scope.ships.map(function (ship) {
-                        var extraInfo = ShipsDetailConstants[ship.metadata.shortName] || 
+                        var extraInfo = ShipsDetailConstants[ship.metadata.shortName] ||
                             ShipsDetailConstants[ship.display_name.split(' ')[0].toLowerCase()] ||
                             {};
                         ship.metadata = _.extend(ship.metadata, extraInfo);
@@ -1116,7 +1116,7 @@
     var module = angular.module('confirmationModal');
 
     module.factory('confirmationModalFactory', [ '$modal', '$controller', function($modal,$controller){
-      
+
       // set default parameters
       var params = {
         message: 'Are you sure?'

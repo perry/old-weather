@@ -17,7 +17,28 @@
     <body ng-class="bodyClass ? 'page-' + bodyClass : ''">
         <header id="site-header">
             <nav id="site-nav" class="navbar navbar-default" ng-init="isCollapsed = true;">
+
                 <div class="container-fluid">
+
+                  <div ng-cloak class="nav navbar-nav navbar-right" ng-controller="HeaderUserCtrl">
+
+                    <div ng-show="!user" class="user">
+                      <div class="text">
+                        <a class="logout" href="#" ng-click="$event.preventDefault(); signIn()">Log in</a>
+                      </div>
+                    </div>
+
+                    <div ng-if="user" class="user">
+                      <div class="text">
+                        <span ng-bind="'Hello, '"></span>
+                        <strong ng-bind="user.display_name"></strong>
+                        <a class="logout" href="#" ng-click="$event.preventDefault(); signOut()">Log out</a>
+                      </div>
+                      <img ng-if="avatar" ng-src="{{ avatar.src }}" class="avatar">
+                    </div>
+
+                  </div>
+
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle collapsed" ng-click="isCollapsed = !isCollapsed">
                             <span class="sr-only">Toggle navigation</span>
@@ -51,25 +72,6 @@
                            <li><a href="https://www.zooniverse.org/projects/zooniverse/old-weather/talk/" target="_blank">Discuss</a></li>
                         </ul>
                     </div>
-
-                    <ul class="nav navbar-nav navbar-right" ng-controller="HeaderUserCtrl">
-
-                        <li ng-if="!user" class="authentication-buttons">
-                            <ul class="nav navbar-nav">
-                                <li><a href="#" ng-click="$event.preventDefault(); signIn();">Log in</a></li>
-                            </ul>
-                        </li>
-
-                        <li ng-if="user" class="user">
-                            <div class="text">
-                                <span ng-bind="'Hello, '"></span>
-                                <strong ng-bind="user.display_name"></strong>
-                                <a class="logout" href="#" ng-click="$event.preventDefault(); signOut()">Log out</a>
-                            </div>
-                            <img ng-if="avatar" ng-src="{{ avatar.src }}" class="avatar">
-                        </li>
-
-                    </ul>
 
                 </div>
             </nav>
