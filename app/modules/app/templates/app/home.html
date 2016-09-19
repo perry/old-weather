@@ -30,14 +30,16 @@
     </div>
 </div>
 
-<div class="home-project-stats">
+<div
+  ng-show="project"
+  class="home-project-stats">
     <div class="container">
         <p>Current project statistics</p>
     </div>
     <div class="stats">
         <div class="container">
             <div class="stat col-sm-3">
-                <div class="figure">{{ project.retired_subjects_count / project.subjects_count }}%</div>
+                <div ng-if="project.subjects_count !== undefined" class="figure">{{ project.retired_subjects_count / project.subjects_count }}%</div>
                 <div class="title">Subjects complete</div>
             </div>
 
