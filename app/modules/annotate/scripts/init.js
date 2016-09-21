@@ -235,10 +235,10 @@
           // use as a reference
           var beforeGrid = localStorageService.get('grids')[index];
 
-          for(let annotation of currentGrid) {
+          for(var annotation of currentGrid) {
             var beforeAnnotation = _.filter(beforeGrid, {_id: annotation._id});
-            let xBefore = beforeAnnotation[0].x;
-            let yBefore = beforeAnnotation[0].y;
+            var xBefore = beforeAnnotation[0].x;
+            var yBefore = beforeAnnotation[0].y;
             annotation.x = xBefore + currentPos.x - initialClick.x;
             annotation.y = yBefore + currentPos.y - initialClick.y;
           }
@@ -448,7 +448,7 @@
     module.factory('subjectFactory', function ($q, $filter, zooAPI, localStorageService, zooAPIProject, $timeout) {
 
         var _getPrevQueueCache = function (subject_set_id) {
-            let cache = localStorageService.get('subject_set_prev_queue_' + subject_set_id);
+            var cache = localStorageService.get('subject_set_prev_queue_' + subject_set_id);
             if (!cache) {
               localStorageService.set('subject_set_prev_queue_' + subject_set_id, []);
               cache = localStorageService.get('subject_set_prev_queue_' + subject_set_id);
@@ -457,7 +457,7 @@
         };
 
         var _getNextQueueCache = function (subject_set_id) {
-            let cache = localStorageService.get('subject_set_next_queue_' + subject_set_id);
+            var cache = localStorageService.get('subject_set_next_queue_' + subject_set_id);
             if (!cache) {
               localStorageService.set('subject_set_next_queue_' + subject_set_id, []);
               cache = localStorageService.get('subject_set_next_queue_' + subject_set_id);
@@ -509,9 +509,9 @@
             };
 
             var preloadSubjectImages = function (subjects) {
-              let images = [];
-              for (let subject of subjects) {
-                let keys = Object.keys(subject.locations[0]);
+              var images = [];
+              for (var subject of subjects) {
+                var keys = Object.keys(subject.locations[0]);
                 // console.log('PRELOADING: ', subject.locations[0][keys[0]]);
                 images.push( new Image().src = subject.locations[0][keys[0]] );
               }
@@ -634,7 +634,7 @@
         };
 
         var getCurrentSubject = function (subject_set_id) {
-          let currentSubject = localStorageService.get('current_subject_' + subject_set_id);
+          var currentSubject = localStorageService.get('current_subject_' + subject_set_id);
           if( typeof currentSubject !== "undefined" && currentSubject !== null){
             return currentSubject;
           }
