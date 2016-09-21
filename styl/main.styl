@@ -33,22 +33,23 @@ body
     position: relative
     font-family: 'Open Sans', sans-serif
     min-height: 100vh
-    background-color: $shallow-teal
-    background-image: url(../images/home-bg.png), url(../images/home-bg-tile.png)
-    background-repeat: no-repeat, repeat-y
-    background-size: 100% auto, 100% auto
-    background-position: 0 -200px
+    // background-color: $shallow-teal
+    background-image: url("../images/home-bg.png") //, url(../images/home-bg-tile.png)
+    background-repeat: no-repeat
+    background-size: cover
     &.page-annotate,
     &.page-transcribe
-        background-image: none
-    &.page-home
-        background-image: none
+        // background-image: none
         #site-main
             background-color: $shallow-teal
-            background-image: url(../images/home-bg.png)
-            background-repeat: no-repeat
-            background-size: cover
-            background-position: 0 0
+    &.page-home
+        // background-image: none
+        #site-main
+            // background-color: $shallow-teal
+            // background-image: url(../images/home-bg.png)
+            // background-repeat: no-repeat
+            // background-size: cover
+            // background-position: 0 0
 
 .page-annotate,
 .page-transcribe
@@ -147,17 +148,17 @@ img
 .navbar
     border-radius: 0
 
-.container-fluid
-    width: 100%
-    padding-left: 0px
-    padding-right: 0px
+// .container-fluid
+//     width: 100%
+//     padding-left: 0px
+//     padding-right: 0px
 
 .glyphicon.mirror
     transform: scaleX(-1)
 
 #site-header
     .page-home &
-        position: absolute
+        // position: absolute
         z-index: 10
         top: 0
         left: 0
@@ -330,7 +331,7 @@ img
 
 .home-content
     padding-bottom: 87px
-    padding-top: 87px
+    padding-top: 12px
     h1,
     p
         max-width: 580px
