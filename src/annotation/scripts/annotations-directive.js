@@ -102,10 +102,10 @@
                 scope.removeAnnotation = function (annotation, type) {
                     if(type === 'row' && annotation._rowId) { // remove all annotations in row
                       var annotationsToRemove = _.filter(scope.annotations, {_rowId: annotation._rowId});
-                      for(var currAnnotation of annotationsToRemove) {
-                        _.remove(scope.annotations, {_rowId: currAnnotation._rowId});
-                        annotationsFactory.remove(currAnnotation._id, scope.$parent.subject);
-                      }
+                      annotationsToRemove.forEach(function(currAnnotation) {
+                          _.remove(scope.annotations, {_rowId: currAnnotation._rowId});
+                          annotationsFactory.remove(currAnnotation._id, scope.$parent.subject);
+                      });
                     } else {
                       _.remove(scope.annotations, {_id: annotation._id});
                       annotationsFactory.remove(annotation._id, scope.$parent.subject);

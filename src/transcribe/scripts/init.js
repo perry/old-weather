@@ -46,7 +46,9 @@
                 }));
             }).then(function(annotationsFiltered) {
                 // Strip out false values from promise result
-                return Promise.resolve(annotationsFiltered.filter(annotation => annotation));
+                return Promise.resolve(annotationsFiltered.filter(function(annotation) {
+                    return annotation;
+                }));
             })
             .catch(function(err) {
                 throw err;
@@ -80,13 +82,14 @@
           // use as a reference
           var beforeGrid = localStorageService.get('grids')[index];
 
-          for(var annotation of currentGrid) {
+          currentGrid.forEach(function(annotation) {
             var beforeAnnotation = _.filter(beforeGrid, {_id: annotation._id});
             var xBefore = beforeAnnotation[0].x;
             var yBefore = beforeAnnotation[0].y;
             annotation.x = xBefore + currentPos.x - initialClick.x;
             annotation.y = yBefore + currentPos.y - initialClick.y;
-          }
+          });
+
           showGrid(index);
         }
 
