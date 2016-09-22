@@ -241,12 +241,26 @@ img
             fill: #fff
 
 #site-nav
+
     background: none
     border: 0
     margin: 0
     color: #fff
     .navbar-nav
         > li
+            .active
+              background-color: $shallow-teal
+            ul
+              a
+                background-color: transparent
+                color: black
+                padding-left: 60px
+                @media screen and (min-width: 768px)
+                  color: black
+                  padding-left: 10px
+              a:hover
+                background-color: #ccf0f2
+
             margin-right: 10px
             > a,
             > button
@@ -258,12 +272,8 @@ img
                 padding: 7px 40px
                 &:hover,
                 &:focus
-                    background-color: rgba(197, 252, 255, 0.25)
-        > .active > a,
-        > .active > a:hover,
-        > .active > a:focus
-            background: none
-            border-color: #c5fcff
+                    background-color: $shallow-teal
+
     .navbar-brand
         height: auto
         svg
