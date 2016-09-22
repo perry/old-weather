@@ -287,19 +287,26 @@ img
     .user
         display: flex
         line-height: 1
+        float: right
         .text
-            padding-top: 12px
-            margin-right: 10px
-            .logout,
+
             .login
-                color: #fff
-                display: block
-                font-size: 11px
-                margin-top: 4px
-                text-align: right
-                text-decoration: underline
-                &:hover
-                    text-decoration: none
+              color: $orange
+              display: block
+              font-size: 14px
+              font-weight: 700
+              text-align: right
+
+            .logout
+              border-radius: 5px
+              border-color: #fff
+              padding-top: 12px
+              margin-right: 10px
+              color: #fff
+              display: block
+              font-size: 11px
+              text-align: right
+              text-decoration: underline
 
 
         .page-annotate &,

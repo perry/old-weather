@@ -18,25 +18,6 @@
         <header id="site-header">
             <nav id="site-nav" class="navbar navbar-default" ng-init="isCollapsed = true;">
 
-                  <div ng-cloak class="nav navbar-nav navbar-right" ng-controller="HeaderUserCtrl">
-
-                    <div ng-show="!user" class="user">
-                      <div class="text">
-                        <a class="logout" href="#" ng-click="$event.preventDefault(); signIn()">Log in</a>
-                      </div>
-                    </div>
-
-                    <div ng-if="user" class="user">
-                      <div class="text">
-                        <span ng-bind="'Hello, '"></span>
-                        <strong ng-bind="user.display_name"></strong>
-                        <a class="logout" href="#" ng-click="$event.preventDefault(); signOut()">Log out</a>
-                      </div>
-                      <img ng-if="avatar" ng-src="{{ avatar.src }}" class="avatar">
-                    </div>
-
-                  </div>
-
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle collapsed" ng-click="isCollapsed = !isCollapsed">
                             <span class="sr-only">Toggle navigation</span>
@@ -53,6 +34,7 @@
                     </div>
 
                     <div class="collapse navbar-collapse navbar-left" collapse="isCollapsed">
+
                         <ul class="nav navbar-nav">
                             <li ui-sref-active="active"><a ui-sref="ships-list">Ships</a></li>
                             <li ui-sref-active="active" dropdown>
@@ -69,7 +51,30 @@
                            <li><a href="http://blog.oldweather.org" target="_blank">Blog</a></li>
                            <li><a href="https://www.zooniverse.org/projects/zooniverse/old-weather/talk/" target="_blank">Discuss</a></li>
                         </ul>
+
                     </div>
+
+
+                    <!-- Login/Log out >>> -->
+                    <div ng-cloak class="nav navbar-nav navbar-right" ng-controller="HeaderUserCtrl">
+
+                      <div ng-show="!user" class="user">
+                        <div class="text">
+                          <a class="login" href="#" ng-click="$event.preventDefault(); signIn()">Log in</a>
+                        </div>
+                      </div>
+
+                      <div ng-if="user" class="user">
+                        <div class="text">
+                          <span ng-bind="'Hello, '"></span>
+                          <strong ng-bind="user.display_name"></strong>
+                          <a class="logout" href="#" ng-click="$event.preventDefault(); signOut()">Log out</a>
+                        </div>
+                        <img ng-if="avatar" ng-src="{{ avatar.src }}" class="avatar">
+                      </div>
+
+                    </div>
+                    <!-- <<< Login/Log out -->
 
             </nav>
 
