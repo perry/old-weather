@@ -15,7 +15,7 @@
                 self.rotation = 0;
 
                 // center subject image on viewable area
-                var svgWidth = self.svgInstance.getSizes().width - 300; // subtract right column width
+                var svgWidth = self.svgInstance.getSizes().width;
                 var zoomFactor = self.svgInstance.getSizes().realZoom;
                 var subjectWidth = self.svgInstance.getSizes().viewBox.width * zoomFactor;
                 self.svgInstance.pan({x: svgWidth/2 - subjectWidth/2, y:0});

@@ -35,7 +35,7 @@ body
     min-height: 100vh
     background-image: url("../images/home-bg.png")
     background-repeat: no-repeat
-    background-size: cover
+    // background-size: cover
     &.page-annotate,
     &.page-transcribe
         #site-main
@@ -48,28 +48,28 @@ body
     #site-header,
     #site-main
         position: relative
-        padding-right: 300px
+        // padding-right: 300px
         &:after
-            content: ''
-            position: absolute
-            z-index: 1
-            height: 100%
-            width: 300px
-            background: #f2fbfc
-            top: 0
-            right: 0
+            // content: ''
+            // position: absolute
+            // z-index: 1
+            // height: 100%
+            // width: 300px
+            // background: #f2fbfc
+            // top: 0
+            // right: 0
     #site-nav
         .navbar-right
             position: absolute
             z-index: 10
-            right: -300px + 15px
+            // right: -300px + 15px
 
 .authentication-buttons
     // display: none
 
 .workflow-col
     width: 300px
-    padding: 0 15px
+    padding: 20px 0px 15px 15px
     position: absolute
     z-index: 10
     top: 0
@@ -443,7 +443,16 @@ img
     font-size: 0
     overflow: hidden
     padding-left: 0px
-    padding-right: 0px
+    padding-right: 300px
+
+    // content: ''
+    // position: absolute
+    // z-index: 1
+    // height: 100%
+    // width: 300px
+    background: #f2fbfc
+    // top: 0
+    // right: 0
 
     .guides
         pointer-events: none
@@ -468,6 +477,7 @@ img
             top: 20%
 
     .log-controls
+        z-index: 100
         border-radius: 5px
         box-shadow: 0 0 5px 3px rgba(0,0,0,0.4)
         position: absolute
@@ -507,6 +517,7 @@ img
     max-width: 100%
     width: 100%
     height: 100vh
+    background-color: $shallow-teal
 
     image
       cursor: move /* fallback if grab cursor is unsupported */
