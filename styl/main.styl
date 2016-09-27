@@ -35,37 +35,17 @@ body
     min-height: 100vh
     background-image: url("../images/home-bg.png")
     background-repeat: no-repeat
-    // background-size: cover
     &.page-annotate,
     &.page-transcribe
         #site-main
             background-color: $shallow-teal
-    // &.page-home
-    //     #site-main
 
 .page-annotate,
 .page-transcribe
+    color: #fff
     #site-header,
     #site-main
         position: relative
-        // padding-right: 300px
-        &:after
-            // content: ''
-            // position: absolute
-            // z-index: 1
-            // height: 100%
-            // width: 300px
-            // background: #f2fbfc
-            // top: 0
-            // right: 0
-    #site-nav
-        .navbar-right
-            position: absolute
-            z-index: 10
-            // right: -300px + 15px
-
-.authentication-buttons
-    // display: none
 
 .workflow-col
     width: 300px
@@ -74,7 +54,7 @@ body
     z-index: 10
     top: 0
     right: 0
-    color:  #00b5be
+    color:  $shallow-teal
     font-size: 14px
     font-weight: 400
     line-height: 20px
@@ -83,14 +63,14 @@ body
         display: block
         margin-bottom: 20px
         font-family: 'Domine', serif
-        color:  #00b5be
+        color:  $shallow-teal
         font-size: 24px
         font-weight: 400
         line-height: 20px
         text-align: center
 
     .title
-        color:  #00b5be
+        color:  $shallow-teal
         font-size: 14px
         font-weight: 700
         line-height: 20px
@@ -148,7 +128,6 @@ img
 
 #site-header
     .page-home &
-        // position: absolute
         z-index: 10
         top: 0
         left: 0
@@ -169,7 +148,6 @@ img
 
 
 #site-main
-    // height: 100vh
     min-height: 660px // prevent from collapsing
     position: relative
 
@@ -179,7 +157,6 @@ img
             background: $deep-teal
             color: $shallow-teal
             font-size: 18px
-            // padding-top: 110px
             padding-top: 36px
             padding-bottom: 36px
             text-align: center
@@ -242,6 +219,7 @@ img
 
 #site-nav
 
+    margin-top: 17px
     background: none
     border: 0
     margin: 0
@@ -286,8 +264,9 @@ img
         margin-right: 0
     .user
         display: flex
-        line-height: 1
-        float: right
+        line-height: 0.5em
+        position: absolute
+        right: 20px
         .text
 
             .login
@@ -307,16 +286,6 @@ img
               font-size: 11px
               text-align: right
               text-decoration: underline
-
-
-        .page-annotate &,
-        .page-transcribe &
-            .text,
-            .logout
-                color:  #00b5be
-            strong
-                color:  #00494d
-
 
         .avatar
             border-radius: 40px
@@ -444,15 +413,7 @@ img
     overflow: hidden
     padding-left: 0px
     padding-right: 300px
-
-    // content: ''
-    // position: absolute
-    // z-index: 1
-    // height: 100%
-    // width: 300px
     background: #f2fbfc
-    // top: 0
-    // right: 0
 
     .guides
         pointer-events: none
