@@ -36,6 +36,8 @@ body
     min-height: 100vh
     background-image: url("../images/home-bg.png")
     background-repeat: no-repeat
+    color: #fff
+    background-color: $shallow-teal
     &.page-annotate,
     &.page-transcribe
         #site-main
@@ -828,3 +830,8 @@ img
       border: solid rgba(0,0,0,0) 1px
     &:hover
       border: solid black 1px
+
+// "Nothing to transcribe" warning
+.no-annotations
+    padding: 16px
+    text-align: center

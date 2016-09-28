@@ -12,30 +12,47 @@
                 url: '/transcribe/:subject_set_id/',
                 views: {
                     main: {
-                        controller: 'TranscribeController',
+                        controller: 'transcribeController',
                         templateUrl: 'templates/transcribe.html'
                     }
                 }
             });
     });
 
-    module.service('pendingAnnotationsService', ['zooAPI', 'localStorageService', function(zooAPI, localStorageService) {
+    module.service('pendingAnnotationsService', ['zooAPI', function(zooAPI) {
         this.get = function(subjectSet, page) {
-          var user = localStorageService.get('user');
-          if (typeof user !== "undefined" && user !== null) { // user exists?
-            var current_subject = localStorageService.get('current_subject_' + subjectSet.id);
-            return zooAPI.type('classifications/incomplete').get({ // fetch user's incomplete classification
+            // Fetch current user's incomplete classifications
+            return zooAPI.type('classifications/incomplete').get({
                 page: page || 1,
-                project_id: subjectSet.links.project,
-                subject_id: current_subject.id
-            }).then(function(classifications) {
-                return Promise.resolve(classifications);
-            }).catch(function(err) {
+                project_id: subjectSet.links.project
+            }).then(function(annotations) {
+                // Filter them to the current subject set
+                return Promise.all(annotations.map(function (annotation) {
+                    annotation.metadata.subjects = [];
+                    var subjectId = annotation.links.subjects[0];
+                    return zooAPI.type('set_member_subjects').get({ subject_id: subjectId })
+                        .then(function(sets) {
+                            var setsMatching = sets.filter(function(set) {
+                                return set.links.subject_set === subjectSet.id;
+                            });
+                            if (setsMatching.length) {
+                                // Subject in set; keep
+                                return Promise.resolve(annotation);
+                            } else {
+                                // Subject not in set; discard
+                                return Promise.resolve(false);
+                            }
+                        });
+                }));
+            }).then(function(annotationsFiltered) {
+                // Strip out false values from promise result
+                return Promise.resolve(annotationsFiltered.filter(function(annotation) {
+                    return annotation;
+                }));
+            })
+            .catch(function(err) {
                 throw err;
             });
-          } else {
-            return []; // nothing to do for non-logged-in users
-          }
         }
 
         // Save the grid to local storage for reuse
@@ -65,23 +82,25 @@
           // use as a reference
           var beforeGrid = localStorageService.get('grids')[index];
 
-          for(var annotation of currentGrid) {
+          currentGrid.forEach(function(annotation) {
             var beforeAnnotation = _.filter(beforeGrid, {_id: annotation._id});
             var xBefore = beforeAnnotation[0].x;
             var yBefore = beforeAnnotation[0].y;
             annotation.x = xBefore + currentPos.x - initialClick.x;
             annotation.y = yBefore + currentPos.y - initialClick.y;
-          }
+          });
+
           showGrid(index);
         }
 
         function enableMove(e) {
           isMoveEnabled = true;
           annotationsFactory.isEnabled = false; // prevents deleting annotations (and modals produces)
+
         };
     }]);
 
-    module.controller('TranscribeController', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
+    module.controller('transcribeController', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
         $rootScope.bodyClass = 'transcribe';
 
         function zoomToCurrentAnnotation() {

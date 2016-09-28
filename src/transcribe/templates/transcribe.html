@@ -1,6 +1,11 @@
-<div class="transcribe-container">
-    <div ng-show="!annotations && !isLoading">
-        <p>There isn't anything to transcribe on this ship. Help <a ui-sref="annotate({subject_set_id: ship.id})">annotate logs on this ship</a> or try <a ui-sref="ships-list">another ship</a>?</p>
+<div class="container-fluid">
+    <div ng-show="!annotations && !isLoading" class="no-annotations">
+        <h1>Nothing to transcribe</h1>
+        <p>All the annotated log pages for this ship have been transcribed.</p>
+        <p>
+            <a class="btn btn-skeleton white uppercase" ui-sref="annotate({subject_set_id: ship.id})">Annotate more logs on this ship</a>
+            <a class="btn btn-skeleton white uppercase" ui-sref="ships-list">Try another ship</a>
+        </p>
     </div>
     <span
     us-spinner

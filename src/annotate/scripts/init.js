@@ -26,7 +26,7 @@
                 url: '/annotate/:subject_set_id/',
                 views: {
                     main: {
-                        controller: 'AnnotateController',
+                        controller: 'annotateController',
                         templateUrl: 'templates/annotate.html'
                     }
                 }
@@ -131,7 +131,7 @@
 
                 scope.newSubject = function () {
                     scope.toggleTool();
-                    scope.$parent.loadSubjects('next'); // check that this works!
+                    scope.$parent.loadSubject();
                 };
             }
         };
@@ -235,13 +235,13 @@
           // use as a reference
           var beforeGrid = localStorageService.get('grids')[index];
 
-          for(var annotation of currentGrid) {
+          currentGrid.forEach(function(annotation) {
             var beforeAnnotation = _.filter(beforeGrid, {_id: annotation._id});
             var xBefore = beforeAnnotation[0].x;
             var yBefore = beforeAnnotation[0].y;
             annotation.x = xBefore + currentPos.x - initialClick.x;
             annotation.y = yBefore + currentPos.y - initialClick.y;
-          }
+          });
           showGrid(index);
         }
 
@@ -282,7 +282,6 @@
                 });
 
                 scope.$watch('activeTask', function () {
-
                     toolFactory.disable(); // reset mouse events (removes duplicates)
 
                     // Skip grid tasks if we're not logged in
@@ -306,7 +305,6 @@
                             scope.grids = gridFactory.list();
                             scope.showGrid(0);
                         }
-
                     } else {
                       gridFactory.disableMove();
                     }
@@ -400,7 +398,6 @@
                     }
                 ]
             };
-
             // // No longer needed?
             // // Commented out while we focus on getting this out of the door
             // workflow.tasks['T5-adjust-grid'] = {
@@ -446,80 +443,50 @@
     });
 
     module.factory('subjectFactory', function ($q, $filter, zooAPI, localStorageService, zooAPIProject, $timeout) {
-
-        var _getPrevQueueCache = function (subject_set_id) {
-            var cache = localStorageService.get('subject_set_prev_queue_' + subject_set_id);
+        var _getQueueCache = function (subject_set_id) {
+            var cache = localStorageService.get('subject_set_queue_' + subject_set_id);
             if (!cache) {
-              localStorageService.set('subject_set_prev_queue_' + subject_set_id, []);
-              cache = localStorageService.get('subject_set_prev_queue_' + subject_set_id);
+                cache = localStorageService.set('subject_set_queue_' + subject_set_id, []);
             }
+
             return cache;
         };
 
-        var _getNextQueueCache = function (subject_set_id) {
-            var cache = localStorageService.get('subject_set_next_queue_' + subject_set_id);
-            if (!cache) {
-              localStorageService.set('subject_set_next_queue_' + subject_set_id, []);
-              cache = localStorageService.get('subject_set_next_queue_' + subject_set_id);
-            }
-            return cache;
-        };
-
-        var _addToNextQueue = function (subject_set_id, subjects) {
-            var cache = _getNextQueueCache(subject_set_id);
+        var _addToQueue = function (subject_set_id, subjects) {
+            var cache = _getQueueCache(subject_set_id);
 
             angular.forEach(subjects, function (subject) {
                 upsert(cache, {id: subject.id}, subject);
             });
 
             cache = $filter('removeCircularDeps')(cache);
-            return localStorageService.set('subject_set_next_queue_' + subject_set_id, cache);
 
+            return localStorageService.set('subject_set_queue_' + subject_set_id, cache);
         };
 
         var _loadNewSubjects = function (subject_set_id) {
             var deferred = $q.defer();
 
-            var _getSubjectsPage = function (project) {
-
-                var current_subject = getCurrentSubject(subject_set_id);
-                var subject_ids = current_subject ? current_subject.metadata.nextSubjectIds : null;
-                var params = {}
-
-                if (subject_ids) {
-                  console.log(' *** FETCHING SUBJECT WITH IDS %s ***', subject_ids.toString()); // --STI
-                  params = { id: subject_ids }
-                } else {
-                  console.log(' *** FETCHING RANDOM SUBJECT ***'); // --STI
-                  params = {
-                    subject_set_id: subject_set_id,
-                    page_size: 1,
-                    sort: 'queued',
-                    workflow_id: project.configuration.default_workflow
-                  };
-                }
-
-                return zooAPI.type('subjects').get(params)
-                  .then(function (subjects) {
-                    console.log('      >>>>>>>>> CURRENT PAGE: ' + subjects[0].metadata.pageNumber + ', ID: ' + subjects[0].id + ' <<<<<<<<<<'); // --STI
-                    // localStorageService.set('current_subject_' + subject_set_id, subjects[0]);
-                    preloadSubjectImages(subjects);
-                    return subjects;
-                  });
-            };
-
-            var preloadSubjectImages = function (subjects) {
-              var images = [];
-              for (var subject of subjects) {
-                var keys = Object.keys(subject.locations[0]);
-                // console.log('PRELOADING: ', subject.locations[0][keys[0]]);
-                images.push( new Image().src = subject.locations[0][keys[0]] );
-              }
+            var lastPage = localStorageService.get('subject_set_page_' + subject_set_id);
+            if (!lastPage) {
+                lastPage = 0;
             }
+
+            var _getSubjectsPage = function (project) {
+                return zooAPI.type('subjects').get({
+                    sort: 'queued',
+                    workflow_id: project.configuration.default_workflow, //project.links.workflows[0],
+                    // page: lastPage + 1,
+                    page_size: 20,
+                    subject_set_id: subject_set_id
+                }).then(function (res) {
+                    return res;
+                });
+            };
 
             var project;
 
-            zooAPIProject.get() // first, we need project to determine which workflow/subject set to fetch from
+            zooAPIProject.get()
                 .then(function (response) {
                     project = response;
                     return _getSubjectsPage(response);
@@ -531,7 +498,9 @@
                 })
                 .then(function (response) {
                     if (response.length > 0) {
-                        _addToNextQueue(subject_set_id, response);
+                        _addToQueue(subject_set_id, response);
+
+                        localStorageService.set('subject_set_page_' + subject_set_id, (lastPage + 1));
                         deferred.resolve();
                     } else {
                         deferred.reject();
@@ -542,205 +511,116 @@
             return deferred.promise;
         };
 
-        var _getNextInQueue = function (subject_set_id, cacheDirection) {
-
-            var _getCache = function(subject_set_id, cacheDirection) {
-              var cache = [];
-              if (cacheDirection == 'prev') {
-                cache = _getPrevQueueCache(subject_set_id);
-              } else if (cacheDirection == 'next') {
-                cache = _getNextQueueCache(subject_set_id);
-              } else { // initial
-                cache = _getNextQueueCache(subject_set_id);
-              }
-              return cache;
-            }
-
+        var _getNextInQueue = function (subject_set_id) {
             var deferred = $q.defer();
-            var cache = _getCache(subject_set_id, cacheDirection);
+
+            var cache = _getQueueCache(subject_set_id);
 
             if (!angular.isArray(cache) || cache.length === 0) {
                 _loadNewSubjects(subject_set_id)
                     .then(function () {
-                        cache = _getCache(subject_set_id, cacheDirection);
+                        cache = _getQueueCache(subject_set_id);
+
                         if (cache.length === 0) {
-                          deferred.resolve(null); // Note: I think this means we're done with all subjects in the set?
+                            deferred.resolve(null);
                         } else {
-                          deferred.resolve(cache[0]); // get first element
+                            deferred.resolve(cache[0]);
                         }
                     });
             } else {
-              deferred.resolve(cache[0]);
+                deferred.resolve(cache[0]);
             }
 
             return deferred.promise;
         };
 
-        var _updateCache = function(nextSubject, subject_set_id, cacheDirection) {
-          var oldSubject = getCurrentSubject(subject_set_id);
-
-          localStorageService.set('current_subject_' + subject_set_id, nextSubject );
-          var nextCache = _getNextQueueCache(subject_set_id);
-          var prevCache = _getPrevQueueCache(subject_set_id);
-
-          if (cacheDirection == 'next') {
-            _.remove(nextCache, {id: nextSubject.id});    // remove previous subject
-            if( prevCache.length >= 5) prevCache.pop();   // remove last subject in array
-            prevCache.unshift(oldSubject);                // prepend old subject to array
-          }
-
-          else if (cacheDirection == 'prev') {
-            if( nextCache.length >= 5) nextCache.pop();   // remove last subject in array
-            _.remove(prevCache, {id: nextSubject.id});    // remove previous subject
-            nextCache.unshift(oldSubject);                // prepend old subject to array
-          }
-
-          else { // INITIAL CACHE
-            // TO DO: Fix this; it keeps advancing the pages on refresh.
-            nextCache.shift();                            // remove first subject in array
-          }
-
-          localStorageService.set('subject_set_next_queue_' + subject_set_id, nextCache);
-          localStorageService.set('subject_set_prev_queue_' + subject_set_id, prevCache);
-
-          // FOR DEBUGGING >>>
-          {
-            var prevSubjectIds = [];
-            for(var subject of prevCache) {
-               prevSubjectIds.push( subject.metadata.pageNumber );
-            }
-
-            var nextSubjectIds = [];
-            for(var subject of nextCache) {
-               nextSubjectIds.push( subject.metadata.pageNumber );
-            }
-
-            console.log('PREV SUBJECT PAGES    : ', prevSubjectIds);
-            console.log('CURRENT SUBJECT PAGES : ', localStorageService.get('current_subject_' + subject_set_id).metadata.pageNumber );
-            console.log('NEXT SUBJECT PAGES    : ', nextSubjectIds);
-          }
-          // <<< FOR DEBUGGING
-
-        }
-
-        var get = function (subject_set_id, cacheDirection) {
+        var get = function (subject_set_id) {
             var deferred = $q.defer();
-            _getNextInQueue(subject_set_id, cacheDirection)
-              .then( function(nextSubject) {
-                _updateCache(nextSubject, subject_set_id, cacheDirection);
-                deferred.resolve(nextSubject);
-              });
+
+            _getNextInQueue(subject_set_id)
+                .then(function (subject) {
+                    deferred.resolve(subject);
+                });
+
+
             return deferred.promise;
         };
-
-        var getCurrentSubject = function (subject_set_id) {
-          var currentSubject = localStorageService.get('current_subject_' + subject_set_id);
-          if( typeof currentSubject !== "undefined" && currentSubject !== null){
-            return currentSubject;
-          }
-          return null;
-        }
 
         return {
-            get: get,
-            getCurrentSubject: getCurrentSubject
+            get: get
         };
-    }); // END SUBJECT FACTORY
-
-    module.controller('PageNavController', function ($scope, $stateParams, $modal, subjectFactory, localStorageService) {
-
-      // update prev/next buttons
-      $scope.$on('annotate:loadedSubject', function(newValue, oldValue) {
-        var currentSubject = subjectFactory.getCurrentSubject($stateParams.subject_set_id);
-        var prevCache = localStorageService.get('subject_set_prev_queue_' + $stateParams.subject_set_id);
-        $scope.nextDisabled = currentSubject.metadata.nextSubjectIds ? false : true
-        $scope.prevDisabled = currentSubject.metadata.nextSubjectIds && !prevCache.length == 0 ? false : true
-      });
-
-      $scope.nextPage = function() {
-        console.log('NEXT PAGE >>>'); // --STI
-        $scope.loadSubjects('next');
-      }
-
-      $scope.prevPage = function() {
-        console.log('<<< PREV PAGE'); // --STI
-        $scope.loadSubjects('prev');
-      }
-
     });
 
-    module.controller('AnnotateController', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
-      $rootScope.bodyClass = 'annotate';
+    module.controller('annotateController', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
+        $rootScope.bodyClass = 'annotate';
 
-      $scope.loadSubjects = function (cacheDirection) {
-        $rootScope.$broadcast('annotate:loadingSubject');
+        $scope.loadSubject = function () {
+          $rootScope.$broadcast('annotate:loadingSubject');
 
-        $scope.subject_set_id = $stateParams.subject_set_id;
-        $scope.subject = undefined;
-        $scope.isLoading = true;
-        $scope.questions = null;
-        $scope.questionsComplete = false;
-        $scope.grid = gridFactory.get;
+          $scope.subject_set_id = $stateParams.subject_set_id;
+          $scope.subject = undefined;
+          $scope.isLoading = true;
+          $scope.questions = null;
+          $scope.questionsComplete = false;
+          $scope.grid = gridFactory.get;
 
-        workflowFactory.get($scope.subject_set_id)
-          .then(function (response) {
-            $scope.questions = response;
-          });
+          workflowFactory.get($scope.subject_set_id)
+            .then(function (response) {
+              $scope.questions = response;
+            });
 
-        subjectFactory.get($scope.subject_set_id, cacheDirection)
-          .then(function (response) {
-            if (response !== null) {
-              $timeout(function () {
-                $scope.subject = response;
-                var keys = Object.keys($scope.subject.locations[0]);
-                var subjectImage = $scope.subject.locations[0][keys[0]];
-
-                // TODO: change this. We're cache busting the image.onload event.
-                // subjectImage += '?' + new Date().getTime();
-                $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
-                $scope.loadHandler = $scope.subjectLoaded(); // is loadHandler still used? --STI
+          subjectFactory.get($scope.subject_set_id)
+            .then(function (response) {
+              if (response !== null) {
+                $timeout(function () {
+                  $scope.subject = response;
+                  var keys = Object.keys($scope.subject.locations[0]);
+                  var subjectImage = $scope.subject.locations[0][keys[0]];
+                  // TODO: change this. We're cache busting the image.onload event.
+                  subjectImage += '?' + new Date().getTime();
+                  $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
+                  $scope.loadHandler = $scope.subjectLoaded();
+                  $rootScope.$broadcast('annotate:loadedSubject');
+                });
+              } else {
+                $scope.subject = null;
                 $rootScope.$broadcast('annotate:loadedSubject');
-              });
-            } else {
-              $scope.subject = null;
-              $rootScope.$broadcast('annotate:loadedSubject');
-            }
+              }
 
-          });
-      };
+            });
+        };
+        $scope.loadSubject();
 
-      $scope.loadSubjects('initial');
+        $scope.subjectLoaded = function () {
+            $scope.isLoading = false;
+        };
 
-      $scope.subjectLoaded = function () {
-        $scope.isLoading = false;
-      };
+        $scope.saveSubject = function () {
+            annotationsFactory.save($scope.subject.id)
+                .then(function () {
+                    $scope.loadSubject();
+                });
+        };
 
-      $scope.saveSubject = function () {
-        annotationsFactory.save($scope.subject.id)
-          .then(function () {
-            $scope.loadSubjects('next');
-          });
-      };
+        $scope.saveSubjectAndTranscribe = function () {
+            annotationsFactory.save($scope.subject.id)
+                .then(function () {
+                    $state.go('transcribe', { subject_set_id: $scope.subject_set_id });
+                });
+        };
 
-      $scope.saveSubjectAndTranscribe = function () {
-        annotationsFactory.save($scope.subject.id)
-          .then(function () {
-            $state.go('transcribe', { subject_set_id: $scope.subject_set_id });
-          });
-      };
+        $scope.$on('annotate:svgPanZoomToggle', function () {
+            $scope.isAnnotating = !svgPanZoomFactory.status();
+        });
 
-      $scope.$on('annotate:svgPanZoomToggle', function () {
-        $scope.isAnnotating = !svgPanZoomFactory.status();
-      });
+        $scope.$on('annotate:questionsComplete', function () {
+            $scope.questionsComplete = true;
+        });
 
-      $scope.$on('annotate:questionsComplete', function () {
-        $scope.questionsComplete = true;
-      });
+        $scope.clearAnnotations = function () {
+            $rootScope.$broadcast('annotate:clearAnnotations');
+        };
 
-      $scope.clearAnnotations = function () {
-        $rootScope.$broadcast('annotate:clearAnnotations');
-      };
-
-    }); // end AnnotateController
+    });
 
 }(window.angular, window._));
