@@ -365,6 +365,251 @@
 
 }(window.angular, window.zooAuth));
 
+(function (angular, _) {
+    'use strict';
+
+    var module = angular.module('transcribe', [
+        'ui.router',
+        'angularSpinner'
+    ]);
+
+    module.config(function ($stateProvider) {
+        $stateProvider
+            .state('transcribe', {
+                url: '/transcribe/:subject_set_id/',
+                views: {
+                    main: {
+                        controller: 'transcribeController',
+                        templateUrl: 'templates/transcribe.html'
+                    }
+                }
+            });
+    });
+
+    module.service('pendingAnnotationsService', ['zooAPI', function(zooAPI) {
+        this.get = function(subjectSet, page) {
+            // Fetch current user's incomplete classifications
+            return zooAPI.type('classifications/incomplete').get({
+                page: page || 1,
+                project_id: subjectSet.links.project
+            }).then(function(annotations) {
+                // Filter them to the current subject set
+                return Promise.all(annotations.map(function (annotation) {
+                    annotation.metadata.subjects = [];
+                    var subjectId = annotation.links.subjects[0];
+                    return zooAPI.type('set_member_subjects').get({ subject_id: subjectId })
+                        .then(function(sets) {
+                            var setsMatching = sets.filter(function(set) {
+                                return set.links.subject_set === subjectSet.id;
+                            });
+                            if (setsMatching.length) {
+                                // Subject in set; keep
+                                return Promise.resolve(annotation);
+                            } else {
+                                // Subject not in set; discard
+                                return Promise.resolve(false);
+                            }
+                        });
+                }));
+            }).then(function(annotationsFiltered) {
+                // Strip out false values from promise result
+                return Promise.resolve(annotationsFiltered.filter(function(annotation) {
+                    return annotation;
+                }));
+            })
+            .catch(function(err) {
+                throw err;
+            });
+        }
+
+        // Save the grid to local storage for reuse
+        function saveGrid(data) {
+            _grids.push(angular.copy(data));
+            localStorageService.set('grids', _grids);
+        }
+
+        // not sure this is needed?
+        function updateGrid(data) {
+          var index = _grids.indexOf(data);
+          _grids.splice(index, 1, data); // replace element with updated version
+          localStorageService.set('grids', _grids);
+        }
+
+        // Delete grid from local storage
+        function deleteGrid(index) {
+            _grids.splice(index, 1);
+            localStorageService.set('grids', _grids);
+        }
+
+        function moveGrid(currentGrid, initialClick, e) {
+          if (!isMoveEnabled) return;
+          var currentPos = svgGridFactory.createPoint(e);
+          var index = _grids.indexOf(currentGrid);
+
+          // use as a reference
+          var beforeGrid = localStorageService.get('grids')[index];
+
+          currentGrid.forEach(function(annotation) {
+            var beforeAnnotation = _.filter(beforeGrid, {_id: annotation._id});
+            var xBefore = beforeAnnotation[0].x;
+            var yBefore = beforeAnnotation[0].y;
+            annotation.x = xBefore + currentPos.x - initialClick.x;
+            annotation.y = yBefore + currentPos.y - initialClick.y;
+          });
+
+          showGrid(index);
+        }
+
+        function enableMove(e) {
+          isMoveEnabled = true;
+          annotationsFactory.isEnabled = false; // prevents deleting annotations (and modals produces)
+
+        };
+    }]);
+
+    module.controller('transcribeController', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
+        $rootScope.bodyClass = 'transcribe';
+
+        function zoomToCurrentAnnotation() {
+            if ($scope.annotations && $scope.annotations.length > 0) {
+                var annotation = $scope.annotations[0];
+                var obj = svgPanZoomFactory.zoomToRect(annotation);
+
+                $scope.uiPositionTop = (obj.sizes.height / 2) + ((annotation.height * obj.sizes.realZoom) / 2);
+                $scope.annotationContent = $scope.annotations[0].content;
+            }
+        }
+
+        window.zoomToCurrentAnnotation = zoomToCurrentAnnotation;
+
+        var subject_set_id = $stateParams.subject_set_id;
+        $scope.isLoading = true;
+        zooAPISubjectSets.get({id: subject_set_id})
+            .then(function (response) {
+                $scope.ship = response[0];
+                return pendingAnnotationsService.get($scope.ship);
+            })
+            .then(function (annotations_for_subject_set) {
+
+                $scope.showAllAnnotations = false;
+
+                var load_next = function () {
+                    $scope.subjectImage = null;
+                    $scope.isLoading = true;
+
+                    if (annotations_for_subject_set.length > 0) {
+                        var annotation = annotations_for_subject_set[0];
+                        $scope.subject_id = annotation.links.subjects[0];
+                        annotations_for_subject_set.shift();
+
+                        $scope.annotations = annotation.annotations;
+                        $scope.classification = annotation;
+
+                        // Our best friend $timeout is back. Used here to delay setting
+                        // of first / last until the $$hashKey has been set.
+                        $timeout(function() {
+                            $scope.first = $scope.annotations[0].$$hashKey;
+                            $scope.last = $scope.annotations[$scope.annotations.length - 1].$$hashKey;
+                        }, 0);
+
+                        // This is presumably to allow saving of header rows, but this
+                        // feature never got implemented. I'm not quite sure why there
+                        // are separate entries for rows and cells (possibly to create
+                        // subsequent rows off the columns), but we want to be able to
+                        // transcribe the header cells for now.
+                        // _.remove($scope.annotations, {type: 'header'});
+
+                        _.remove($scope.annotations, {type: 'row'});
+
+                        zooAPI.type('subjects').get({id: $scope.subject_id})
+                            .then(function (response) {
+                                var subject = response[0];
+                                var keys = Object.keys(subject.locations[0]);
+                                var subjectImage = subject.locations[0][keys[0]];
+                                subjectImage += '?' + new Date().getTime();
+                                $timeout(function () {
+                                    $scope.subjectImage = $sce.trustAsResourceUrl(subjectImage);
+                                    $scope.loadHandler = $scope.subjectLoaded();
+                                }, 0);
+                            });
+                    } else {
+                        $scope.annotations = null;
+                        $scope.isLoading = false;
+                    }
+                };
+
+                load_next();
+
+                $scope.$watch('annotations', zoomToCurrentAnnotation, true);
+
+                $scope.subjectLoaded = function () {
+                    $scope.isLoading = false;
+                    // Image is loaded, we can safely calculate zoom for first annotation
+                    $timeout(zoomToCurrentAnnotation, 0);
+                };
+
+                $scope.prevAnnotation = function () {
+                    $scope.save();
+                    $scope.annotations.unshift($scope.annotations.pop());
+                };
+
+                $scope.nextAnnotation = function () {
+                    $scope.save();
+                    $scope.annotations.push($scope.annotations.shift());
+                };
+
+                $scope.save = function () {
+                    $scope.annotations[0].content = $scope.annotationContent;
+                    $scope.annotationContent = null;
+                };
+
+                $scope.toggleAllAnnotations = function () {
+                    $scope.showAllAnnotations = true;
+                    $scope.panZoom.fit();
+                    $scope.panZoom.center();
+                };
+
+                var annotationInput = document.getElementById('annotation-input');
+
+                $scope.insertChar = function (insertValue) {
+                    var input = annotationInput;
+                    if (document.selection) {
+                        input.focus();
+                        document.selection.createRange().text = insertValue;
+                    } else if (input.selectionStart || input.selectionStart === '0') {
+                        var endPos = input.selectionStart + 1;
+                        input.value = input.value.substring(0, input.selectionStart) + insertValue + input.value.substring(input.selectionEnd, input.value.length);
+                        input.selectionStart = endPos;
+                        input.selectionEnd = endPos;
+                        input.focus();
+                    } else {
+                        input.value += insertValue;
+                    }
+                };
+
+                $scope.finish = function () {
+                    $scope.save();
+                    $scope.classification.update({
+                      completed: true, // otherwise classification remains incomplete!
+                      annotations: $scope.annotations,
+                      metadata: {
+                          started_at: new Date().toISOString(),
+                          finished_at: new Date().toISOString(),
+                          user_agent: navigator.userAgent,
+                          user_language: navigator.language
+                      }
+                    });
+
+                    $scope.classification.save()
+                        .then(function (response) {
+                            $scope.$apply(load_next);
+                        });
+                };
+        });
+    });
+
+}(window.angular, window._));
+
 (function (angular) {
     'use strict';
 
@@ -541,7 +786,7 @@
                 ['finally'](function () {
                     $scope.loading = false;
                     $scope.ships = $scope.ships.map(function (ship) {
-                        var extraInfo = ShipsDetailConstants[ship.metadata.shortName] ||
+                        var extraInfo = ShipsDetailConstants[ship.metadata.shortName] || 
                             ShipsDetailConstants[ship.display_name.split(' ')[0].toLowerCase()] ||
                             {};
                         ship.metadata = _.extend(ship.metadata, extraInfo);
@@ -1019,7 +1264,7 @@
                 self.rotation = 0;
 
                 // center subject image on viewable area
-                var svgWidth = self.svgInstance.getSizes().width - 300; // subtract right column width
+                var svgWidth = self.svgInstance.getSizes().width;
                 var zoomFactor = self.svgInstance.getSizes().realZoom;
                 var subjectWidth = self.svgInstance.getSizes().viewBox.width * zoomFactor;
                 self.svgInstance.pan({x: svgWidth/2 - subjectWidth/2, y:0});
@@ -1116,7 +1361,7 @@
     var module = angular.module('confirmationModal');
 
     module.factory('confirmationModalFactory', [ '$modal', '$controller', function($modal,$controller){
-
+      
       // set default parameters
       var params = {
         message: 'Are you sure?'
@@ -1397,6 +1642,204 @@
 
     var module = angular.module('annotation');
 
+    module.directive('annotations', ['confirmationModalFactory', 'annotationsFactory', function (confirmationModalFactory, annotationsFactory) {
+        return {
+            replace: true,
+            restrict: 'A',
+            scope: true,
+            templateUrl: 'templates/annotation/annotations.html',
+            link: function (scope, element, attrs) {
+
+                var addAnnotation = function (data) {
+                    var subject = scope.$parent.subject;
+                    scope.annotations.push(data);
+                    annotationsFactory.add(data, subject);
+
+                    scope.$apply();
+                };
+
+                var updateAnnotation = function (data, existing) {
+                    var subject = scope.$parent.subject;
+                    var indexOf = _.indexOf(scope.annotations, existing);
+                    scope.annotations.splice(indexOf, 1, data);
+                    annotationsFactory.update(data, subject);
+
+                    scope.$apply();
+                };
+
+                var tempCells = {};
+
+                var createCells = function (row) {
+                    var headers = _.where(scope.annotations, {type: 'header'});
+                    var rowId = _.uniqueId() + new Date().getTime();
+                    _.each(headers, function (header, index) {
+                        // If the row is below the header
+                        if (row.y >= (header.y + header.height)) {
+                            var annotation = {
+                                height: row.height,
+                                width: header.width,
+                                x: header.x,
+                                y: row.y,
+                                rotation: header.rotation,
+                                type: 'row_annotation' // actual row annotations need to be called something else for now --STI
+                            };
+
+                            var existing = _.find(scope.annotations, { _id: tempCells[index] });
+
+                            if (angular.isUndefined(existing)) {
+                                annotation._id = _.uniqueId() + new Date().getTime();
+                                annotation._rowId = rowId;
+                                addAnnotation(annotation);
+                                tempCells[index] = annotation._id;
+                            } else {
+                                annotation._id = existing._id;
+                                annotation._rowId = existing._rowId;
+                                updateAnnotation(annotation, existing);
+                            }
+
+                        }
+                    });
+                };
+
+                var storeAnnotations = function (e, data) {
+                    // skip for row annotation: createCells() called separately
+                    if (data.type === 'row') {
+                      createCells(data);
+                    } else {
+                      var existing = _.find(scope.annotations, {_id: data._id});
+                      if (angular.isUndefined(existing)) {
+                          addAnnotation(data);
+                      } else {
+                          updateAnnotation(data, existing);
+                      }
+                    }
+
+                };
+
+                var getAnnotations = function () {
+                    scope.annotations = [];
+
+                    annotationsFactory.get(scope.$parent.subject.id)
+                        .then(function (response) {
+                            if (response) {
+                                scope.annotations = response.annotations;
+                            }
+                        });
+                };
+
+                var clearAnnotations = function () {
+                  var params = {message: 'Clear all annotations?'};
+                  confirmationModalFactory.setParams(params);
+                  confirmationModalFactory.deployModal(function(deleteType){
+                    if(deleteType){
+                      scope.annotations = [];
+                      annotationsFactory.clear(null, scope.$parent.subject);
+                    }
+                  });
+                };
+
+                scope.removeAnnotation = function (annotation, type) {
+                    if(type === 'row' && annotation._rowId) { // remove all annotations in row
+                      var annotationsToRemove = _.filter(scope.annotations, {_rowId: annotation._rowId});
+                      annotationsToRemove.forEach(function(currAnnotation) {
+                          _.remove(scope.annotations, {_rowId: currAnnotation._rowId});
+                          annotationsFactory.remove(currAnnotation._id, scope.$parent.subject);
+                      });
+                    } else {
+                      _.remove(scope.annotations, {_id: annotation._id});
+                      annotationsFactory.remove(annotation._id, scope.$parent.subject);
+                    }
+                    // scope.$apply();
+                };
+
+                scope.selectAnnotation = function (annotation) {
+                    var index = _.indexOf(scope.annotations, annotation);
+
+                    _.each(scope.annotations, function (a, i) {
+                        if (index !== i) { a.selected = false; }
+                    });
+
+                    scope.annotations[index].selected = !scope.annotations[index].selected;
+                    // scope.$apply();
+                };
+
+                scope.$on('annotate:clearAnnotations', clearAnnotations);
+                scope.$on('annotate:loadedSubject', getAnnotations);
+                scope.$on('svgDrawing:add', storeAnnotations);
+                scope.$on('svgDrawing:update', storeAnnotations);
+                scope.$on('svgDrawing:update', function (e, rect, data) {
+                    // if (data.type === 'row') {
+                    //     createCells(rect); // this doesn't seem necessary anymore
+                    // }
+                });
+
+                scope.$on('svgDrawing:finish', function (e, rect, data) {
+                    // if (data.type === 'row') {
+                    //     createCells(rect); // this doesn't seem necessary anymore
+                    // }
+                    tempCells = {};
+                });
+
+                getAnnotations();
+            } // end link
+        };
+    }]);
+
+
+    module.directive('annotation', function (confirmationModalFactory, annotationsFactory, $window, $parse) {
+        return {
+          link: function (scope, element, attrs) {
+
+            var isClicked = false;
+
+            element.bind('mousedown', function (e) {
+              e.stopPropagation(); // stops grid-level propagation
+              isClicked = true;
+
+              // prevents deleting annotations (e.g. when moving grid)
+              if (!annotationsFactory.isEnabled) return;
+
+              var annotation = $parse(attrs.annotation)(scope);
+
+              annotationsFactory.get(scope.$parent.subject.id)
+                .then( function(response) {
+                  // determine dialog options for modal
+                  var annotationsInRow = _.filter(response.annotations, {_rowId: annotation._rowId}).length;
+                  var params = {
+                      message:    ( annotation.type === 'row_annotation' && annotationsInRow > 1 ) ? 'Delete annotation or entire row?' : 'Delete annotation?',
+                      deleteType: ( annotation.type === 'row_annotation' && annotationsInRow > 1 ) ? 'row' : 'row_annotation'
+                  };
+
+                  confirmationModalFactory.setParams(params);
+                  confirmationModalFactory.deployModal( function(deleteType) {
+                    if(!deleteType) {
+                      return; // no params passed, nothing to do
+                    }
+                    if(deleteType === 'row'){
+                      scope.$parent.removeAnnotation(annotation, 'row');
+                    } else if(deleteType === 'annotation') {
+                      scope.$parent.removeAnnotation(annotation, 'annotation');
+                    }
+                  });
+                });
+
+            });
+
+            element.bind('mouseup', function(e) {
+                // e.stopPropagation();
+                isClicked = false;
+            });
+          }
+        };
+    });
+
+}(window.angular, window._));
+
+(function (angular, _) {
+    'use strict';
+
+    var module = angular.module('annotation');
+
     module.directive('grid', function (annotationsFactory, gridFactory, $document) {
         return {
             replace: true,
@@ -1451,6 +1894,633 @@
               };
             }
         };
+    });
+
+}(window.angular, window._));
+
+(function (angular, _) {
+    'use strict';
+
+    var upsert = function (arr, key, newVal) {
+        var match = _.find(arr, key);
+        if (match) {
+            var index = _.indexOf(arr, match);
+            arr.splice(index, 1, newVal);
+        } else {
+            arr.push(newVal);
+        }
+    };
+
+    var module = angular.module('annotate', [
+        // 'ngAnimate',
+        'ui.router',
+        'angularSpinner',
+        'svg',
+        'annotation',
+        'tutorial'
+    ]);
+
+    module.config(function ($stateProvider) {
+        $stateProvider
+            .state('annotate', {
+                url: '/annotate/:subject_set_id/',
+                views: {
+                    main: {
+                        controller: 'annotateController',
+                        templateUrl: 'templates/annotate.html'
+                    }
+                }
+            });
+    });
+
+    module.directive('annotateTools', function (svgPanZoomFactory, svgDrawingFactory, toolFactory) {
+        return {
+            restrict: 'A',
+            templateUrl: 'templates/_tools.html',
+            scope: true,
+            link: function (scope, element, attrs) {
+                scope.tools = [
+                    {
+                        id: 'header',
+                        title: 'Table header'
+                    },
+                    {
+                        id: 'row',
+                        title: 'Table row'
+                    },
+                    {
+                        id: 'cell',
+                        title: 'Table cell'
+                    },
+                    {
+                        id: 'date',
+                        title: 'Date',
+                        icon: 'calendar',
+                        tooltip: 'Record any mentions of the date'
+                    },
+                    {
+                        id: 'location',
+                        title: 'Location',
+                        icon: 'globe',
+                        tooltip: 'Record any mentions of location'
+                    },
+                    {
+                        id: 'weather',
+                        title: 'Weather',
+                        icon: 'cloud'
+                    },
+                    {
+                        id: 'sea-ice',
+                        title: 'Sea Ice',
+                        icon: 'asterisk',
+                        tooltip: 'Record any mentions of sea ice'
+                    },
+                    {
+                        id: 'refueling',
+                        title: 'Refueling',
+                        icon: 'oil',
+                        tooltip: 'Enter any mentions of the ship\'s refueling'
+                    },
+                    {
+                        id: 'events',
+                        title: 'Events',
+                        icon: 'list-alt',
+                        tooltip: 'Note any other interesting events on the ship'
+                    },
+                    {
+                        id: 'animals',
+                        title: 'Animals',
+                        icon: 'piggy-bank',
+                        tooltip: 'Enter any mentions of animals sighted or captured'
+                    },
+                    {
+                        id: 'mentions',
+                        title: 'Mentions',
+                        icon: 'bullhorn',
+                        tooltip: 'Record any mentions of people or ships'
+                    }
+                ];
+
+                scope.toggleHover = function (i) {
+                    scope.tools[i].hover = !scope.tools[i].hover;
+                };
+
+                scope.toggleTool = function (i) {
+                    var thisTool = scope.tools[i];
+
+                    // Disable all other tools.
+                    angular.forEach(scope.tools, function (tool, index) {
+                        if (index !== i) { tool.active = false; }
+                    });
+
+                    // Toggle the active state of this tool.
+                    if (angular.isDefined(i)) {
+                        thisTool.active = !thisTool.active;
+                    }
+
+                    // Define the active tool on the parent scope.
+                    scope.$parent.activeTool = thisTool && thisTool.active ? thisTool : null;
+
+                    // Toggle pan zoom based on the active tool.
+                    if (_.isNull(scope.$parent.activeTool)) {
+                        toolFactory.disable();
+                    } else {
+                        toolFactory.enable(thisTool.id);
+                    }
+                };
+
+                scope.newSubject = function () {
+                    scope.toggleTool();
+                    scope.$parent.loadSubject();
+                };
+            }
+        };
+    });
+
+    module.factory('toolFactory', function (svgPanZoomFactory, svgDrawingFactory, svgGridFactory) {
+
+      var enable = function (tool) {
+        svgPanZoomFactory.disable();
+        svgDrawingFactory.bindMouseEvents({type: tool});
+      };
+
+      var disable = function () {
+        svgPanZoomFactory.enable();
+        svgDrawingFactory.unBindMouseEvents();
+      };
+
+      return {
+        enable: enable,
+        disable: disable
+      };
+
+    });
+
+    module.factory('gridFactory', function ($rootScope, annotationsFactory, localStorageService, zooAPI, zooAPIProject, svgGridFactory, svgPanZoomFactory) {
+
+        var factory;
+        var _currentGrid = [];
+        var _grids = localStorageService.get('grids') || [];
+        var isMoveEnabled = false;
+
+        factory = {
+            del: deleteGrid,
+            get: getGrid,
+            hide: hideGrid,
+            list: listGrids,
+            save: saveGrid,
+            show: showGrid,
+            use: useGrid,
+            enableMove: enableMove,
+            disableMove: disableMove,
+            moveGrid: moveGrid,
+            createPoint: createPoint,
+            updateGrid: updateGrid
+        };
+
+        return factory;
+
+        // Returns all the grids in local storage
+        function listGrids() {
+            return _grids;
+        }
+
+        // Hides the grid from view
+        function hideGrid() {
+            _currentGrid = [];
+        }
+
+        // Show a grid with a given ID
+        function showGrid(id) {
+            id = id || 0;
+            _currentGrid = _grids[id];
+        }
+
+        // Return the _currentGrid so it can be bound to the view
+        function getGrid() {
+            return _currentGrid;
+        }
+
+        // Copy the content of the grid as annotations
+        function useGrid() {
+            _currentGrid.forEach(function (cell) {
+                $rootScope.$broadcast('svgDrawing:add', cell);
+            });
+        }
+
+        // Save the grid to local storage for reuse
+        function saveGrid(data) {
+            _grids.push(angular.copy(data));
+            localStorageService.set('grids', _grids);
+        }
+
+        // not sure this is needed?
+        function updateGrid(data) {
+          var index = _grids.indexOf(data);
+          _grids.splice(index, 1, data); // replace element with updated version
+          localStorageService.set('grids', _grids);
+        }
+
+        // Delete grid from local storage
+        function deleteGrid(index) {
+            _grids.splice(index, 1);
+            localStorageService.set('grids', _grids);
+        }
+
+        function moveGrid(currentGrid, initialClick, e) {
+          if (!isMoveEnabled) return;
+          var currentPos = svgGridFactory.createPoint(e);
+          var index = _grids.indexOf(currentGrid);
+
+          // use as a reference
+          var beforeGrid = localStorageService.get('grids')[index];
+
+          currentGrid.forEach(function(annotation) {
+            var beforeAnnotation = _.filter(beforeGrid, {_id: annotation._id});
+            var xBefore = beforeAnnotation[0].x;
+            var yBefore = beforeAnnotation[0].y;
+            annotation.x = xBefore + currentPos.x - initialClick.x;
+            annotation.y = yBefore + currentPos.y - initialClick.y;
+          });
+          showGrid(index);
+        }
+
+        function enableMove(e) {
+          isMoveEnabled = true;
+          annotationsFactory.isEnabled = false; // prevents deleting annotations (and modals produces)
+        };
+
+        function disableMove(e) {
+          isMoveEnabled = false;
+          annotationsFactory.isEnabled = true;
+        };
+
+        function createPoint(e) {
+          var newPoint = svgGridFactory.createPoint(e);
+          return newPoint;
+        };
+
+    });
+
+    module.directive('annotateQuestions', function ($rootScope, $timeout, annotationsFactory, gridFactory, toolFactory, authFactory) {
+        return {
+            restrict: 'A',
+            scope: {
+                questions: '=annotateQuestions'
+            },
+            templateUrl: 'templates/_questions.html',
+            link: function (scope, element, attrs) {
+
+                scope.grids = [];
+
+                scope.$watch('questions', function () {
+                    if (scope.questions && scope.questions.tasks) {
+                        scope.tasks = scope.questions.tasks;
+                        scope.activeTask = scope.questions.first_task;
+                        scope.questionsCompleted = false;
+                    }
+                });
+
+                scope.$watch('activeTask', function () {
+                    toolFactory.disable(); // reset mouse events (removes duplicates)
+
+                    // Skip grid tasks if we're not logged in
+                    if (scope.activeTask && scope.tasks[scope.activeTask].grid && !authFactory.getUser()) {
+                        scope.confirm(scope.tasks[scope.activeTask].skip);
+                        return; // prevent duplicate event bindings after skipping task
+                    }
+
+                    if (scope.activeTask && angular.isDefined(scope.tasks[scope.activeTask].tools)) {
+                        toolFactory.enable(scope.tasks[scope.activeTask].tools[0].label);
+                    } else {
+                        toolFactory.disable();
+                    }
+
+                    /* Begin grid-related stuff */
+                    if (scope.activeTask === 'T5-use-grid') {
+                        gridFactory.enableMove(); // and disable deleting annotations
+                        if (gridFactory.list().length === 0) {
+                            scope.confirm(scope.tasks[scope.activeTask].skip);
+                        } else {
+                            scope.grids = gridFactory.list();
+                            scope.showGrid(0);
+                        }
+                    } else {
+                      gridFactory.disableMove();
+                    }
+
+                });
+
+                scope.loadGrid = function (answer, next) {
+                    if (answer === 'Yes') {
+                        gridFactory.use();
+                    }
+
+                    gridFactory.hide();
+                    scope.confirm(next);
+                };
+
+                scope.showGrid = function (index) {
+                    scope.active = index;
+                    gridFactory.show(index);
+                };
+
+                scope.deleteGrid = function (index) {
+                    gridFactory.del(index);
+                    if (gridFactory.list().length) {
+                        scope.showGrid(0);
+                    } else {
+                        gridFactory.hide();
+                        scope.confirm(scope.tasks[scope.activeTask].skip);
+                    }
+                };
+
+                scope.saveGrid = function (answer, next) {
+                    if (answer === 'Yes') {
+                        annotationsFactory.get(scope.$parent.subject.id)
+                            .then(function (response) {
+                                gridFactory.save(response.annotations);
+                            });
+                    }
+
+                    // In practice this will be undefined as this is the last task,
+                    // but this is consistent with the current API.
+                    scope.confirm(next);
+                };
+
+                scope.confirm = function (value) {
+                    if (value && _.isString(value)) {
+                        scope.activeTask = value;
+                    } else {
+                        scope.activeTask = undefined;
+                        $rootScope.$broadcast('annotate:questionsComplete');
+                    }
+                };
+
+                scope.skipQuestions = function () {
+                    scope.activeTask = undefined;
+                    $rootScope.$broadcast('annotate:questionsComplete');
+                };
+            }
+        };
+    });
+
+    module.factory('workflowFactory', function ($q, authFactory, zooAPI, zooAPISubjectSets, zooAPIWorkflows, localStorageService, gridFactory) {
+        var get = function (subject_set_id) {
+            var deferred = $q.defer();
+            zooAPISubjectSets.get({id: subject_set_id})
+                .then(function (response) {
+                    var workflowID = response[0].links.workflows[0]; // Note: Defaulting to first workflow may cause unexpected issues
+                    zooAPIWorkflows.get(workflowID)
+                        .then(addReuseGridTask)
+                        .then(deferred.resolve, deferred.reject, deferred.notify);
+                });
+
+            return deferred.promise;
+        };
+
+        function addReuseGridTask(workflow) {
+            workflow.tasks.T4.answers[0].next = 'T5-use-grid';
+            workflow.tasks.T6.next = 'T6-save-grid';
+            workflow.tasks['T5-use-grid'] = {
+                grid: true,
+                skip: 'T5',
+                question: 'Would you like to use this grid? If you need to, move the grid into the correct position.',
+                answers: [
+                    {
+                        label: 'Yes',
+                        // next: 'T5-adjust-grid'
+                        next: 'T5-edit-grid'
+                    },
+                    {
+                        label: 'No',
+                        next: 'T5'
+                    }
+                ]
+            };
+            // // No longer needed?
+            // // Commented out while we focus on getting this out of the door
+            // workflow.tasks['T5-adjust-grid'] = {
+            //     grid: true,
+            //     instruction: 'If you need to, move the grid into the correct position.',
+            //     next: 'T5-edit-grid'
+            // };
+            workflow.tasks['T5-edit-grid'] = {
+                grid: true,
+                instruction: 'Draw or remove any additional cells.',
+                next: 'T6-save-grid',
+                type: 'drawing',
+                tools: [
+                    {
+                        color: '#00ff00',
+                        details: [],
+                        label: 'cell',
+                        type: 'rectangle'
+                    }
+                ]
+            };
+            workflow.tasks['T6-save-grid'] = {
+                grid: true,
+                // Skip to the end...
+                skip: undefined,
+                question: 'Would you like to save this grid for future use?',
+                answers: [
+                    {
+                        // We'll handle grid saving from the annotations factory
+                        label: 'Yes'
+                    },
+                    {
+                        label: 'No'
+                    }
+                ]
+            };
+            return workflow;
+        }
+
+        return {
+            get: get
+        };
+    });
+
+    module.factory('subjectFactory', function ($q, $filter, zooAPI, localStorageService, zooAPIProject, $timeout) {
+        var _getQueueCache = function (subject_set_id) {
+            var cache = localStorageService.get('subject_set_queue_' + subject_set_id);
+            if (!cache) {
+                cache = localStorageService.set('subject_set_queue_' + subject_set_id, []);
+            }
+
+            return cache;
+        };
+
+        var _addToQueue = function (subject_set_id, subjects) {
+            var cache = _getQueueCache(subject_set_id);
+
+            angular.forEach(subjects, function (subject) {
+                upsert(cache, {id: subject.id}, subject);
+            });
+
+            cache = $filter('removeCircularDeps')(cache);
+
+            return localStorageService.set('subject_set_queue_' + subject_set_id, cache);
+        };
+
+        var _loadNewSubjects = function (subject_set_id) {
+            var deferred = $q.defer();
+
+            var lastPage = localStorageService.get('subject_set_page_' + subject_set_id);
+            if (!lastPage) {
+                lastPage = 0;
+            }
+
+            var _getSubjectsPage = function (project) {
+                return zooAPI.type('subjects').get({
+                    sort: 'queued',
+                    workflow_id: project.configuration.default_workflow, //project.links.workflows[0],
+                    // page: lastPage + 1,
+                    page_size: 20,
+                    subject_set_id: subject_set_id
+                }).then(function (res) {
+                    return res;
+                });
+            };
+
+            var project;
+
+            zooAPIProject.get()
+                .then(function (response) {
+                    project = response;
+                    return _getSubjectsPage(response);
+                })
+                .then(function (response) {
+                    return response;
+                }, function (response) {
+                    return $timeout(_getSubjectsPage, 3000, true, project);
+                })
+                .then(function (response) {
+                    if (response.length > 0) {
+                        _addToQueue(subject_set_id, response);
+
+                        localStorageService.set('subject_set_page_' + subject_set_id, (lastPage + 1));
+                        deferred.resolve();
+                    } else {
+                        deferred.reject();
+                    }
+
+                });
+
+            return deferred.promise;
+        };
+
+        var _getNextInQueue = function (subject_set_id) {
+            var deferred = $q.defer();
+
+            var cache = _getQueueCache(subject_set_id);
+
+            if (!angular.isArray(cache) || cache.length === 0) {
+                _loadNewSubjects(subject_set_id)
+                    .then(function () {
+                        cache = _getQueueCache(subject_set_id);
+
+                        if (cache.length === 0) {
+                            deferred.resolve(null);
+                        } else {
+                            deferred.resolve(cache[0]);
+                        }
+                    });
+            } else {
+                deferred.resolve(cache[0]);
+            }
+
+            return deferred.promise;
+        };
+
+        var get = function (subject_set_id) {
+            var deferred = $q.defer();
+
+            _getNextInQueue(subject_set_id)
+                .then(function (subject) {
+                    deferred.resolve(subject);
+                });
+
+
+            return deferred.promise;
+        };
+
+        return {
+            get: get
+        };
+    });
+
+    module.controller('annotateController', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
+        $rootScope.bodyClass = 'annotate';
+
+        $scope.loadSubject = function () {
+          $rootScope.$broadcast('annotate:loadingSubject');
+
+          $scope.subject_set_id = $stateParams.subject_set_id;
+          $scope.subject = undefined;
+          $scope.isLoading = true;
+          $scope.questions = null;
+          $scope.questionsComplete = false;
+          $scope.grid = gridFactory.get;
+
+          workflowFactory.get($scope.subject_set_id)
+            .then(function (response) {
+              $scope.questions = response;
+            });
+
+          subjectFactory.get($scope.subject_set_id)
+            .then(function (response) {
+              if (response !== null) {
+                $timeout(function () {
+                  $scope.subject = response;
+                  var keys = Object.keys($scope.subject.locations[0]);
+                  var subjectImage = $scope.subject.locations[0][keys[0]];
+                  // TODO: change this. We're cache busting the image.onload event.
+                  subjectImage += '?' + new Date().getTime();
+                  $scope.trustedSubjectImage = $sce.trustAsResourceUrl(subjectImage);
+                  $scope.loadHandler = $scope.subjectLoaded();
+                  $rootScope.$broadcast('annotate:loadedSubject');
+                });
+              } else {
+                $scope.subject = null;
+                $rootScope.$broadcast('annotate:loadedSubject');
+              }
+
+            });
+        };
+        $scope.loadSubject();
+
+        $scope.subjectLoaded = function () {
+            $scope.isLoading = false;
+        };
+
+        $scope.saveSubject = function () {
+            annotationsFactory.save($scope.subject.id)
+                .then(function () {
+                    $scope.loadSubject();
+                });
+        };
+
+        $scope.saveSubjectAndTranscribe = function () {
+            annotationsFactory.save($scope.subject.id)
+                .then(function () {
+                    $state.go('transcribe', { subject_set_id: $scope.subject_set_id });
+                });
+        };
+
+        $scope.$on('annotate:svgPanZoomToggle', function () {
+            $scope.isAnnotating = !svgPanZoomFactory.status();
+        });
+
+        $scope.$on('annotate:questionsComplete', function () {
+            $scope.questionsComplete = true;
+        });
+
+        $scope.clearAnnotations = function () {
+            $rootScope.$broadcast('annotate:clearAnnotations');
+        };
+
     });
 
 }(window.angular, window._));
