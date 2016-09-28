@@ -141,6 +141,9 @@ gulp.task('copy', function () {
     gulp.src(appDir + '/images/**/*')
         .pipe(gulp.dest('.tmp/build/images'));
 
+    gulp.src(appDir + '/templates/**/*')
+        .pipe(gulp.dest('.tmp/build/templates'));
+
     gulp.src(appDir + '/bower_components/bootstrap/dist/fonts/*')
         .pipe(gulp.dest('.tmp/build/fonts'));
 });
