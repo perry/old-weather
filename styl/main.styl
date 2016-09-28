@@ -30,6 +30,7 @@ html
     overflow-y: scroll
 
 body
+    overflow: hidden // temporary fix for layout overflow (what's causing this?)
     position: relative
     font-family: 'Open Sans', sans-serif
     min-height: 100vh
@@ -49,7 +50,7 @@ body
 
 .workflow-col
     width: 300px
-    padding: 20px 0px 15px 15px
+    padding: 20px 15px 0px 15px
     position: absolute
     z-index: 10
     top: 0
@@ -262,6 +263,16 @@ img
         margin-top: 15px
     .navbar-right
         margin-right: 0
+    .navbar-toggle
+        &:hover
+          background-color: $deep-teal-lt
+        &:focus
+          background-color: $deep-teal
+        margin-right: 20px
+        margin-top: 20px
+        border-color: #c5fcff
+        .icon-bar
+          background-color: #c5fcff
     .user
         display: flex
         line-height: 0.5em
