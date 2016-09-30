@@ -25,7 +25,7 @@
                 url: 'https://static.zooniverse.org/zoo-footer/zoo-footer.json'
             })
             .then(function (response) {
-                data = response.data;
+                //data = response.data;
             });
         }
 
