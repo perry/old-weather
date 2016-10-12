@@ -53,7 +53,7 @@
     $scope.completedClassifications = [];
 
     var params = {
-      // project_id: localStorageService.get('project').id,
+      project_id: localStorageService.get('project').id,
     };
 
     if($stateParams.page) {

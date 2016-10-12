@@ -103,6 +103,8 @@
     module.controller('transcribeController', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
         $rootScope.bodyClass = 'transcribe';
 
+        $scope.user = localStorageService.get('user');
+        
         function zoomToCurrentAnnotation() {
             if ($scope.annotations && $scope.annotations.length > 0) {
                 var annotation = $scope.annotations[0];
@@ -169,6 +171,7 @@
                         $scope.annotations = null;
                         $scope.isLoading = false;
                     }
+
                 };
 
                 load_next();

@@ -141,6 +141,7 @@
             zooAPI.type('projects').get({display_name: zooAPIConfig.display_name})
                 .then(function (response) {
                     var data = $filter('removeCircularDeps')(response[0]);
+                    localStorageService.set('project', data);
                     deferred.resolve(data);
                 });
 
@@ -470,6 +471,8 @@
     module.controller('transcribeController', function ($rootScope, $q, $timeout, $scope, $sce, $stateParams, zooAPI, zooAPISubjectSets, localStorageService, svgPanZoomFactory, pendingAnnotationsService) {
         $rootScope.bodyClass = 'transcribe';
 
+        $scope.user = localStorageService.get('user');
+        
         function zoomToCurrentAnnotation() {
             if ($scope.annotations && $scope.annotations.length > 0) {
                 var annotation = $scope.annotations[0];
@@ -536,6 +539,7 @@
                         $scope.annotations = null;
                         $scope.isLoading = false;
                     }
+
                 };
 
                 load_next();
@@ -2773,7 +2777,7 @@
     $scope.completedClassifications = [];
 
     var params = {
-      // project_id: localStorageService.get('project').id,
+      project_id: localStorageService.get('project').id,
     };
 
     if($stateParams.page) {

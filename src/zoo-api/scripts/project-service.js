@@ -58,6 +58,7 @@
             zooAPI.type('projects').get({display_name: zooAPIConfig.display_name})
                 .then(function (response) {
                     var data = $filter('removeCircularDeps')(response[0]);
+                    localStorageService.set('project', data);
                     deferred.resolve(data);
                 });
 
