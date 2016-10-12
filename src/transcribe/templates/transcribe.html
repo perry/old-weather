@@ -7,6 +7,12 @@
             <a class="btn btn-skeleton white uppercase" ui-sref="ships-list">Try another ship</a>
         </p>
     </div>
+
+    <div ng-show="!user" class="no-user">
+        <h1>Must be signed in</h1>
+        <p>Please sign in to transcribe your work.</p>
+    </div>
+
     <span
     us-spinner
     ng-show="isLoading"
@@ -96,7 +102,7 @@
 
     </div>
 
-    <div class="workflow-col">
+    <div ng-show="annotations && !isLoading" class="workflow-col">
         <span class="workflow-title">Transcription</span>
         <p>Type out what you see in each marking that appears. Press [Enter] to move to the next mark.</p>
         <button class="btn btn-orange" ng-click="finish();" ng-show="annotations">I've finished with this page</button>

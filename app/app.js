@@ -2786,7 +2786,6 @@
 
     zooAPI.type('classifications').get(params)
       .then( function(response) {
-        console.log('CLASSIFICATIONS: ', response);
         $scope.meta = response[0]._meta;
         $scope.page = $scope.meta.classifications.page;
         $scope.pageCount = $scope.meta.classifications.page_count;
