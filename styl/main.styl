@@ -30,58 +30,34 @@ html
     overflow-y: scroll
 
 body
+    overflow: hidden // temporary fix for layout overflow (what's causing this?)
     position: relative
     font-family: 'Open Sans', sans-serif
     min-height: 100vh
+    background-image: url("../images/home-bg.png")
+    background-repeat: no-repeat
+    color: #fff
     background-color: $shallow-teal
-    background-image: url(../images/home-bg.png), url(../images/home-bg-tile.png)
-    background-repeat: no-repeat, repeat-y
-    background-size: 100% auto, 100% auto
-    background-position: 0 -200px
     &.page-annotate,
     &.page-transcribe
-        background-image: none
-    &.page-home
-        background-image: none
         #site-main
             background-color: $shallow-teal
-            background-image: url(../images/home-bg.png)
-            background-repeat: no-repeat
-            background-size: cover
-            background-position: 0 0
 
 .page-annotate,
 .page-transcribe
+    color: #fff
     #site-header,
     #site-main
         position: relative
-        padding-right: 300px
-        &:after
-            content: ''
-            position: absolute
-            z-index: 1
-            height: 100%
-            width: 300px
-            background: #f2fbfc
-            top: 0
-            right: 0
-    #site-nav
-        .navbar-right
-            position: absolute
-            z-index: 10
-            right: -300px + 15px
-
-    .authentication-buttons
-        display: none
 
 .workflow-col
     width: 300px
-    padding: 0 15px
+    padding: 20px 15px 0px 15px
     position: absolute
     z-index: 10
     top: 0
     right: 0
-    color:  #00b5be
+    color:  $shallow-teal
     font-size: 14px
     font-weight: 400
     line-height: 20px
@@ -90,14 +66,14 @@ body
         display: block
         margin-bottom: 20px
         font-family: 'Domine', serif
-        color:  #00b5be
+        color:  $shallow-teal
         font-size: 24px
         font-weight: 400
         line-height: 20px
         text-align: center
 
     .title
-        color:  #00b5be
+        color:  $shallow-teal
         font-size: 14px
         font-weight: 700
         line-height: 20px
@@ -133,6 +109,11 @@ body
             color #fff
             background $shallow-teal
 
+    .page-nav
+      button[disabled]
+        opacity 0.30
+        cursor not-allowed
+
 h1
     font-family: 'Domine', serif
 
@@ -142,15 +123,14 @@ img
 .navbar
     border-radius: 0
 
-.container-fluid
-    width: 100%
+.annotate-container, .transcribe-container
+    padding: 0px
 
 .glyphicon.mirror
     transform: scaleX(-1)
 
 #site-header
     .page-home &
-        position: absolute
         z-index: 10
         top: 0
         left: 0
@@ -171,81 +151,99 @@ img
 
 
 #site-main
-    min-height: 480px // prevent from collapsing
+    color: #000
+    // min-height: inherit //660px // prevent from collapsing
     position: relative
 
-#site-footer
-    .container-wrapper
-        &.top
-            background: $deep-teal
-            color: $shallow-teal
-            font-size: 18px
-            padding: 36px 0
-            text-align: center
-            p
-                margin-bottom: 30px
-            .btn
-                border-width: 2px
-        &.middle
-            background: #003033
-            padding: 23px 0
-        &.bottom
-            background: #00181a
-            color: #808080
-            font-size: 12px
-            padding: 20px 0
-            text-align: center
-            @media (min-width: 768px)
-                text-align: left
-            a
-                color: #808080
-            p
-                margin-bottom: 3px
-    .zooniverse-logo
-        width: 60px
-        margin-bottom: 36px
-        fill: $shallow-teal
-
-    .zooniverse-projects-list
-        h4,
-        li a
-            font-size: 12px
-            color: $shallow-teal
-        h4
-            font-weight: bold
-            line-height: 20px
-            margin: 0
-
-    .sharing
-        display: flex
-        align-items: center
-        list-style-type: none
-        justify-content: center
-        margin-bottom: 0
-        margin-top: 10px
-        @media (min-width: 768px)
-            justify-content: flex-end
-            margin-top: 0
-        a
-            display: block
-        a .icon
-            height: 20px
-            margin-left: 20px
-            width: 20px
-
-        a .icon path
-            fill: grey
-
-        a:hover .icon path
-            fill: #fff
+// CURRENTLY NOT BEING USED
+// #site-footer
+//     .container-wrapper
+//         &.top
+//             background: $deep-teal
+//             color: $shallow-teal
+//             font-size: 18px
+//             padding-top: 36px
+//             padding-bottom: 36px
+//             text-align: center
+//             p
+//                 margin-bottom: 30px
+//             .btn
+//                 border-width: 2px
+//         &.middle
+//             background: #003033
+//             padding: 23px 0
+//         &.bottom
+//             background: #00181a
+//             color: #808080
+//             font-size: 12px
+//             padding: 20px 0
+//             text-align: center
+//             @media (min-width: 768px)
+//                 text-align: left
+//             a
+//                 color: #808080
+//             p
+//                 margin-bottom: 3px
+//     .zooniverse-logo
+//         width: 60px
+//         margin-bottom: 36px
+//         fill: $shallow-teal
+//
+//     .zooniverse-projects-list
+//         h4,
+//         li a
+//             font-size: 12px
+//             color: $shallow-teal
+//         h4
+//             font-weight: bold
+//             line-height: 20px
+//             margin: 0
+//
+//     .sharing
+//         display: flex
+//         align-items: center
+//         list-style-type: none
+//         justify-content: center
+//         margin-bottom: 0
+//         margin-top: 10px
+//         @media (min-width: 768px)
+//             justify-content: flex-end
+//             margin-top: 0
+//         a
+//             display: block
+//         a .icon
+//             height: 20px
+//             margin-left: 20px
+//             width: 20px
+//
+//         a .icon path
+//             fill: grey
+//
+//         a:hover .icon path
+//             fill: #fff
 
 #site-nav
+
+    margin-top: 17px
     background: none
     border: 0
     margin: 0
     color: #fff
     .navbar-nav
         > li
+            .active
+              background-color: $shallow-teal
+            ul
+              a
+                background-color: transparent
+                color: black
+                padding-left: 60px
+                @media screen and (min-width: 768px)
+                  color: black
+                  padding-left: 10px
+              a:hover
+                background-color: #ccf0f2
+
             margin-right: 10px
             > a,
             > button
@@ -257,12 +255,8 @@ img
                 padding: 7px 40px
                 &:hover,
                 &:focus
-                    background-color: rgba(197, 252, 255, 0.25)
-        > .active > a,
-        > .active > a:hover,
-        > .active > a:focus
-            background: none
-            border-color: #c5fcff
+                    background-color: $shallow-teal
+
     .navbar-brand
         height: auto
         svg
@@ -273,35 +267,45 @@ img
         margin-top: 15px
     .navbar-right
         margin-right: 0
+    .navbar-toggle
+        &:hover
+          background-color: $deep-teal-lt
+        &:focus
+          background-color: $deep-teal
+        margin-right: 20px
+        margin-top: 20px
+        border-color: #c5fcff
+        .icon-bar
+          background-color: #c5fcff
     .user
         display: flex
-        line-height: 1
+        line-height: 0.5em
+        position: absolute
+        right: 20px
         .text
-            padding-top: 12px
+
+            .login
+              color: $orange
+              display: block
+              font-size: 14px
+              font-weight: 700
+              text-align: right
+
             .logout
-                color: #fff
-                display: block
-                font-size: 11px
-                margin-top: 4px
-                text-align: right
-                text-decoration: underline
-                &:hover
-                    text-decoration: none
-
-
-        .page-annotate &,
-        .page-transcribe &
-            .text,
-            .logout
-                color:  #00b5be
-            strong
-                color:  #00494d
-
+              border-radius: 5px
+              border-color: #fff
+              padding-top: 12px
+              margin-right: 10px
+              color: #fff
+              display: block
+              font-size: 11px
+              text-align: right
+              text-decoration: underline
 
         .avatar
             border-radius: 40px
             height: 40px
-            margin-left: 10px
+            // margin-left: 10px
             width: 40px
 
 #tutorial
@@ -321,7 +325,7 @@ img
 
 .home-content
     padding-bottom: 87px
-    padding-top: 87px
+    padding-top: 12px
     h1,
     p
         max-width: 580px
@@ -398,6 +402,7 @@ img
 .content-section
     padding: 80px 0
     background: #ededed
+    // height: 100vh
 
 .transcribe-col
     $animation-duration = 1000ms
@@ -421,6 +426,9 @@ img
     position: relative
     font-size: 0
     overflow: hidden
+    padding-left: 0px
+    padding-right: 300px
+    background: #f2fbfc
 
     .guides
         pointer-events: none
@@ -445,9 +453,25 @@ img
             top: 20%
 
     .log-controls
+        z-index: 100
+        border-radius: 5px
+        box-shadow: 0 0 5px 3px rgba(0,0,0,0.4)
         position: absolute
-        bottom: 35px
-        right: 15px
+        .btn
+          outline: none
+        .nav-tools-handle
+          color: black
+          height: auto
+          background-color: #efefef
+          font-size: 16px
+          font-family: inherit
+          text-transform: uppercase
+          font-weight: 600
+          text-align: center
+          border-bottom: 2px solid #dedede
+          padding: 5px
+          user-select: none
+          cursor: move
 
     .input-area
         width: 100%
@@ -468,7 +492,9 @@ img
 .log
     max-width: 100%
     width: 100%
-    height: 90vh
+    height: 100vh
+    background-color: $shallow-teal
+
     image
       cursor: move /* fallback if grab cursor is unsupported */
       cursor: grab
@@ -602,6 +628,7 @@ img
                     margin-bottom: 0
 
 .modal-dialog
+    color: black
     margin: 100px auto
 .modal-backdrop
     background-color: $deep-teal
@@ -738,3 +765,79 @@ img
         @extend .btn.btn-skeleton.red
         border-radius: 4px
         padding: 11px
+
+.classification-viewer
+  width: 100%
+  color: #fff
+  .header
+    text-transform: uppercase
+    font-family: 'Domine', serif
+    margin-left: 40px
+  .content
+    background-color: #ededed
+  .error
+    color: red
+  .log
+    background-color: #ededec
+  text
+    cursor: default
+    user-select none
+    pointer-events none
+  .btn-group-vertical
+    position: absolute
+    right: 20px
+    top: 400px
+  .annotation
+    text
+      stroke: red
+      fill: red
+      stroke-width: 1
+      opacity: 0.25
+      &.hovered
+        opacity: 1.0
+    rect
+      stroke: red
+      fill: transparent
+      stroke-width: 1
+      opacity: 0.25
+      &.hovered
+        opacity: 1.0
+
+.classification-list
+  color: #000
+  background-color: #fff
+  display: inline-block
+  padding: 20px 40px
+  width: 100%
+  min-height: 220px
+  .page-indicator
+    text-align: center
+  a
+    color: inherit
+    display: block
+    cursor: pointer
+    text-decoration: none
+  .classification-item
+    background-color: #fff
+    display: inline-block
+    margin: 5px
+    width: 60px
+    height: 60px
+    line-height: 60px
+    text-align: center
+    border: solid rgba(0,0,0,0.5) 1px
+    border-radius: 3px
+    &.is-selected
+      color: #fff
+      background-color: $shallow-teal
+      border: solid rgba(0,0,0,0) 1px
+    &:hover
+      border: solid black 1px
+
+// "Nothing to transcribe" warning
+.no-annotations, .no-user
+    color: #fff
+    font-size: 20px
+    padding: 16px
+    text-align: center
+    height: 100%

@@ -1,0 +1,64 @@
+<div class="pre-content-section" ng-if="!loading">
+    <div class="container">
+        <div class="ship-basicinfo -full row" ng-show="shipInfo">
+
+            <dl class="col-xs-12 col-sm-6 col-md-4 datum -name">
+                <dt>Ship Name</dt>
+                <dd>{{ ::shipInfo.fullName }}</dd>
+            </dl>
+
+            <dl class="col-xs-6 col-sm-3 col-md-2 datum">
+                <dt>Class</dt>
+                <dd>{{ ::shipInfo.shipClass }}</dd>
+            </dl>
+
+            <dl class="col-xs-6 col-sm-3 col-md-2 datum">
+                <dt>Tonnage</dt>
+                <dd>{{ ::shipInfo.tonnage }}</dd>
+            </dl>
+
+            <div class="col-xs-12 col-sm-12 col-md-4 buttons">
+                <a ui-sref="annotate({subject_set_id: ship.id})" href="#" class="btn btn-skeleton teal">Annotate</a>
+                <a ui-sref="transcribe({subject_set_id: ship.id})" href="#" class="btn btn-skeleton teal">Transcribe</a>
+            </div>
+
+        </div>
+
+        <div class="ship-basicinfo row" ng-show="!shipInfo">
+
+            <dl class="col-xs-12 col-sm-7 datum -name" >
+                <dt>Voyage</dt>
+                <dd>{{ ::ship.display_name }}</dd>
+            </dl>
+
+            <div class="col-xs-12 col-sm-5 buttons">
+                <a ui-sref="annotate({subject_set_id: ship.id})" href="#" class="btn btn-skeleton teal">Annotate</a>
+                <a ui-sref="transcribe({subject_set_id: ship.id})" href="#" class="btn btn-skeleton teal">Transcribe</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="content-section" ng-if="!loading">
+
+    <div class="container" ng-if="shipInfo">
+        <div class="row ship-bio">
+            <section class="col-xs-12 col-sm-8">
+                <img ng-src="{{ ::shipInfo.imageUrl }}" class="img-responsive">
+            </section>
+            <section class="col-xs-12 col-sm-4">
+                <h4>Description</h4>
+                <p ng-repeat="para in ::shipInfo.bio">{{ para }}</p>
+                <p>
+                    <a href="{{ ::shipInfo.url }}" target="_blank">Learn more about the {{ ::shipInfo.fullName }} at Naval-History.net</a>
+                </p>
+            </section>
+        </div>
+    </div>
+
+    <div class="container" ng-if="!shipInfo">
+        <p>No data on this vessel was found.</p>
+    </div>
+
+</div>

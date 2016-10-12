@@ -17,7 +17,7 @@
     <body ng-class="bodyClass ? 'page-' + bodyClass : ''">
         <header id="site-header">
             <nav id="site-nav" class="navbar navbar-default" ng-init="isCollapsed = true;">
-                <div class="container-fluid">
+
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle collapsed" ng-click="isCollapsed = !isCollapsed">
                             <span class="sr-only">Toggle navigation</span>
@@ -33,7 +33,13 @@
                         </a>
                     </div>
 
+
+
+
+
+
                     <div class="collapse navbar-collapse navbar-left" collapse="isCollapsed">
+
                         <ul class="nav navbar-nav">
                             <li ui-sref-active="active"><a ui-sref="ships-list">Ships</a></li>
                             <li ui-sref-active="active" dropdown>
@@ -50,36 +56,45 @@
                            <li><a href="http://blog.oldweather.org" target="_blank">Blog</a></li>
                            <li><a href="https://www.zooniverse.org/projects/zooniverse/old-weather/talk/" target="_blank">Discuss</a></li>
                         </ul>
-                    </div>
 
-                    <ul class="nav navbar-nav navbar-right" ng-controller="HeaderUserCtrl">
+                        <!-- Login/Log out >>> -->
+                        <div ng-cloak class="navbar-left" ng-controller="HeaderUserCtrl">
 
-                        <li ng-if="!user" class="authentication-buttons">
-                            <ul class="nav navbar-nav">
-                                <li><a href="#" ng-click="$event.preventDefault(); signIn();">Log in</a></li>
-                            </ul>
-                        </li>
-
-                        <li ng-if="user" class="user">
+                          <div ng-show="!user" class="user">
                             <div class="text">
-                                <span ng-bind="'Hello, '"></span>
-                                <strong ng-bind="user.display_name"></strong>
-                                <a class="logout" href="#" ng-click="$event.preventDefault(); signOut()">Log out</a>
+                              <a class="login" href="#" ng-click="$event.preventDefault(); signIn()">Log in</a>
+                            </div>
+                          </div>
+
+                          <div ng-if="user" class="user">
+                            <div class="text">
+                              <span ng-bind="'Hello, '"></span>
+                              <strong ng-bind="user.display_name"></strong>
+                              <a class="logout" href="#" ng-click="$event.preventDefault(); signOut()">Log out</a>
                             </div>
                             <img ng-if="avatar" ng-src="{{ avatar.src }}" class="avatar">
-                        </li>
+                          </div>
 
-                    </ul>
+                        </div>
+                        <!-- <<< Login/Log out -->
 
-                </div>
+                    </div>
+
+
+
+
             </nav>
 
-            <div ui-view="header-bottom" class="header-bottom"></div>
+            <!-- <div ui-view="header-bottom" class="header-bottom"></div> -->
+
+
         </header>
 
-        <div ui-view="main" id="site-main"></div>
+        <div ui-view="main" id="site-main">
+          <!-- router content gets injected here -->
+        </div>
 
-        <footer id="site-footer" zooniverse-footer>
+        <!-- <footer id="site-footer" zooniverse-footer>
             <div class="container-wrapper top">
                 <div class="container">
                     <div class="row">
@@ -161,7 +176,7 @@
                     </div>
                 </div>
             </div>
-        </footer>
+        </footer> -->
 
         <script src="https://cdn.polyfill.io/v2/polyfill.js?unknown=polyfill&amp;features=default&amp;flags=gated"></script>
         <!-- build:js scripts/app.js -->
@@ -179,62 +194,9 @@
         <script src="bower_components/packery/dist/packery.pkgd.js"></script>
 
         <script src="panoptes-client.js"></script>
-
-        <script src="modules/app/scripts/init.js"></script>
-        <script src="modules/app/scripts/home-controller.js"></script>
-        <script src="modules/app/scripts/templates.js"></script>
-
-        <script src="modules/zoo-api/scripts/init.js"></script>
-        <script src="modules/zoo-api/scripts/project-service.js"></script>
-
-        <script src="modules/auth/scripts/init.js"></script>
-        <script src="modules/auth/scripts/templates.js"></script>
-
-        <script src="modules/transcription/scripts/init.js"></script>
-        <script src="modules/transcription/scripts/templates.js"></script>
-
-        <script src="modules/404/scripts/init.js"></script>
-        <script src="modules/404/scripts/templates.js"></script>
-
-        <script src="modules/content/scripts/init.js"></script>
-        <script src="modules/content/scripts/templates.js"></script>
-
-        <script src="modules/ships/scripts/init.js"></script>
-        <script src="modules/ships/scripts/templates.js"></script>
-        <script src="modules/ships/scripts/ships-list-controller.js"></script>
-        <script src="modules/ships/scripts/ships-detail-controller.js"></script>
-        <script src="modules/ships/scripts/ships-detail-constant.js"></script>
-
-        <script src="modules/svg/scripts/init.js"></script>
-        <script src="modules/svg/scripts/svg-pan-zoom-directive.js"></script>
-        <script src="modules/svg/scripts/svg-service.js"></script>
-        <script src="modules/svg/scripts/svg-grid-factory-service.js"></script>
-        <script src="modules/svg/scripts/svg-drawing-factory-service.js"></script>
-        <script src="modules/svg/scripts/svg-pan-zoom-factory-service.js"></script>
-
-        <script src="modules/confirmationModal/scripts/init.js"></script>
-        <script src="modules/confirmationModal/scripts/confirmation-modal-factory-service.js"></script>
-        <script src="modules/confirmationModal/scripts/confirmation-modal-controller.js"></script>
-        <script src="modules/confirmationModal/scripts/templates.js"></script>
-
-        <script src="modules/annotation/scripts/init.js"></script>
-        <script src="modules/annotation/scripts/templates.js"></script>
-        <script src="modules/annotation/scripts/annotations-factory-service.js"></script>
-        <script src="modules/annotation/scripts/annotations-directive.js"></script>
-        <script src="modules/annotation/scripts/grid-directive.js"></script>
-
-        <script src="modules/transcribe/scripts/init.js"></script>
-        <script src="modules/transcribe/scripts/templates.js"></script>
-
-        <script src="modules/tutorial/scripts/init.js"></script>
-        <script src="modules/tutorial/scripts/templates.js"></script>
+        <script src="app.js"></script>
 
 
-        <script src="modules/zooniverse/scripts/init.js"></script>
-        <script src="modules/zooniverse/scripts/zooniverse-footer.factory.js"></script>
-        <script src="modules/zooniverse/scripts/zooniverse-footer.directive.js"></script>
-
-        <script src="modules/zooniverse/scripts/zooniverse-footer.directive.js"></script>
         <!-- endbuild -->
 
         <!-- Google Tag Manager -->
