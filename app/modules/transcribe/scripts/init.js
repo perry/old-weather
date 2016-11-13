@@ -464,32 +464,41 @@
             return localStorageService.set('subject_set_queue_' + subject_set_id, cache);
         };
 
-        var _loadNewSubjects = function (subject_set_id) {
+        var _loadNewSubjects = function (subject_set_id, subject_id) {
             var deferred = $q.defer();
+            var current_subject = localStorageService.get('current_subject');
 
-            var lastPage = localStorageService.get('subject_set_page_' + subject_set_id);
-            if (!lastPage) {
-                lastPage = 0;
-            }
+            var _getSubjectsPage = function (project, subject_id) {
 
-            var _getSubjectsPage = function (project) {
-                return zooAPI.type('subjects').get({
+                var params = {}
+
+                if (subject_id) {
+                  console.log(' *** FETCHING SUBJECT WITH ID %s ***', subject_id); // --STI
+                  params = { id: subject_id }
+                } else {
+                  console.log(' *** FETCHING RANDOM SUBJECT ***'); // --STI
+                  params = {
+                    subject_set_id: subject_set_id,
+                    page_size: 1,
                     sort: 'queued',
-                    workflow_id: project.configuration.default_workflow, //project.links.workflows[0],
-                    // page: lastPage + 1,
-                    page_size: 20,
-                    subject_set_id: subject_set_id
-                }).then(function (res) {
+                    workflow_id: project.configuration.default_workflow
+                  };
+                }
+
+                return zooAPI.type('subjects').get(params)
+                  .then(function (res) {
+                    localStorageService.set('current_subject', res[0] ); // --STI
+                    console.log('      >>>>>>>>> CURRENT PAGE: ' + res[0].metadata.pageNumber + ', ID: ' + res[0].id + ' <<<<<<<<<<'); // --STI
                     return res;
-                });
+                  });
             };
 
             var project;
 
-            zooAPIProject.get()
+            zooAPIProject.get() // first, we need project to determine which workflow/subject set to fetch from
                 .then(function (response) {
                     project = response;
-                    return _getSubjectsPage(response);
+                    return _getSubjectsPage(response, subject_id);
                 })
                 .then(function (response) {
                     return response;
@@ -499,8 +508,6 @@
                 .then(function (response) {
                     if (response.length > 0) {
                         _addToQueue(subject_set_id, response);
-
-                        localStorageService.set('subject_set_page_' + subject_set_id, (lastPage + 1));
                         deferred.resolve();
                     } else {
                         deferred.reject();
@@ -511,13 +518,12 @@
             return deferred.promise;
         };
 
-        var _getNextInQueue = function (subject_set_id) {
+        var _getNextInQueue = function (subject_set_id, subject_id) {
             var deferred = $q.defer();
-
             var cache = _getQueueCache(subject_set_id);
 
             if (!angular.isArray(cache) || cache.length === 0) {
-                _loadNewSubjects(subject_set_id)
+                _loadNewSubjects(subject_set_id, subject_id)
                     .then(function () {
                         cache = _getQueueCache(subject_set_id);
 
@@ -534,14 +540,13 @@
             return deferred.promise;
         };
 
-        var get = function (subject_set_id) {
+        var get = function (subject_set_id, subject_id) {
             var deferred = $q.defer();
 
-            _getNextInQueue(subject_set_id)
+            _getNextInQueue(subject_set_id, subject_id)
                 .then(function (subject) {
                     deferred.resolve(subject);
                 });
-
 
             return deferred.promise;
         };
@@ -551,12 +556,41 @@
         };
     });
 
+    module.controller('TranscribeNavController', function ($scope, $stateParams, $modal, subjectFactory, localStorageService) {
+
+      // update prev/next buttons
+      $scope.$on('transcribe:loadedSubject', function(newValue, oldValue) {
+        var currentSubject = localStorageService.get('current_subject');
+        console.log('CURRENT SUBJECT = ', currentSubject);
+        $scope.nextDisabled = currentSubject.metadata.nextSubjectId ? false : true
+        $scope.prevDisabled = currentSubject.metadata.prevSubjectId ? false : true
+      });
+
+      $scope.nextPage = function() {
+        console.log('NEXT PAGE >>>');
+        var new_subject_id = $scope.subject.metadata.nextSubjectId;
+        var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
+        _.remove(subject_set_queue, {id: $scope.subject.id});
+        localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
+        $scope.loadSubject(new_subject_id);
+      }
+
+      $scope.prevPage = function() {
+        console.log('<<< PREV PAGE');
+        var new_subject_id = $scope.subject.metadata.prevSubjectId;
+        var subject_set_queue = localStorageService.get('subject_set_queue_' + $stateParams.subject_set_id);
+        _.remove(subject_set_queue, {id: $scope.subject.id});
+        localStorageService.set('subject_set_queue_' + $stateParams.subject_set_id, subject_set_queue);
+        $scope.loadSubject(new_subject_id);
+      }
+
+    });
+
     module.controller('transcribeCtrl', function ($rootScope, $timeout, $stateParams, $scope, $sce, $state, annotationsFactory, workflowFactory, subjectFactory, svgPanZoomFactory, gridFactory) {
         $rootScope.bodyClass = 'annotate';
 
         $scope.loadSubject = function () {
           $rootScope.$broadcast('transcribe:loadingSubject');
-
           $scope.subject_set_id = $stateParams.subject_set_id;
           $scope.subject = undefined;
           $scope.isLoading = true;
@@ -586,7 +620,6 @@
                 $scope.subject = null;
                 $rootScope.$broadcast('transcribe:loadedSubject');
               }
-
             });
         };
         $scope.loadSubject();
